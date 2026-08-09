@@ -1,0 +1,92 @@
+[
+  {
+    "url": "https://next-auth.js.org",
+    "name": "NextAuth.js",
+    "snippet": "Built in email / passwordless / magic link · Use with any username / password store · Use ... Read more",
+    "host_name": "next-auth.js.org",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=w2h54xz6Ndw",
+    "name": "Next-Auth Login Authentication Tutorial with Next.js App",
+    "snippet": "In this Next-Auth login authentication tutorial with Next. js app directory, you will learn how to protect all of your pages with credentials or ...",
+    "host_name": "www.youtube.com",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.reddit.com/r/nextjs/comments/191solg/how_to_use_social_login_with_nextauth_when_using",
+    "name": "How to use social login with NextAuth when",
+    "snippet": "You can absolutely combine a Credentials Provider with OAuth in a Next. js project using NextAuth , Handle the OAuth flow\nYou can absolutely combine a Credentials Provider with OAuth in a Next. js project using NextAuth , even if your backend is separate (e.g., using ... Read more",
+    "host_name": "www.reddit.com",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://javascript.plainenglish.io/next-js-nextauth-js-secure-authentication-in-minutes-06d0bdbf8ad5",
+    "name": "Next.js + NextAuth.js: Secure Authentication in Minutes",
+    "snippet": "Apr 28, 2025 — NextAuth.js makes it insanely easy to add OAuth, credentials, or email logins with just a few lines of code. all in under 30 minutes.",
+    "host_name": "javascript.plainenglish.io",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://stackoverflow.com/questions/68320519/how-to-do-authentication-using-nextauth-js-without-login-page-using-postman",
+    "name": "How to do authentication using NextAuth.js without login",
+    "snippet": "I was asked to do authentication ( login ) using next-auth with custom credentials . I have to make a rest API endpoint: api/auth/ login . I know how to do this ... Read more",
+    "host_name": "stackoverflow.com",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://blog.logrocket.com/auth-js-client-side-authentication-next-js",
+    "name": "How to use Auth.js for client-side authentication in Next.js",
+    "snippet": "Jun 14, 2024 — In this article, we'll set up a client-side authentication that doesn't require a password in Next. js using the Auth. js library. Read more",
+    "host_name": "blog.logrocket.com",
+    "rank": 5,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://github.com/nextauthjs/next-auth/discussions/5496",
+    "name": "How to use NextAuth without database (only OAuth part)",
+    "snippet": "We use NextAuth to register / login users. But now we're building a Facebook / Twitter integration (for people to able to tweet etc). Since they all use OAuth2 . Read more\nWe use Prisma + NextAuth for Social Login , by default NextAuth . js does not use DB if you don't specify an adapter. We just need access / refresh tokens.  ...",
+    "host_name": "github.com",
+    "rank": 6,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=wcDmA4uPqw0",
+    "name": "Next Auth v5 Social OAuth Login in Next.js 15 with Prisma and",
+    "snippet": "In this tutorial, you'll learn how to implement Next Auth v5 social OAuth login in next. js 15 with prisma and MongoDB.",
+    "host_name": "www.youtube.com",
+    "rank": 7,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://medium.com/@garciadiazjaime/nextauth-js-an-easy-way-to-add-authentication-to-your-next-js-project-65e6f3603087",
+    "name": "An easy way to add authentication to your Next.js project",
+    "snippet": "It's a pretty solid library that simplifies login , logout, and session handling. Here are the steps I followed. Read more",
+    "host_name": "medium.com",
+    "rank": 8,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://thenewstack.io/implement-third-party-authentication-with-google-in-next-js",
+    "name": "Implement Third-Party Authentication With Google in Next.js",
+    "snippet": "Oct 4, 2024 — In this guide, we'll show you how to set up Google authentication in a Next. js app, including configuring your Google API credentials and using NextAuth for ... Read more",
+    "host_name": "thenewstack.io",
+    "rank": 9,
+    "date": "",
+    "favicon": ""
+  }
+]
