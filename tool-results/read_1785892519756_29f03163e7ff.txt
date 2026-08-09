@@ -1,0 +1,2002 @@
+     1→▲ Next.js 16.1.3 (Turbopack)
+     2→- Local:         http://localhost:3000
+     3→- Network:       http://21.0.9.219:3000
+     4→- Environments: .env
+     5→
+     6→✓ Starting...
+     7→Attention: Next.js now collects completely anonymous telemetry regarding usage.
+     8→This information is used to shape Next.js' roadmap and prioritize features.
+     9→You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+    10→https://nextjs.org/telemetry
+    11→
+    12→✓ Ready in 652ms
+    13→○ Compiling / ...
+    14→ GET / 200 in 2.7s (compile: 2.5s, render: 285ms)
+    15→ GET / 200 in 26ms (compile: 2ms, render: 24ms)
+    16→ GET / 200 in 41ms (compile: 3ms, render: 38ms)
+    17→[next-auth][warn][NEXTAUTH_URL] 
+    18→https://next-auth.js.org/warnings#nextauth_url
+    19→ GET /api/auth/session 200 in 1762ms (compile: 1732ms, render: 29ms)
+    20→ GET / 200 in 64ms (compile: 3ms, render: 61ms)
+    21→ GET / 200 in 35ms (compile: 2ms, render: 33ms)
+    22→ GET /api/auth/session 200 in 32ms (compile: 22ms, render: 10ms)
+    23→✓ Compiled in 170ms
+    24→✓ Compiled in 144ms
+    25→⚠ Cross origin request detected from preview-chat-c09468c8-6a6b-4dcc-9515-abe53fca7f1f.space-z.ai to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+    26→Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+    27→✓ Compiled in 212ms
+    28→✓ Compiled in 138ms
+    29→✓ Compiled in 174ms
+    30→✓ Compiled in 160ms
+    31→✓ Compiled in 126ms
+    32→✓ Compiled in 141ms
+    33→ GET / 200 in 242ms (compile: 51ms, render: 191ms)
+    34→ GET / 200 in 32ms (compile: 3ms, render: 29ms)
+    35→ GET /api/auth/session 200 in 32ms (compile: 24ms, render: 9ms)
+    36→✓ Compiled in 167ms
+    37→ GET / 200 in 257ms (compile: 53ms, render: 204ms)
+    38→ GET /api/auth/session 200 in 44ms (compile: 34ms, render: 10ms)
+    39→✓ Compiled in 163ms
+    40→ GET / 200 in 246ms (compile: 52ms, render: 194ms)
+    41→ GET / 200 in 27ms (compile: 2ms, render: 24ms)
+    42→ GET / 200 in 36ms (compile: 3ms, render: 33ms)
+    43→ GET / 200 in 32ms (compile: 2ms, render: 29ms)
+    44→ GET /api/auth/session 200 in 50ms (compile: 26ms, render: 24ms)
+    45→ GET /api/auth/session 200 in 31ms (compile: 23ms, render: 9ms)
+    46→ GET /api/auth/providers 200 in 37ms (compile: 24ms, render: 13ms)
+    47→ GET /api/auth/csrf 200 in 13ms (compile: 3ms, render: 10ms)
+    48→prisma:query SELECT `main`.`User`.`id`, `main`.`User`.`email`, `main`.`User`.`name`, `main`.`User`.`password`, `main`.`User`.`image`, `main`.`User`.`createdAt`, `main`.`User`.`updatedAt` FROM `main`.`User` WHERE (`main`.`User`.`email` = ? AND 1=1) LIMIT ? OFFSET ?
+    49→ POST /api/auth/callback/credentials 401 in 62ms (compile: 37ms, render: 24ms)
+    50→prisma:query SELECT 1
+    51→prisma:query SELECT `main`.`User`.`id`, `main`.`User`.`email`, `main`.`User`.`name`, `main`.`User`.`password`, `main`.`User`.`image`, `main`.`User`.`createdAt`, `main`.`User`.`updatedAt` FROM `main`.`User` WHERE (`main`.`User`.`email` = ? AND 1=1) LIMIT ? OFFSET ?
+    52→ POST /api/auth/register 201 in 394ms (compile: 255ms, render: 139ms)
+    53→prisma:query INSERT INTO `main`.`User` (`id`, `email`, `name`, `password`, `createdAt`, `updatedAt`) VALUES (?,?,?,?,?,?) RETURNING `id` AS `id`, `email` AS `email`, `name` AS `name`, `password` AS `password`, `image` AS `image`, `createdAt` AS `createdAt`, `updatedAt` AS `updatedAt`
+    54→ GET /api/auth/providers 200 in 33ms (compile: 24ms, render: 9ms)
+    55→ GET /api/auth/csrf 200 in 20ms (compile: 2ms, render: 17ms)
+    56→prisma:query SELECT `main`.`User`.`id`, `main`.`User`.`email`, `main`.`User`.`name`, `main`.`User`.`password`, `main`.`User`.`image`, `main`.`User`.`createdAt`, `main`.`User`.`updatedAt` FROM `main`.`User` WHERE (`main`.`User`.`email` = ? AND 1=1) LIMIT ? OFFSET ?
+    57→ POST /api/auth/callback/credentials 200 in 123ms (compile: 24ms, render: 99ms)
+    58→ GET /api/auth/session 200 in 15ms (compile: 2ms, render: 13ms)
+    59→prisma:query SELECT `main`.`Company`.`id`, `main`.`Company`.`userId`, `main`.`Company`.`name`, `main`.`Company`.`cnpj`, `main`.`Company`.`createdAt`, `main`.`Company`.`updatedAt` FROM `main`.`Company` WHERE `main`.`Company`.`userId` = ? ORDER BY `main`.`Company`.`createdAt` ASC LIMIT ? OFFSET ?
+    60→prisma:query SELECT `main`.`CompanyShare`.`id`, `main`.`CompanyShare`.`companyId`, `main`.`CompanyShare`.`userId`, `main`.`CompanyShare`.`invitedBy`, `main`.`CompanyShare`.`role`, `main`.`CompanyShare`.`status`, `main`.`CompanyShare`.`createdAt`, `main`.`CompanyShare`.`updatedAt` FROM `main`.`CompanyShare` WHERE (`main`.`CompanyShare`.`userId` = ? AND `main`.`CompanyShare`.`status` = ?) ORDER BY `main`.`CompanyShare`.`createdAt` DESC LIMIT ? OFFSET ?
+    61→prisma:query SELECT `main`.`CompanyShare`.`id`, `main`.`CompanyShare`.`companyId` FROM `main`.`CompanyShare` WHERE (`main`.`CompanyShare`.`userId` = ? AND `main`.`CompanyShare`.`status` = ?) LIMIT ? OFFSET ?
+    62→ GET /api/auth/invitations 200 in 345ms (compile: 327ms, render: 18ms)
+    63→ GET /api/companies 200 in 317ms (compile: 272ms, render: 45ms)
+    64→prisma:query SELECT 1
+    65→prisma:query SELECT COUNT(*) AS `_count$_all` FROM (SELECT `main`.`Company`.`id` FROM `main`.`Company` WHERE `main`.`Company`.`userId` = ? LIMIT ? OFFSET ?) AS `sub`
+    66→prisma:query INSERT INTO `main`.`Company` (`id`, `userId`, `name`, `cnpj`, `createdAt`, `updatedAt`) VALUES (?,?,?,?,?,?) RETURNING `id` AS `id`, `userId` AS `userId`, `name` AS `name`, `cnpj` AS `cnpj`, `createdAt` AS `createdAt`, `updatedAt` AS `updatedAt`
+    67→ POST /api/companies 201 in 23ms (compile: 5ms, render: 17ms)
+    68→prisma:query SELECT `main`.`Company`.`id`, `main`.`Company`.`userId`, `main`.`Company`.`name`, `main`.`Company`.`cnpj`, `main`.`Company`.`createdAt`, `main`.`Company`.`updatedAt` FROM `main`.`Company` WHERE (`main`.`Company`.`id` = ? AND 1=1) LIMIT ? OFFSET ?
+    69→prisma:query SELECT `main`.`DREEntry`.`id`, `main`.`DREEntry`.`companyId`, `main`.`DREEntry`.`month`, `main`.`DREEntry`.`year`, `main`.`DREEntry`.`prestacaoNf`, `main`.`DREEntry`.`honorariosSucumbenciais`, `main`.`DREEntry`.`honorarios`, `main`.`DREEntry`.`reembolsoDespesas`, `main`.`DREEntry`.`naoIdentificado`, `main`.`DREEntry`.`impostosCpp`, `main`.`DREEntry`.`combustivel`, `main`.`DREEntry`.`insumos`, `main`.`DREEntry`.`materialEscritorio`, `main`.`DREEntry`.`servicosContratados`, `main`.`DREEntry`.`materiaisUsoConsumo`, `main`.`DREEntry`.`taxas`, `main`.`DREEntry`.`tarifas`, `main`.`DREEntry`.`energiaEletrica`, `main`.`DREEntry`.`agua`, `main`.`DREEntry`.`aluguel`, `main`.`DREEntry`.`salarios`, `main`.`DREEntry`.`fgts`, `main`.`DREEntry`.`prolabore`, `main`.`DREEntry`.`bonus`, `main`.`DREEntry`.`inss`, `main`.`DREEntry`.`iptu`, `main`.`DREEntry`.`telefoneInternet`, `main`.`DREEntry`.`valeTransporte`, `main`.`DREEntry`.`planoSaude`, `main`.`DREEntry`.`createdAt`, `main`.`DREEntry`.`updatedAt` FROM `main`.`DREEntry` WHERE ((`main`.`DREEntry`.`companyId` = ? AND `main`.`DREEntry`.`month` = ? AND `main`.`DREEntry`.`year` = ?) AND 1=1) LIMIT ? OFFSET ?
+    70→ GET /api/dre?companyId=cmsfb4paj0002ortry9lfkyvb&month=8&year=2026 200 in 517ms (compile: 469ms, render: 48ms)
+    71→prisma:query SELECT `main`.`Company`.`id`, `main`.`Company`.`userId`, `main`.`Company`.`name`, `main`.`Company`.`cnpj`, `main`.`Company`.`createdAt`, `main`.`Company`.`updatedAt` FROM `main`.`Company` WHERE (`main`.`Company`.`id` = ? AND 1=1) LIMIT ? OFFSET ?
+    72→prisma:query SELECT `main`.`DREEntry`.`id`, `main`.`DREEntry`.`companyId`, `main`.`DREEntry`.`month`, `main`.`DREEntry`.`year`, `main`.`DREEntry`.`prestacaoNf`, `main`.`DREEntry`.`honorariosSucumbenciais`, `main`.`DREEntry`.`honorarios`, `main`.`DREEntry`.`reembolsoDespesas`, `main`.`DREEntry`.`naoIdentificado`, `main`.`DREEntry`.`impostosCpp`, `main`.`DREEntry`.`combustivel`, `main`.`DREEntry`.`insumos`, `main`.`DREEntry`.`materialEscritorio`, `main`.`DREEntry`.`servicosContratados`, `main`.`DREEntry`.`materiaisUsoConsumo`, `main`.`DREEntry`.`taxas`, `main`.`DREEntry`.`tarifas`, `main`.`DREEntry`.`energiaEletrica`, `main`.`DREEntry`.`agua`, `main`.`DREEntry`.`aluguel`, `main`.`DREEntry`.`salarios`, `main`.`DREEntry`.`fgts`, `main`.`DREEntry`.`prolabore`, `main`.`DREEntry`.`bonus`, `main`.`DREEntry`.`inss`, `main`.`DREEntry`.`iptu`, `main`.`DREEntry`.`telefoneInternet`, `main`.`DREEntry`.`valeTransporte`, `main`.`DREEntry`.`planoSaude`, `main`.`DREEntry`.`createdAt`, `main`.`DREEntry`.`updatedAt` FROM `main`.`DREEntry` WHERE `main`.`DREEntry`.`companyId` = ? ORDER BY `main`.`DREEntry`.`year` ASC, `main`.`DREEntry`.`month` ASC LIMIT ? OFFSET ?
+    73→ GET /api/dre?companyId=cmsfb4paj0002ortry9lfkyvb&all=true 200 in 13ms (compile: 2ms, render: 10ms)
+    74→ GET /api/companies/cmsfb4paj0002ortry9lfkyvb/custom-fields 200 in 1142ms (compile: 1057ms, render: 85ms)
+    75→prisma:query SELECT `main`.`CustomDREField`.`id`, `main`.`CustomDREField`.`companyId`, `main`.`CustomDREField`.`section`, `main`.`CustomDREField`.`name`, `main`.`CustomDREField`.`sign`, `main`.`CustomDREField`.`order`, `main`.`CustomDREField`.`createdAt` FROM `main`.`CustomDREField` WHERE `main`.`CustomDREField`.`companyId` = ? ORDER BY `main`.`CustomDREField`.`section` ASC, `main`.`CustomDREField`.`order` ASC LIMIT ? OFFSET ?
+    76→prisma:query SELECT `main`.`Company`.`id`, `main`.`Company`.`userId`, `main`.`Company`.`name`, `main`.`Company`.`cnpj`, `main`.`Company`.`createdAt`, `main`.`Company`.`updatedAt` FROM `main`.`Company` WHERE (`main`.`Company`.`id` = ? AND 1=1) LIMIT ? OFFSET ?
+    77→prisma:query SELECT `main`.`Company`.`id`, `main`.`Company`.`userId`, `main`.`Company`.`name`, `main`.`Company`.`cnpj`, `main`.`Company`.`createdAt`, `main`.`Company`.`updatedAt` FROM `main`.`Company` WHERE (`main`.`Company`.`id` = ? AND 1=1) LIMIT ? OFFSET ?
+    78→ GET /api/companies/cmsfb4paj0002ortry9lfkyvb/suggested-changes 200 in 1168ms (compile: 1083ms, render: 84ms)
+    79→prisma:query SELECT `main`.`SuggestedChange`.`id`, `main`.`SuggestedChange`.`companyId`, `main`.`SuggestedChange`.`month`, `main`.`SuggestedChange`.`year`, `main`.`SuggestedChange`.`dreField`, `main`.`SuggestedChange`.`oldValue`, `main`.`SuggestedChange`.`newValue`, `main`.`SuggestedChange`.`suggestedBy`, `main`.`SuggestedChange`.`status`, `main`.`SuggestedChange`.`createdAt`, `main`.`SuggestedChange`.`resolvedAt`, `main`.`SuggestedChange`.`resolvedBy` FROM `main`.`SuggestedChange` WHERE `main`.`SuggestedChange`.`companyId` = ? ORDER BY `main`.`SuggestedChange`.`createdAt` DESC LIMIT ? OFFSET ?
+    80→prisma:query SELECT `main`.`Company`.`id`, `main`.`Company`.`userId`, `main`.`Company`.`name`, `main`.`Company`.`cnpj`, `main`.`Company`.`createdAt`, `main`.`Company`.`updatedAt` FROM `main`.`Company` WHERE (`main`.`Company`.`id` = ? AND 1=1) LIMIT ? OFFSET ?
+    81→prisma:query SELECT `main`.`ExpenseQualification`.`id`, `main`.`ExpenseQualification`.`companyId`, `main`.`ExpenseQualification`.`month`, `main`.`ExpenseQualification`.`year`, `main`.`ExpenseQualification`.`description`, `main`.`ExpenseQualification`.`date`, `main`.`ExpenseQualification`.`totalValue`, `main`.`ExpenseQualification`.`dreField`, `main`.`ExpenseQualification`.`uploadedFileId`, `main`.`ExpenseQualification`.`createdAt`, `main`.`ExpenseQualification`.`updatedAt` FROM `main`.`ExpenseQualification` WHERE (`main`.`ExpenseQualification`.`companyId` = ? AND `main`.`ExpenseQualification`.`month` = ? AND `main`.`ExpenseQualification`.`year` = ?) ORDER BY `main`.`ExpenseQualification`.`createdAt` ASC LIMIT ? OFFSET ?
+    82→prisma:query SELECT `main`.`UploadedFile`.`id`, `main`.`UploadedFile`.`companyId`, `main`.`UploadedFile`.`month`, `main`.`UploadedFile`.`year`, `main`.`UploadedFile`.`fileName`, `main`.`UploadedFile`.`uploadedAt` FROM `main`.`UploadedFile` WHERE (`main`.`UploadedFile`.`companyId` = ? AND `main`.`UploadedFile`.`month` = ? AND `main`.`UploadedFile`.`year` = ?) ORDER BY `main`.`UploadedFile`.`uploadedAt` DESC LIMIT ? OFFSET ?
+    83→ GET /api/dre/expense-qualification?companyId=cmsfb4paj0002ortry9lfkyvb&month=8&year=2026 200 in 1908ms (compile: 1897ms, render: 11ms)
+    84→prisma:query SELECT 1
+    85→prisma:query SELECT `main`.`Company`.`id`, `main`.`Company`.`userId`, `main`.`Company`.`name`, `main`.`Company`.`cnpj`, `main`.`Company`.`createdAt`, `main`.`Company`.`updatedAt` FROM `main`.`Company` WHERE (`main`.`Company`.`id` = ? AND 1=1) LIMIT ? OFFSET ?
+    86→prisma:query SELECT `main`.`Company`.`id`, `main`.`Company`.`userId`, `main`.`Company`.`name`, `main`.`Company`.`cnpj`, `main`.`Company`.`createdAt`, `main`.`Company`.`updatedAt` FROM `main`.`Company` WHERE (`main`.`Company`.`id` = ? AND 1=1) LIMIT ? OFFSET ?
+    87→ GET /api/companies/cmsfb4paj0002ortry9lfkyvb/suggested-changes 200 in 47ms (compile: 33ms, render: 14ms)
+    88→prisma:query SELECT `main`.`SuggestedChange`.`id`, `main`.`SuggestedChange`.`companyId`, `main`.`SuggestedChange`.`month`, `main`.`SuggestedChange`.`year`, `main`.`SuggestedChange`.`dreField`, `main`.`SuggestedChange`.`oldValue`, `main`.`SuggestedChange`.`newValue`, `main`.`SuggestedChange`.`suggestedBy`, `main`.`SuggestedChange`.`status`, `main`.`SuggestedChange`.`createdAt`, `main`.`SuggestedChange`.`resolvedAt`, `main`.`SuggestedChange`.`resolvedBy` FROM `main`.`SuggestedChange` WHERE `main`.`SuggestedChange`.`companyId` = ? ORDER BY `main`.`SuggestedChange`.`createdAt` DESC LIMIT ? OFFSET ?
+    89→prisma:query SELECT 1
+    90→prisma:query SELECT `main`.`Company`.`id`, `main`.`Company`.`userId`, `main`.`Company`.`name`, `main`.`Company`.`cnpj`, `main`.`Company`.`createdAt`, `main`.`Company`.`updatedAt` FROM `main`.`Company` WHERE (`main`.`Company`.`id` = ? AND 1=1) LIMIT ? OFFSET ?
+    91→prisma:query SELECT `main`.`Company`.`id`, `main`.`Company`.`userId`, `main`.`Company`.`name`, `main`.`Company`.`cnpj`, `main`.`Company`.`createdAt`, `main`.`Company`.`updatedAt` FROM `main`.`Company` WHERE (`main`.`Company`.`id` = ? AND 1=1) LIMIT ? OFFSET ?
+    92→prisma:query SELECT `main`.`SuggestedChange`.`id`, `main`.`SuggestedChange`.`companyId`, `main`.`SuggestedChange`.`month`, `main`.`SuggestedChange`.`year`, `main`.`SuggestedChange`.`dreField`, `main`.`SuggestedChange`.`oldValue`, `main`.`SuggestedChange`.`newValue`, `main`.`SuggestedChange`.`suggestedBy`, `main`.`SuggestedChange`.`status`, `main`.`SuggestedChange`.`createdAt`, `main`.`SuggestedChange`.`resolvedAt`, `main`.`SuggestedChange`.`resolvedBy` FROM `main`.`SuggestedChange` WHERE `main`.`SuggestedChange`.`companyId` = ? ORDER BY `main`.`SuggestedChange`.`createdAt` DESC LIMIT ? OFFSET ?
+    93→ GET /api/companies/cmsfb4paj0002ortry9lfkyvb/suggested-changes 200 in 53ms (compile: 39ms, render: 14ms)
+    94→prisma:query SELECT `main`.`Company`.`id`, `main`.`Company`.`userId`, `main`.`Company`.`name`, `main`.`Company`.`cnpj`, `main`.`Company`.`createdAt`, `main`.`Company`.`updatedAt` FROM `main`.`Company` WHERE (`main`.`Company`.`id` = ? AND 1=1) LIMIT ? OFFSET ?
+    95→prisma:query INSERT INTO `main`.`UploadedFile` (`id`, `companyId`, `month`, `year`, `fileName`, `uploadedAt`) VALUES (?,?,?,?,?,?) RETURNING `id` AS `id`, `companyId` AS `companyId`, `month` AS `month`, `year` AS `year`, `fileName` AS `fileName`, `uploadedAt` AS `uploadedAt`
+    96→Expense qualification error: Error [PrismaClientValidationError]: 
+    97→Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["db"].expenseQualification.createMany()` invocation in
+    98→/home/z/my-project/.next/dev/server/chunks/[root-of-the-server]__7013861c._.js:378:157
+    99→
+   100→  375         dreField: '',
+   101→  376         uploadedFileId: uploadedFile.id
+   102→  377     }));
+   103→→ 378 await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["db"].expenseQualification.createMany({
+   104→        data: [
+   105→          {
+   106→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   107→            month: 8,
+   108→            year: 2026,
+   109→            description: "Caixa 2025",
+   110→            date: "",
+   111→            totalValue: 646076.31,
+   112→            dreField: "",
+   113→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   114→          },
+   115→          {
+   116→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   117→            month: 8,
+   118→            year: 2026,
+   119→            description: "Graziela Toledo - Fee 10% PHD (ND 751)",
+   120→            date: "2026-01-06",
+   121→            totalValue: -1877,
+   122→            dreField: "",
+   123→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   124→          },
+   125→          {
+   126→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   127→            month: 8,
+   128→            year: 2026,
+   129→            description: "Comatic x Maria Linete de Souza Regis - Processo 1001474-31.2016.5.02.0039 - Parcela 5/6",
+   130→            date: "2026-01-06",
+   131→            totalValue: -1285.08,
+   132→            dreField: "",
+   133→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   134→          },
+   135→          {
+   136→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   137→            month: 8,
+   138→            year: 2026,
+   139→            description: "Pós Graduação Geovana Guimarães - Parcela 11/15",
+   140→            date: "2026-01-06",
+   141→            totalValue: -1936.02,
+   142→            dreField: "",
+   143→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   144→          },
+   145→          {
+   146→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   147→            month: 8,
+   148→            year: 2026,
+   149→            description: "AASP Carlos Mendes - anuidade",
+   150→            date: "2026-01-06",
+   151→            totalValue: -1023.2,
+   152→            dreField: "",
+   153→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   154→          },
+   155→          {
+   156→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   157→            month: 8,
+   158→            year: 2026,
+   159→            description: "AASP Guilherme Coelho - anuidade",
+   160→            date: "2026-01-06",
+   161→            totalValue: -1023.2,
+   162→            dreField: "",
+   163→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   164→          },
+   165→          {
+   166→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   167→            month: 8,
+   168→            year: 2026,
+   169→            description: "Tecno Therm (CH)",
+   170→            date: "2026-01-06",
+   171→            totalValue: -1034.54,
+   172→            dreField: "",
+   173→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   174→          },
+   175→          {
+   176→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   177→            month: 8,
+   178→            year: 2026,
+   179→            description: "Reembolso de Despesas - Fame Securitizadora",
+   180→            date: "2026-01-06",
+   181→            totalValue: 34.35,
+   182→            dreField: "",
+   183→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   184→          },
+   185→          {
+   186→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   187→            month: 8,
+   188→            year: 2026,
+   189→            description: "Honorários Circuito - Parte",
+   190→            date: "2026-01-06",
+   191→            totalValue: 1295.71,
+   192→            dreField: "",
+   193→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   194→          },
+   195→          {
+   196→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   197→            month: 8,
+   198→            year: 2026,
+   199→            description: "Rendimento Pago Aplicação",
+   200→            date: "2026-01-06",
+   201→            totalValue: 0.78,
+   202→            dreField: "",
+   203→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   204→          },
+   205→          {
+   206→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   207→            month: 8,
+   208→            year: 2026,
+   209→            description: "EDG Turismo - viagem VC",
+   210→            date: "2026-01-07",
+   211→            totalValue: -4984,
+   212→            dreField: "",
+   213→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   214→          },
+   215→          {
+   216→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   217→            month: 8,
+   218→            year: 2026,
+   219→            description: "Sandra Bucci Advocacia - Projeto Drone (CH)",
+   220→            date: "2026-01-07",
+   221→            totalValue: -250,
+   222→            dreField: "",
+   223→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   224→          },
+   225→          {
+   226→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   227→            month: 8,
+   228→            year: 2026,
+   229→            description: "COMATIC x HERONILDA FERREIRA DE LIMA - Processo 0002105-91.2014.5.02.0061 - Parcela 4/6",
+   230→            date: "2026-01-07",
+   231→            totalValue: -580.27,
+   232→            dreField: "",
+   233→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   234→          },
+   235→          {
+   236→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   237→            month: 8,
+   238→            year: 2026,
+   239→            description: "Custas Itaesbra",
+   240→            date: "2026-01-07",
+   241→            totalValue: -250.62,
+   242→            dreField: "",
+   243→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   244→          },
+   245→          {
+   246→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   247→            month: 8,
+   248→            year: 2026,
+   249→            description: "Custas Itaesbra",
+   250→            date: "2026-01-07",
+   251→            totalValue: -250.62,
+   252→            dreField: "",
+   253→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   254→          },
+   255→          {
+   256→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   257→            month: 8,
+   258→            year: 2026,
+   259→            description: "Honorários EMS / NC Farma",
+   260→            date: "2026-01-07",
+   261→            totalValue: 11777.54,
+   262→            dreField: "",
+   263→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   264→          },
+   265→          {
+   266→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   267→            month: 8,
+   268→            year: 2026,
+   269→            description: "Honorários Gabriel Mendes",
+   270→            date: "2026-01-07",
+   271→            totalValue: 10030,
+   272→            dreField: "",
+   273→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   274→          },
+   275→          {
+   276→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   277→            month: 8,
+   278→            year: 2026,
+   279→            description: "Reembolso de Despesas - Elaine Tavares Sultowski",
+   280→            date: "2026-01-08",
+   281→            totalValue: 57.77,
+   282→            dreField: "",
+   283→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   284→          },
+   285→          {
+   286→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   287→            month: 8,
+   288→            year: 2026,
+   289→            description: "Honorários Milsa Elmôr",
+   290→            date: "2026-01-08",
+   291→            totalValue: 1421.86,
+   292→            dreField: "",
+   293→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   294→          },
+   295→          {
+   296→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   297→            month: 8,
+   298→            year: 2026,
+   299→            description: "Honorários Rodoviário Oceano",
+   300→            date: "2026-01-08",
+   301→            totalValue: 10000,
+   302→            dreField: "",
+   303→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   304→          },
+   305→          {
+   306→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   307→            month: 8,
+   308→            year: 2026,
+   309→            description: "Reembolso de Despesas - Rodoviário Oceano",
+   310→            date: "2026-01-08",
+   311→            totalValue: 217.85,
+   312→            dreField: "",
+   313→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   314→          },
+   315→          {
+   316→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   317→            month: 8,
+   318→            year: 2026,
+   319→            description: "Reembolso de Despesas - Nicoboco",
+   320→            date: "2026-01-09",
+   321→            totalValue: 1157.59,
+   322→            dreField: "",
+   323→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   324→          },
+   325→          {
+   326→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   327→            month: 8,
+   328→            year: 2026,
+   329→            description: "Honorários Auto Posto Poli Carminha",
+   330→            date: "2026-01-09",
+   331→            totalValue: 15479.08,
+   332→            dreField: "",
+   333→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   334→          },
+   335→          {
+   336→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   337→            month: 8,
+   338→            year: 2026,
+   339→            description: "Honorários Ezeiza Maria Borcezzi Kunzle",
+   340→            date: "2026-01-09",
+   341→            totalValue: 1000,
+   342→            dreField: "",
+   343→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   344→          },
+   345→          {
+   346→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   347→            month: 8,
+   348→            year: 2026,
+   349→            description: "Reembolso de Despesas - Luiz Augusto Carvalho Miranda Junior",
+   350→            date: "2026-01-09",
+   351→            totalValue: 1311.26,
+   352→            dreField: "",
+   353→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   354→          },
+   355→          {
+   356→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   357→            month: 8,
+   358→            year: 2026,
+   359→            description: "Honorários Advocatícios - Pedro Luiz Rodrigues Mateus (VH Advogados) - Parcela 15/48",
+   360→            date: "2026-01-09",
+   361→            totalValue: 3680.33,
+   362→            dreField: "",
+   363→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   364→          },
+   365→          {
+   366→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   367→            month: 8,
+   368→            year: 2026,
+   369→            description: "Reembolso de Despesas - Nazih Taha Ghuneim",
+   370→            date: "2026-01-09",
+   371→            totalValue: 100,
+   372→            dreField: "",
+   373→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   374→          },
+   375→          {
+   376→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   377→            month: 8,
+   378→            year: 2026,
+   379→            description: "Comatic - Processo nº 1002016-36.2016.5.02.0205 - Roberto Hiromi Sonoda - Parcela 28/36",
+   380→            date: "2026-01-12",
+   381→            totalValue: -3865.61,
+   382→            dreField: "",
+   383→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   384→          },
+   385→          {
+   386→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   387→            month: 8,
+   388→            year: 2026,
+   389→            description: "Comatic x EDVALDO RODRIGUES DE SOUZA - Processo nº 1000586-74.2016.5.02.0714 - Parcela 5/6",
+   390→            date: "2026-01-12",
+   391→            totalValue: -5799.72,
+   392→            dreField: "",
+   393→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   394→          },
+   395→          {
+   396→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   397→            month: 8,
+   398→            year: 2026,
+   399→            description: "Honorários FIL Orientação Estética",
+   400→            date: "2026-01-12",
+   401→            totalValue: 7171.03,
+   402→            dreField: "",
+   403→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   404→          },
+   405→          {
+   406→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   407→            month: 8,
+   408→            year: 2026,
+   409→            description: "Reembolso de Despesas - The New York Times (NYT)",
+   410→            date: "2026-01-12",
+   411→            totalValue: 443.3,
+   412→            dreField: "",
+   413→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   414→          },
+   415→          {
+   416→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   417→            month: 8,
+   418→            year: 2026,
+   419→            description: "Honorários \nGeorge Christofis Neto",
+   420→            date: "2026-01-12",
+   421→            totalValue: 4780.69,
+   422→            dreField: "",
+   423→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   424→          },
+   425→          {
+   426→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   427→            month: 8,
+   428→            year: 2026,
+   429→            description: "Saque Caixinha",
+   430→            date: "2026-01-13",
+   431→            totalValue: -1000,
+   432→            dreField: "",
+   433→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   434→          },
+   435→          {
+   436→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   437→            month: 8,
+   438→            year: 2026,
+   439→            description: "Zuts Contabilidade Dezembro 2025 - CH",
+   440→            date: "2026-01-13",
+   441→            totalValue: -1310,
+   442→            dreField: "",
+   443→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   444→          },
+   445→          {
+   446→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   447→            month: 8,
+   448→            year: 2026,
+   449→            description: "Julia Maria dos Santos - Fee 10% ABQM",
+   450→            date: "2026-01-13",
+   451→            totalValue: -2838.71,
+   452→            dreField: "",
+   453→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   454→          },
+   455→          {
+   456→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   457→            month: 8,
+   458→            year: 2026,
+   459→            description: "Sinal Verde - ARS CH (Honorários)",
+   460→            date: "2026-01-13",
+   461→            totalValue: -884,
+   462→            dreField: "",
+   463→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   464→          },
+   465→          {
+   466→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   467→            month: 8,
+   468→            year: 2026,
+   469→            description: "Sinal Verde - ARS CH (Despesas)",
+   470→            date: "2026-01-13",
+   471→            totalValue: -883.2,
+   472→            dreField: "",
+   473→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   474→          },
+   475→          {
+   476→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   477→            month: 8,
+   478→            year: 2026,
+   479→            description: "Honorários Engemasa",
+   480→            date: "2026-01-13",
+   481→            totalValue: 727.14,
+   482→            dreField: "",
+   483→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   484→          },
+   485→          {
+   486→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   487→            month: 8,
+   488→            year: 2026,
+   489→            description: "Honorários Podium",
+   490→            date: "2026-01-13",
+   491→            totalValue: 2390.34,
+   492→            dreField: "",
+   493→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   494→          },
+   495→          {
+   496→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   497→            month: 8,
+   498→            year: 2026,
+   499→            description: "Honorários S.I.N. Implant System",
+   500→            date: "2026-01-13",
+   501→            totalValue: 10655.85,
+   502→            dreField: "",
+   503→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   504→          },
+   505→          {
+   506→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   507→            month: 8,
+   508→            year: 2026,
+   509→            description: "Honorários ABQM",
+   510→            date: "2026-01-13",
+   511→            totalValue: 33927.51,
+   512→            dreField: "",
+   513→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   514→          },
+   515→          {
+   516→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   517→            month: 8,
+   518→            year: 2026,
+   519→            description: "ONET | Solicitação de Pagamento – Acordos Trabalhistas - Leonardo Chaves Alves - Proc. Nº 0002160-73.2015.5.02.0007 - Parcela 2/2",
+   520→            date: "2026-01-14",
+   521→            totalValue: -1500,
+   522→            dreField: "",
+   523→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   524→          },
+   525→          {
+   526→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   527→            month: 8,
+   528→            year: 2026,
+   529→            description: "DL Amanda Santantonio - Janeiro 2026",
+   530→            date: "2026-01-14",
+   531→            totalValue: -10000,
+   532→            dreField: "",
+   533→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   534→          },
+   535→          {
+   536→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   537→            month: 8,
+   538→            year: 2026,
+   539→            description: "Custas Masa",
+   540→            date: "2026-01-14",
+   541→            totalValue: -140.16,
+   542→            dreField: "",
+   543→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   544→          },
+   545→          {
+   546→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   547→            month: 8,
+   548→            year: 2026,
+   549→            description: "SOS Parcelamentos - Comatic x ELENITA VIEIRA DOS REIS - Processo nº 1001290-77.2016.5.02.0006 - Parcela 6/6",
+   550→            date: "2026-01-14",
+   551→            totalValue: -3769.47,
+   552→            dreField: "",
+   553→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   554→          },
+   555→          {
+   556→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   557→            month: 8,
+   558→            year: 2026,
+   559→            description: "SOS Parcelamentos - Comatic x MARIA LIQUEZA DA SILVA - Processo nº 1001918-30.2017.5.02.0718 - Parcela 6/6",
+   560→            date: "2026-01-14",
+   561→            totalValue: -16158.95,
+   562→            dreField: "",
+   563→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   564→          },
+   565→          {
+   566→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   567→            month: 8,
+   568→            year: 2026,
+   569→            description: "SOS Parcelamentos - Comatic x CREMILDA LUIZA DE FRANCA - Processo nº 1000738-90.2018.5.02.0702 - Parcela 6/6",
+   570→            date: "2026-01-14",
+   571→            totalValue: -3340,
+   572→            dreField: "",
+   573→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   574→          },
+   575→          {
+   576→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   577→            month: 8,
+   578→            year: 2026,
+   579→            description: "SOS Parcelamentos - Comatic x SEBASTIANA MOURA DE SOUZA - Processo nº 1002118-10.2016.5.02.0706 - Parcela 6/6",
+   580→            date: "2026-01-14",
+   581→            totalValue: -1843.31,
+   582→            dreField: "",
+   583→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   584→          },
+   585→          {
+   586→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   587→            month: 8,
+   588→            year: 2026,
+   589→            description: "SOS Parcelamentos - Comatic x ADILSON DA CUNHA - Processo nº 1001405-78.2019.5.02.0205 - Parcela 6/6",
+   590→            date: "2026-01-14",
+   591→            totalValue: -5179.42,
+   592→            dreField: "",
+   593→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   594→          },
+   595→          {
+   596→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   597→            month: 8,
+   598→            year: 2026,
+   599→            description: "SOS Parcelamentos - Comatic x MANOEL ELIAS CARDOSO DA SILVA - Processo nº 1000297-64.2020.5.02.0080 - Parcela 6/6",
+   600→            date: "2026-01-14",
+   601→            totalValue: -8915.81,
+   602→            dreField: "",
+   603→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   604→          },
+   605→          {
+   606→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   607→            month: 8,
+   608→            year: 2026,
+   609→            description: "SOS Parcelamentos - Comatic x NEIRI DAS GRACAS CIRINO - Processo nº 1000451-93.2016.5.02.0057 - Parcela 6/6",
+   610→            date: "2026-01-14",
+   611→            totalValue: -1397.85,
+   612→            dreField: "",
+   613→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   614→          },
+   615→          {
+   616→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   617→            month: 8,
+   618→            year: 2026,
+   619→            description: "SOS Parcelamentos - Comatic x RAQUEL IOLANDA DA SILVA - Processo nº 1002222-50.2016.5.02.0205 - Parcela 6/6",
+   620→            date: "2026-01-14",
+   621→            totalValue: -2225.3,
+   622→            dreField: "",
+   623→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   624→          },
+   625→          {
+   626→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   627→            month: 8,
+   628→            year: 2026,
+   629→            description: "SOS Parcelamentos - Comatic x JOSEFA CREMILDA DA CONCEICAO - Processo nº 1000285-92.2018.5.02.0703 - Parcela 6/6",
+   630→            date: "2026-01-14",
+   631→            totalValue: -4139.72,
+   632→            dreField: "",
+   633→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   634→          },
+   635→          {
+   636→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   637→            month: 8,
+   638→            year: 2026,
+   639→            description: "SOS Parcelamentos - Comatic x MARIA DOS PASSOS DA SILVA VEIGA - Processo nº 1000394-10.2017.5.02.0714 - Parcela 6/6",
+   640→            date: "2026-01-14",
+   641→            totalValue: -5671.23,
+   642→            dreField: "",
+   643→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   644→          },
+   645→          {
+   646→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   647→            month: 8,
+   648→            year: 2026,
+   649→            description: "SOS Parcelamentos - Comatic x SEVERINO GOMES DA SILVA - Processo nº 1000912-84.2017.5.02.0201 - Parcela 6/6",
+   650→            date: "2026-01-14",
+   651→            totalValue: -28807.35,
+   652→            dreField: "",
+   653→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   654→          },
+   655→          {
+   656→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   657→            month: 8,
+   658→            year: 2026,
+   659→            description: "SOS Parcelamentos - Comatic x ZENAITE FELIX DA SILVA - Processo nº 1000987-97.2016.5.02.0706 - Parcela 6/6",
+   660→            date: "2026-01-14",
+   661→            totalValue: -1208.79,
+   662→            dreField: "",
+   663→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   664→          },
+   665→          {
+   666→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   667→            month: 8,
+   668→            year: 2026,
+   669→            description: "SOS Parcelamentos - Comatic x SILVIA MENDES DOS SANTOS - Processo nº 1004229-15.2016.5.02.0205 - Parcela 6/6",
+   670→            date: "2026-01-14",
+   671→            totalValue: -5141.23,
+   672→            dreField: "",
+   673→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   674→          },
+   675→          {
+   676→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   677→            month: 8,
+   678→            year: 2026,
+   679→            description: "SOS Parcelamentos - Comatic x ROSALINA XAVIER FRANCISCA - Processo nº 1001952-50.2017.5.02.0703 - Parcela 6/6",
+   680→            date: "2026-01-14",
+   681→            totalValue: -8743.23,
+   682→            dreField: "",
+   683→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   684→          },
+   685→          {
+   686→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   687→            month: 8,
+   688→            year: 2026,
+   689→            description: "Astrea Software",
+   690→            date: "2026-01-14",
+   691→            totalValue: -2279.25,
+   692→            dreField: "",
+   693→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   694→          },
+   695→          {
+   696→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   697→            month: 8,
+   698→            year: 2026,
+   699→            description: "Plano de Saúde Bradesco",
+   700→            date: "2026-01-14",
+   701→            totalValue: -38296.28,
+   702→            dreField: "",
+   703→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   704→          },
+   705→          {
+   706→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   707→            month: 8,
+   708→            year: 2026,
+   709→            description: "Vivo 1256",
+   710→            date: "2026-01-14",
+   711→            totalValue: -109.99,
+   712→            dreField: "",
+   713→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   714→          },
+   715→          {
+   716→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   717→            month: 8,
+   718→            year: 2026,
+   719→            description: "Vivo 0160",
+   720→            date: "2026-01-14",
+   721→            totalValue: -20,
+   722→            dreField: "",
+   723→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   724→          },
+   725→          {
+   726→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   727→            month: 8,
+   728→            year: 2026,
+   729→            description: "Honorários Plasitap - Parcela 4/15",
+   730→            date: "2026-01-14",
+   731→            totalValue: 25631.2,
+   732→            dreField: "",
+   733→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   734→          },
+   735→          {
+   736→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   737→            month: 8,
+   738→            year: 2026,
+   739→            description: "Honorários Truck Van",
+   740→            date: "2026-01-14",
+   741→            totalValue: 40912.39,
+   742→            dreField: "",
+   743→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   744→          },
+   745→          {
+   746→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   747→            month: 8,
+   748→            year: 2026,
+   749→            description: "Honorários Fabio Fontan",
+   750→            date: "2026-01-14",
+   751→            totalValue: 1518,
+   752→            dreField: "",
+   753→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   754→          },
+   755→          {
+   756→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   757→            month: 8,
+   758→            year: 2026,
+   759→            description: "Rendimento Pago Aplicação",
+   760→            date: "2026-01-14",
+   761→            totalValue: 8.98,
+   762→            dreField: "",
+   763→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   764→          },
+   765→          {
+   766→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   767→            month: 8,
+   768→            year: 2026,
+   769→            description: "Adiantamento Alessandra",
+   770→            date: "2026-01-15",
+   771→            totalValue: -1500,
+   772→            dreField: "",
+   773→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   774→          },
+   775→          {
+   776→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   777→            month: 8,
+   778→            year: 2026,
+   779→            description: "Andre Freitas - despesas Fundo COMATIC -  honorários mensais janeiro",
+   780→            date: "2026-01-15",
+   781→            totalValue: -5000,
+   782→            dreField: "",
+   783→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   784→          },
+   785→          {
+   786→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   787→            month: 8,
+   788→            year: 2026,
+   789→            description: "SOS Parcelamentos - Comatic x Ivonete Maria Fragoso da Silva - Processo nº 1001346-73.2017.5.02.0201 - Parcela 2/6",
+   790→            date: "2026-01-15",
+   791→            totalValue: -8182.24,
+   792→            dreField: "",
+   793→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   794→          },
+   795→          {
+   796→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   797→            month: 8,
+   798→            year: 2026,
+   799→            description: "Fernando Sampaio - averbações imóvel",
+   800→            date: "2026-01-15",
+   801→            totalValue: -80.14,
+   802→            dreField: "",
+   803→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   804→          },
+   805→          {
+   806→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   807→            month: 8,
+   808→            year: 2026,
+   809→            description: "Honorários AKMX - Parcela 7/10 (ND 216 - Parte)",
+   810→            date: "2026-01-15",
+   811→            totalValue: 10000,
+   812→            dreField: "",
+   813→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   814→          },
+   815→          {
+   816→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   817→            month: 8,
+   818→            year: 2026,
+   819→            description: "Honorários Allonda Ambiental - Parte 3/3 (804) + Parte 1/4 (043)",
+   820→            date: "2026-01-15",
+   821→            totalValue: 35154.01,
+   822→            dreField: "",
+   823→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   824→          },
+   825→          {
+   826→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   827→            month: 8,
+   828→            year: 2026,
+   829→            description: "Honorários Astro Vistorias",
+   830→            date: "2026-01-16",
+   831→            totalValue: 3242,
+   832→            dreField: "",
+   833→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   834→          },
+   835→          {
+   836→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   837→            month: 8,
+   838→            year: 2026,
+   839→            description: "Honorários Marmitalândia / Amanda Pires Luciano",
+   840→            date: "2026-01-16",
+   841→            totalValue: 4500,
+   842→            dreField: "",
+   843→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   844→          },
+   845→          {
+   846→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   847→            month: 8,
+   848→            year: 2026,
+   849→            description: "Reembolso de Despesas - Marmitalândia / Amanda Pires Luciano",
+   850→            date: "2026-01-16",
+   851→            totalValue: 134.84,
+   852→            dreField: "",
+   853→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   854→          },
+   855→          {
+   856→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   857→            month: 8,
+   858→            year: 2026,
+   859→            description: "IPTU 2026 - Cj. 11A",
+   860→            date: "2026-01-19",
+   861→            totalValue: " R$ (7,507.70)",
+   862→            dreField: "",
+   863→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   864→          },
+   865→          {
+   866→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   867→            month: 8,
+   868→            year: 2026,
+   869→            description: "Custas José Renato Teruel",
+   870→            date: "2026-01-19",
+   871→            totalValue: -115.26,
+   872→            dreField: "",
+   873→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   874→          },
+   875→          {
+   876→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   877→            month: 8,
+   878→            year: 2026,
+   879→            description: "Custas Fame",
+   880→            date: "2026-01-19",
+   881→            totalValue: -179.82,
+   882→            dreField: "",
+   883→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   884→          },
+   885→          {
+   886→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   887→            month: 8,
+   888→            year: 2026,
+   889→            description: "Honorários Valéria de Souza Rosa",
+   890→            date: "2026-01-19",
+   891→            totalValue: 5000,
+   892→            dreField: "",
+   893→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   894→          },
+   895→          {
+   896→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   897→            month: 8,
+   898→            year: 2026,
+   899→            description: "Honorários ZYN Capital",
+   900→            date: "2026-01-19",
+   901→            totalValue: 17927.57,
+   902→            dreField: "",
+   903→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   904→          },
+   905→          {
+   906→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   907→            month: 8,
+   908→            year: 2026,
+   909→            description: "Saque Caixinha",
+   910→            date: "2026-01-20",
+   911→            totalValue: -1000,
+   912→            dreField: "",
+   913→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   914→          },
+   915→          {
+   916→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   917→            month: 8,
+   918→            year: 2026,
+   919→            description: "Custas AI CH (recurso honorários) - Caso Maxply x Carpil",
+   920→            date: "2026-01-20",
+   921→            totalValue: -314.94,
+   922→            dreField: "",
+   923→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   924→          },
+   925→          {
+   926→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   927→            month: 8,
+   928→            year: 2026,
+   929→            description: "DARF Retidos - 12/2025",
+   930→            date: "2026-01-20",
+   931→            totalValue: -2855.59,
+   932→            dreField: "",
+   933→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   934→          },
+   935→          {
+   936→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   937→            month: 8,
+   938→            year: 2026,
+   939→            description: "Custas Fabio Fontana",
+   940→            date: "2026-01-20",
+   941→            totalValue: -193.3,
+   942→            dreField: "",
+   943→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   944→          },
+   945→          {
+   946→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   947→            month: 8,
+   948→            year: 2026,
+   949→            description: "FGTS",
+   950→            date: "2026-01-20",
+   951→            totalValue: -259.08,
+   952→            dreField: "",
+   953→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   954→          },
+   955→          {
+   956→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   957→            month: 8,
+   958→            year: 2026,
+   959→            description: "Reembolso de Despesas - Rivulis Plastro",
+   960→            date: "2026-01-20",
+   961→            totalValue: 616.15,
+   962→            dreField: "",
+   963→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   964→          },
+   965→          {
+   966→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   967→            month: 8,
+   968→            year: 2026,
+   969→            description: "Honorários Gabriel Mendes",
+   970→            date: "2026-01-20",
+   971→            totalValue: 10000,
+   972→            dreField: "",
+   973→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   974→          },
+   975→          {
+   976→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   977→            month: 8,
+   978→            year: 2026,
+   979→            description: "Honorários SIATT Engenharia",
+   980→            date: "2026-01-20",
+   981→            totalValue: 23835.46,
+   982→            dreField: "",
+   983→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   984→          },
+   985→          {
+   986→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   987→            month: 8,
+   988→            year: 2026,
+   989→            description: "PIS 12/2025",
+   990→            date: "2026-01-21",
+   991→            totalValue: -5232.72,
+   992→            dreField: "",
+   993→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+   994→          },
+   995→          {
+   996→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+   997→            month: 8,
+   998→            year: 2026,
+   999→            description: "COFINS 12/2025",
+  1000→            date: "2026-01-21",
+  1001→            totalValue: -24151.08,
+  1002→            dreField: "",
+  1003→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1004→          },
+  1005→          {
+  1006→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1007→            month: 8,
+  1008→            year: 2026,
+  1009→            description: "Custas Venator",
+  1010→            date: "2026-01-21",
+  1011→            totalValue: -38.42,
+  1012→            dreField: "",
+  1013→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1014→          },
+  1015→          {
+  1016→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1017→            month: 8,
+  1018→            year: 2026,
+  1019→            description: "Custas Itaesbra",
+  1020→            date: "2026-01-21",
+  1021→            totalValue: -250.62,
+  1022→            dreField: "",
+  1023→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1024→          },
+  1025→          {
+  1026→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1027→            month: 8,
+  1028→            year: 2026,
+  1029→            description: "Reembolso de Despesas - Hughes",
+  1030→            date: "2026-01-21",
+  1031→            totalValue: 1331.99,
+  1032→            dreField: "",
+  1033→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1034→          },
+  1035→          {
+  1036→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1037→            month: 8,
+  1038→            year: 2026,
+  1039→            description: "Honorários Grupo Dias",
+  1040→            date: "2026-01-21",
+  1041→            totalValue: 53492.95,
+  1042→            dreField: "",
+  1043→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1044→          },
+  1045→          {
+  1046→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1047→            month: 8,
+  1048→            year: 2026,
+  1049→            description: "Honorários JY Transportes",
+  1050→            date: "2026-01-21",
+  1051→            totalValue: 18000,
+  1052→            dreField: "",
+  1053→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1054→          },
+  1055→          {
+  1056→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1057→            month: 8,
+  1058→            year: 2026,
+  1059→            description: "Acordo Fame x Lafaiete Decorações - Parcela 9/12 - Processo 11462729720248260100 - Parte",
+  1060→            date: "2026-01-21",
+  1061→            totalValue: 4560,
+  1062→            dreField: "",
+  1063→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1064→          },
+  1065→          {
+  1066→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1067→            month: 8,
+  1068→            year: 2026,
+  1069→            description: "Reembolso de Despesas - Maria La Via",
+  1070→            date: "2026-01-21",
+  1071→            totalValue: 250,
+  1072→            dreField: "",
+  1073→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1074→          },
+  1075→          {
+  1076→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1077→            month: 8,
+  1078→            year: 2026,
+  1079→            description: "Custas Ricardo Lian",
+  1080→            date: "2026-01-22",
+  1081→            totalValue: -216.07,
+  1082→            dreField: "",
+  1083→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1084→          },
+  1085→          {
+  1086→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1087→            month: 8,
+  1088→            year: 2026,
+  1089→            description: "Repasse Fame x Lafaiete Decorações - Parcela 9/12 - Processo 11462729720248260100 - Parte",
+  1090→            date: "2026-01-22",
+  1091→            totalValue: -3425.73,
+  1092→            dreField: "",
+  1093→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1094→          },
+  1095→          {
+  1096→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1097→            month: 8,
+  1098→            year: 2026,
+  1099→            description: "Rendimento Pago Aplicação",
+  1100→            date: "2026-01-22",
+  1101→            totalValue: 0.66,
+  1102→            dreField: "",
+  1103→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1104→          },
+  1105→          {
+  1106→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1107→            month: 8,
+  1108→            year: 2026,
+  1109→            description: "Honorários NP Brasil",
+  1110→            date: "2026-01-23",
+  1111→            totalValue: 23462.5,
+  1112→            dreField: "",
+  1113→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1114→          },
+  1115→          {
+  1116→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1117→            month: 8,
+  1118→            year: 2026,
+  1119→            description: "Saque Caixinha",
+  1120→            date: "2026-01-26",
+  1121→            totalValue: -1000,
+  1122→            dreField: "",
+  1123→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1124→          },
+  1125→          {
+  1126→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1127→            month: 8,
+  1128→            year: 2026,
+  1129→            description: "Correspondente Débora Ferreira da Silveira (SIATT)",
+  1130→            date: "2026-01-26",
+  1131→            totalValue: -250,
+  1132→            dreField: "",
+  1133→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1134→          },
+  1135→          {
+  1136→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1137→            month: 8,
+  1138→            year: 2026,
+  1139→            description: "Gimba - material de escritório",
+  1140→            date: "2026-01-26",
+  1141→            totalValue: -422.25,
+  1142→            dreField: "",
+  1143→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1144→          },
+  1145→          {
+  1146→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1147→            month: 8,
+  1148→            year: 2026,
+  1149→            description: "Enel - cj. 11D",
+  1150→            date: "2026-01-26",
+  1151→            totalValue: -800.5,
+  1152→            dreField: "",
+  1153→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1154→          },
+  1155→          {
+  1156→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1157→            month: 8,
+  1158→            year: 2026,
+  1159→            description: "APOL  (Software Contratos)",
+  1160→            date: "2026-01-26",
+  1161→            totalValue: -131.82,
+  1162→            dreField: "",
+  1163→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1164→          },
+  1165→          {
+  1166→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1167→            month: 8,
+  1168→            year: 2026,
+  1169→            description: "Honorários Beatriz Graneiro",
+  1170→            date: "2026-01-26",
+  1171→            totalValue: 3000,
+  1172→            dreField: "",
+  1173→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1174→          },
+  1175→          {
+  1176→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1177→            month: 8,
+  1178→            year: 2026,
+  1179→            description: "Reembolso de Despesas - Indústria de Plásticos Valença",
+  1180→            date: "2026-01-26",
+  1181→            totalValue: 977.5,
+  1182→            dreField: "",
+  1183→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1184→          },
+  1185→          {
+  1186→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1187→            month: 8,
+  1188→            year: 2026,
+  1189→            description: "Reembolso de Despesas - Itaesbra",
+  1190→            date: "2026-01-26",
+  1191→            totalValue: 714.65,
+  1192→            dreField: "",
+  1193→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1194→          },
+  1195→          {
+  1196→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1197→            month: 8,
+  1198→            year: 2026,
+  1199→            description: "Honorários Lord Brasil",
+  1200→            date: "2026-01-26",
+  1201→            totalValue: 127088.39,
+  1202→            dreField: "",
+  1203→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1204→          },
+  1205→          {
+  1206→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1207→            month: 8,
+  1208→            year: 2026,
+  1209→            description: "Honorários Lordtech Polímeros",
+  1210→            date: "2026-01-26",
+  1211→            totalValue: 42232.5,
+  1212→            dreField: "",
+  1213→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1214→          },
+  1215→          {
+  1216→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1217→            month: 8,
+  1218→            year: 2026,
+  1219→            description: "Reembolso de Despesas - Grupo Dias",
+  1220→            date: "2026-01-26",
+  1221→            totalValue: 37.02,
+  1222→            dreField: "",
+  1223→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1224→          },
+  1225→          {
+  1226→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1227→            month: 8,
+  1228→            year: 2026,
+  1229→            description: "Acordo Fame x Lafaiete Decorações - Parcela 9/12 - Processo 11462729720248260100 - Parte",
+  1230→            date: "2026-01-26",
+  1231→            totalValue: 2000,
+  1232→            dreField: "",
+  1233→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1234→          },
+  1235→          {
+  1236→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1237→            month: 8,
+  1238→            year: 2026,
+  1239→            description: "Honorários Masa",
+  1240→            date: "2026-01-26",
+  1241→            totalValue: 7508,
+  1242→            dreField: "",
+  1243→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1244→          },
+  1245→          {
+  1246→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1247→            month: 8,
+  1248→            year: 2026,
+  1249→            description: "Depósito Alex Silva x Sul America - 0031719-23.2025.8.26.0002",
+  1250→            date: "2026-01-26",
+  1251→            totalValue: 19562.59,
+  1252→            dreField: "",
+  1253→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1254→          },
+  1255→          {
+  1256→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1257→            month: 8,
+  1258→            year: 2026,
+  1259→            description: "Honorários Loram do Brasil",
+  1260→            date: "2026-01-26",
+  1261→            totalValue: 12787.02,
+  1262→            dreField: "",
+  1263→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1264→          },
+  1265→          {
+  1266→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1267→            month: 8,
+  1268→            year: 2026,
+  1269→            description: "Honorários Loram do Brasil",
+  1270→            date: "2026-01-26",
+  1271→            totalValue: 78516.8,
+  1272→            dreField: "",
+  1273→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1274→          },
+  1275→          {
+  1276→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1277→            month: 8,
+  1278→            year: 2026,
+  1279→            description: "Honorários Fabio Fontan",
+  1280→            date: "2026-01-26",
+  1281→            totalValue: 1621,
+  1282→            dreField: "",
+  1283→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1284→          },
+  1285→          {
+  1286→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1287→            month: 8,
+  1288→            year: 2026,
+  1289→            description: "Comatic X Maria Aparecida de Oliveira - Processo nº - 0001510-45.2017.5.09 - parcela 6.10",
+  1290→            date: "2026-01-27",
+  1291→            totalValue: -11000,
+  1292→            dreField: "",
+  1293→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1294→          },
+  1295→          {
+  1296→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1297→            month: 8,
+  1298→            year: 2026,
+  1299→            description: "Repasse Fame x Lafaiete Decorações - Parcela 9/12 - Processo 11462729720248260100 - Parte",
+  1300→            date: "2026-01-27",
+  1301→            totalValue: -1502.51,
+  1302→            dreField: "",
+  1303→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1304→          },
+  1305→          {
+  1306→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1307→            month: 8,
+  1308→            year: 2026,
+  1309→            description: "Repasse Alex Silva x Sul America - 0031719-23.2025.8.26.0002",
+  1310→            date: "2026-01-27",
+  1311→            totalValue: -18458.51,
+  1312→            dreField: "",
+  1313→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1314→          },
+  1315→          {
+  1316→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1317→            month: 8,
+  1318→            year: 2026,
+  1319→            description: "ONET | Solicitação de Pagamento – Acordos Trabalhistas - Camila Quirino Ferreira - Processo: 0010906-57.2016.5.15.0095",
+  1320→            date: "2026-01-27",
+  1321→            totalValue: -31000,
+  1322→            dreField: "",
+  1323→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1324→          },
+  1325→          {
+  1326→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1327→            month: 8,
+  1328→            year: 2026,
+  1329→            description: "[Registro JUCEMG] AGE ALÇADA DIRETORIA - TSEA",
+  1330→            date: "2026-01-27",
+  1331→            totalValue: -884,
+  1332→            dreField: "",
+  1333→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1334→          },
+  1335→          {
+  1336→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1337→            month: 8,
+  1338→            year: 2026,
+  1339→            description: "[Registro JUCEMG] AGE ALÇADA DIRETORIA - TSEA",
+  1340→            date: "2026-01-27",
+  1341→            totalValue: -465.88,
+  1342→            dreField: "",
+  1343→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1344→          },
+  1345→          {
+  1346→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1347→            month: 8,
+  1348→            year: 2026,
+  1349→            description: "VR Fevereiro - Alessandra",
+  1350→            date: "2026-01-27",
+  1351→            totalValue: -450,
+  1352→            dreField: "",
+  1353→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1354→          },
+  1355→          {
+  1356→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1357→            month: 8,
+  1358→            year: 2026,
+  1359→            description: "Custas RE Ricardo Lian",
+  1360→            date: "2026-01-27",
+  1361→            totalValue: -1157.59,
+  1362→            dreField: "",
+  1363→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1364→          },
+  1365→          {
+  1366→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1367→            month: 8,
+  1368→            year: 2026,
+  1369→            description: "Custas Resp Ricardo Lian",
+  1370→            date: "2026-01-27",
+  1371→            totalValue: -259.08,
+  1372→            dreField: "",
+  1373→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1374→          },
+  1375→          {
+  1376→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1377→            month: 8,
+  1378→            year: 2026,
+  1379→            description: "Custas SIN Implants",
+  1380→            date: "2026-01-27",
+  1381→            totalValue: -456.44,
+  1382→            dreField: "",
+  1383→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1384→          },
+  1385→          {
+  1386→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1387→            month: 8,
+  1388→            year: 2026,
+  1389→            description: "Honorários Nazih Taha Ghuneim Ltda",
+  1390→            date: "2026-01-27",
+  1391→            totalValue: 10000,
+  1392→            dreField: "",
+  1393→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1394→          },
+  1395→          {
+  1396→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1397→            month: 8,
+  1398→            year: 2026,
+  1399→            description: "Honorários Paula Fernanda Lucca - Parte",
+  1400→            date: "2026-01-27",
+  1401→            totalValue: 5000,
+  1402→            dreField: "",
+  1403→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1404→          },
+  1405→          {
+  1406→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1407→            month: 8,
+  1408→            year: 2026,
+  1409→            description: "Honorários Paulo Baroni",
+  1410→            date: "2026-01-27",
+  1411→            totalValue: 17927.57,
+  1412→            dreField: "",
+  1413→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1414→          },
+  1415→          {
+  1416→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1417→            month: 8,
+  1418→            year: 2026,
+  1419→            description: "Honorários TSEA",
+  1420→            date: "2026-01-27",
+  1421→            totalValue: 7307.62,
+  1422→            dreField: "",
+  1423→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1424→          },
+  1425→          {
+  1426→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1427→            month: 8,
+  1428→            year: 2026,
+  1429→            description: "Acordo Deborah Regina Dejane - Processo nº 10195473920248260011",
+  1430→            date: "2026-01-27",
+  1431→            totalValue: 3666.65,
+  1432→            dreField: "",
+  1433→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1434→          },
+  1435→          {
+  1436→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1437→            month: 8,
+  1438→            year: 2026,
+  1439→            description: "Honorários Nazih Taha Ghuneim Ltda",
+  1440→            date: "2026-01-27",
+  1441→            totalValue: 10000,
+  1442→            dreField: "",
+  1443→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1444→          },
+  1445→          {
+  1446→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1447→            month: 8,
+  1448→            year: 2026,
+  1449→            description: "Honorários Nalva Aguiar Carvalho x Comatic - Processo nº 000000000010002329320175020203",
+  1450→            date: "2026-01-27",
+  1451→            totalValue: 842.93,
+  1452→            dreField: "",
+  1453→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1454→          },
+  1455→          {
+  1456→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1457→            month: 8,
+  1458→            year: 2026,
+  1459→            description: "Rendimento Pago Aplicação",
+  1460→            date: "2026-01-27",
+  1461→            totalValue: 2.24,
+  1462→            dreField: "",
+  1463→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1464→          },
+  1465→          {
+  1466→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1467→            month: 8,
+  1468→            year: 2026,
+  1469→            description: "CSLL - 4º trimestre 2025",
+  1470→            date: "2026-01-28",
+  1471→            totalValue: -260897.51,
+  1472→            dreField: "",
+  1473→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1474→          },
+  1475→          {
+  1476→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1477→            month: 8,
+  1478→            year: 2026,
+  1479→            description: "IRPJ - 4º trimestre 2025",
+  1480→            date: "2026-01-28",
+  1481→            totalValue: -341713.29,
+  1482→            dreField: "",
+  1483→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1484→          },
+  1485→          {
+  1486→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1487→            month: 8,
+  1488→            year: 2026,
+  1489→            description: "IPTU 2026 - Cj. 11D",
+  1490→            date: "2026-01-28",
+  1491→            totalValue: -7507.7,
+  1492→            dreField: "",
+  1493→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1494→          },
+  1495→          {
+  1496→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1497→            month: 8,
+  1498→            year: 2026,
+  1499→            description: "Aluguel ref. Fevereiro 2026",
+  1500→            date: "2026-01-28",
+  1501→            totalValue: -10000,
+  1502→            dreField: "",
+  1503→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1504→          },
+  1505→          {
+  1506→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1507→            month: 8,
+  1508→            year: 2026,
+  1509→            description: "Devolução honorários Nazih Taha Ghuneim Ltda  - pago em duplicidade",
+  1510→            date: "2026-01-28",
+  1511→            totalValue: -10000,
+  1512→            dreField: "",
+  1513→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1514→          },
+  1515→          {
+  1516→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1517→            month: 8,
+  1518→            year: 2026,
+  1519→            description: "Agência HUB BMD (Comunicação e Marketing)",
+  1520→            date: "2026-01-28",
+  1521→            totalValue: -2000,
+  1522→            dreField: "",
+  1523→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1524→          },
+  1525→          {
+  1526→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1527→            month: 8,
+  1528→            year: 2026,
+  1529→            description: "IBDT Guilherme Coelho - anuidade",
+  1530→            date: "2026-01-28",
+  1531→            totalValue: -980,
+  1532→            dreField: "",
+  1533→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1534→          },
+  1535→          {
+  1536→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1537→            month: 8,
+  1538→            year: 2026,
+  1539→            description: "Custas Francisco Horta",
+  1540→            date: "2026-01-28",
+  1541→            totalValue: -2000,
+  1542→            dreField: "",
+  1543→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1544→          },
+  1545→          {
+  1546→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1547→            month: 8,
+  1548→            year: 2026,
+  1549→            description: "Honorários Allonda Ambiental - Parte 2/4",
+  1550→            date: "2026-01-28",
+  1551→            totalValue: 15757.91,
+  1552→            dreField: "",
+  1553→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1554→          },
+  1555→          {
+  1556→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1557→            month: 8,
+  1558→            year: 2026,
+  1559→            description: "Honorários EMS / NC Farma",
+  1560→            date: "2026-01-28",
+  1561→            totalValue: 11777.5,
+  1562→            dreField: "",
+  1563→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1564→          },
+  1565→          {
+  1566→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1567→            month: 8,
+  1568→            year: 2026,
+  1569→            description: "Honorários Auto Posto Poli Carminha",
+  1570→            date: "2026-01-28",
+  1571→            totalValue: 16416.67,
+  1572→            dreField: "",
+  1573→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1574→          },
+  1575→          {
+  1576→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1577→            month: 8,
+  1578→            year: 2026,
+  1579→            description: "Honorários New Life",
+  1580→            date: "2026-01-28",
+  1581→            totalValue: 9000,
+  1582→            dreField: "",
+  1583→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1584→          },
+  1585→          {
+  1586→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1587→            month: 8,
+  1588→            year: 2026,
+  1589→            description: "Honorários Marcelo Mester",
+  1590→            date: "2026-01-28",
+  1591→            totalValue: 23903.43,
+  1592→            dreField: "",
+  1593→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1594→          },
+  1595→          {
+  1596→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1597→            month: 8,
+  1598→            year: 2026,
+  1599→            description: "Honorários Fabio Fontan",
+  1600→            date: "2026-01-28",
+  1601→            totalValue: 1621,
+  1602→            dreField: "",
+  1603→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1604→          },
+  1605→          {
+  1606→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1607→            month: 8,
+  1608→            year: 2026,
+  1609→            description: "Rendimento Pago Aplicação",
+  1610→            date: "2026-01-28",
+  1611→            totalValue: 101.94,
+  1612→            dreField: "",
+  1613→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1614→          },
+  1615→          {
+  1616→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1617→            month: 8,
+  1618→            year: 2026,
+  1619→            description: "Saque Caixinha",
+  1620→            date: "2026-01-29",
+  1621→            totalValue: -1500,
+  1622→            dreField: "",
+  1623→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1624→          },
+  1625→          {
+  1626→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1627→            month: 8,
+  1628→            year: 2026,
+  1629→            description: "Repasse Deborah Regina Dejane - Processo nº 10195473920248260011",
+  1630→            date: "2026-01-29",
+  1631→            totalValue: -2566.66,
+  1632→            dreField: "",
+  1633→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1634→          },
+  1635→          {
+  1636→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1637→            month: 8,
+  1638→            year: 2026,
+  1639→            description: "Honorários Contador | Proc. 1002121-28.2025.5.02.0292 - Onet",
+  1640→            date: "2026-01-29",
+  1641→            totalValue: -220,
+  1642→            dreField: "",
+  1643→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1644→          },
+  1645→          {
+  1646→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1647→            month: 8,
+  1648→            year: 2026,
+  1649→            description: "Honorários Venator",
+  1650→            date: "2026-01-29",
+  1651→            totalValue: 2400,
+  1652→            dreField: "",
+  1653→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1654→          },
+  1655→          {
+  1656→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1657→            month: 8,
+  1658→            year: 2026,
+  1659→            description: "Rendimento Pago Aplicação",
+  1660→            date: "2026-01-29",
+  1661→            totalValue: 0.2,
+  1662→            dreField: "",
+  1663→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1664→          },
+  1665→          {
+  1666→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1667→            month: 8,
+  1668→            year: 2026,
+  1669→            description: "Honorários Allonda Ambiental - Parte 3/4",
+  1670→            date: "2026-01-30",
+  1671→            totalValue: 15924.92,
+  1672→            dreField: "",
+  1673→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1674→          },
+  1675→          {
+  1676→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1677→            month: 8,
+  1678→            year: 2026,
+  1679→            description: "Honorários Itaesbra",
+  1680→            date: "2026-01-30",
+  1681→            totalValue: 51617.5,
+  1682→            dreField: "",
+  1683→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1684→          },
+  1685→          {
+  1686→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1687→            month: 8,
+  1688→            year: 2026,
+  1689→            description: "Honorários Phenox",
+  1690→            date: "2026-01-30",
+  1691→            totalValue: 18361.94,
+  1692→            dreField: "",
+  1693→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1694→          },
+  1695→          {
+  1696→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1697→            month: 8,
+  1698→            year: 2026,
+  1699→            description: "Honorários Cygnus",
+  1700→            date: "2026-01-30",
+  1701→            totalValue: 15537.23,
+  1702→            dreField: "",
+  1703→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1704→          },
+  1705→          {
+  1706→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1707→            month: 8,
+  1708→            year: 2026,
+  1709→            description: "Tarifa Câmbio",
+  1710→            date: "2026-01-30",
+  1711→            totalValue: -135,
+  1712→            dreField: "",
+  1713→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1714→          },
+  1715→          {
+  1716→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1717→            month: 8,
+  1718→            year: 2026,
+  1719→            description: "DL Graziela Toledo - Janeiro 2026",
+  1720→            date: "2026-02-02",
+  1721→            totalValue: -8333.33,
+  1722→            dreField: "",
+  1723→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1724→          },
+  1725→          {
+  1726→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1727→            month: 8,
+  1728→            year: 2026,
+  1729→            description: "Pagamento de contador - Roberto Soares dos Santos X Itaesbra",
+  1730→            date: "2026-02-02",
+  1731→            totalValue: -220,
+  1732→            dreField: "",
+  1733→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1734→          },
+  1735→          {
+  1736→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1737→            month: 8,
+  1738→            year: 2026,
+  1739→            description: "DL Camilla Ribeiro - Janeiro 2026",
+  1740→            date: "2026-02-02",
+  1741→            totalValue: -566.67,
+  1742→            dreField: "",
+  1743→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1744→          },
+  1745→          {
+  1746→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1747→            month: 8,
+  1748→            year: 2026,
+  1749→            description: "Reembolso de Despesas Graziela Toledo - George Neto",
+  1750→            date: "2026-02-02",
+  1751→            totalValue: -132.92,
+  1752→            dreField: "",
+  1753→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1754→          },
+  1755→          {
+  1756→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1757→            month: 8,
+  1758→            year: 2026,
+  1759→            description: "Pós Graduação Maria Antonia - 08/18",
+  1760→            date: "2026-02-02",
+  1761→            totalValue: -999.95,
+  1762→            dreField: "",
+  1763→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1764→          },
+  1765→          {
+  1766→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1767→            month: 8,
+  1768→            year: 2026,
+  1769→            description: "Gmail Experts - CH",
+  1770→            date: "2026-02-02",
+  1771→            totalValue: -3038,
+  1772→            dreField: "",
+  1773→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1774→          },
+  1775→          {
+  1776→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1777→            month: 8,
+  1778→            year: 2026,
+  1779→            description: "Honorários Sonia Hosomi",
+  1780→            date: "2026-02-02",
+  1781→            totalValue: 2500,
+  1782→            dreField: "",
+  1783→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1784→          },
+  1785→          {
+  1786→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1787→            month: 8,
+  1788→            year: 2026,
+  1789→            description: "Honorários Rivulis Plastro",
+  1790→            date: "2026-02-02",
+  1791→            totalValue: 55205.42,
+  1792→            dreField: "",
+  1793→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1794→          },
+  1795→          {
+  1796→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1797→            month: 8,
+  1798→            year: 2026,
+  1799→            description: "DL Desproporcional Carlos Mendes - Janeiro 2026",
+  1800→            date: "2026-02-03",
+  1801→            totalValue: -20152.1,
+  1802→            dreField: "",
+  1803→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1804→          },
+  1805→          {
+  1806→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1807→            month: 8,
+  1808→            year: 2026,
+  1809→            description: "Alessandra Araujo - Prestação de Serviços - Janeiro 2026",
+  1810→            date: "2026-02-03",
+  1811→            totalValue: -3500,
+  1812→            dreField: "",
+  1813→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1814→          },
+  1815→          {
+  1816→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1817→            month: 8,
+  1818→            year: 2026,
+  1819→            description: "DL Amanda Santantonio - Fee 10% EMS/NC Farma (ND 732)",
+  1820→            date: "2026-02-03",
+  1821→            totalValue: -985.43,
+  1822→            dreField: "",
+  1823→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1824→          },
+  1825→          {
+  1826→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1827→            month: 8,
+  1828→            year: 2026,
+  1829→            description: "Luciana Pires - Fee 30% Familia Faleiros (ND 800)",
+  1830→            date: "2026-02-03",
+  1831→            totalValue: -750,
+  1832→            dreField: "",
+  1833→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1834→          },
+  1835→          {
+  1836→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1837→            month: 8,
+  1838→            year: 2026,
+  1839→            description: "DL Desproporcional Thiago Hohl - Janeiro 2026",
+  1840→            date: "2026-02-03",
+  1841→            totalValue: -19120.49,
+  1842→            dreField: "",
+  1843→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1844→          },
+  1845→          {
+  1846→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1847→            month: 8,
+  1848→            year: 2026,
+  1849→            description: "DL Lais Rampin - Fee 10% Mamitalândia (ND 859)",
+  1850→            date: "2026-02-03",
+  1851→            totalValue: -376.52,
+  1852→            dreField: "",
+  1853→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1854→          },
+  1855→          {
+  1856→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1857→            month: 8,
+  1858→            year: 2026,
+  1859→            description: "DL Lucia Moioli - Janeiro 2026",
+  1860→            date: "2026-02-03",
+  1861→            totalValue: -19800,
+  1862→            dreField: "",
+  1863→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1864→          },
+  1865→          {
+  1866→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1867→            month: 8,
+  1868→            year: 2026,
+  1869→            description: "DL Amanda Santantonio - Fee 50% Masa (ND 803)",
+  1870→            date: "2026-02-03",
+  1871→            totalValue: -3140.97,
+  1872→            dreField: "",
+  1873→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1874→          },
+  1875→          {
+  1876→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1877→            month: 8,
+  1878→            year: 2026,
+  1879→            description: "DL Fabricio Bonini - Janeiro 2026",
+  1880→            date: "2026-02-03",
+  1881→            totalValue: -9000,
+  1882→            dreField: "",
+  1883→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1884→          },
+  1885→          {
+  1886→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1887→            month: 8,
+  1888→            year: 2026,
+  1889→            description: "Reembolso de Despesas Guilherme Coelho (CH)",
+  1890→            date: "2026-02-03",
+  1891→            totalValue: -271.2,
+  1892→            dreField: "",
+  1893→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1894→          },
+  1895→          {
+  1896→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1897→            month: 8,
+  1898→            year: 2026,
+  1899→            description: "DL Desproporcional Guilherme Coelho - Janeiro 2026",
+  1900→            date: "2026-02-03",
+  1901→            totalValue: -20235.48,
+  1902→            dreField: "",
+  1903→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1904→          },
+  1905→          {
+  1906→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1907→            month: 8,
+  1908→            year: 2026,
+  1909→            description: "DL Izabela Soares - Janeiro 2026",
+  1910→            date: "2026-02-03",
+  1911→            totalValue: -11000,
+  1912→            dreField: "",
+  1913→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1914→          },
+  1915→          {
+  1916→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1917→            month: 8,
+  1918→            year: 2026,
+  1919→            description: "DL Geovana Guimarães - Janeiro 2026",
+  1920→            date: "2026-02-03",
+  1921→            totalValue: -7863.98,
+  1922→            dreField: "",
+  1923→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1924→          },
+  1925→          {
+  1926→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1927→            month: 8,
+  1928→            year: 2026,
+  1929→            description: "Lincoln - Fee 10% JY Transportes (ND 021)",
+  1930→            date: "2026-02-03",
+  1931→            totalValue: -1506.06,
+  1932→            dreField: "",
+  1933→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1934→          },
+  1935→          {
+  1936→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1937→            month: 8,
+  1938→            year: 2026,
+  1939→            description: "DL Desproporcional Victor Chodraui - Janeiro 2026",
+  1940→            date: "2026-02-03",
+  1941→            totalValue: -22088.26,
+  1942→            dreField: "",
+  1943→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1944→          },
+  1945→          {
+  1946→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1947→            month: 8,
+  1948→            year: 2026,
+  1949→            description: "DL Stephanie Pimentel - Janeiro 2026",
+  1950→            date: "2026-02-03",
+  1951→            totalValue: -3150,
+  1952→            dreField: "",
+  1953→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1954→          },
+  1955→          {
+  1956→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1957→            month: 8,
+  1958→            year: 2026,
+  1959→            description: "DL Amanda Santantonio - Janeiro 2026",
+  1960→            date: "2026-02-03",
+  1961→            totalValue: -15000,
+  1962→            dreField: "",
+  1963→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1964→          },
+  1965→          {
+  1966→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1967→            month: 8,
+  1968→            year: 2026,
+  1969→            description: "Reembolso de Despesas Barbara Oliveira (Itaesbra)",
+  1970→            date: "2026-02-03",
+  1971→            totalValue: -58.1,
+  1972→            dreField: "",
+  1973→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1974→          },
+  1975→          {
+  1976→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1977→            month: 8,
+  1978→            year: 2026,
+  1979→            description: "Reembolso de Despesas Fabricio Bonini (CH - Projeto Drone)",
+  1980→            date: "2026-02-03",
+  1981→            totalValue: -1246.38,
+  1982→            dreField: "",
+  1983→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1984→          },
+  1985→          {
+  1986→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1987→            month: 8,
+  1988→            year: 2026,
+  1989→            description: "DL Gabrielle Moura - Janeiro 2026",
+  1990→            date: "2026-02-03",
+  1991→            totalValue: -9867,
+  1992→            dreField: "",
+  1993→            uploadedFileId: "cmsfb633b0004ortr0otbq7py"
+  1994→          },
+  1995→          {
+  1996→            companyId: "cmsfb4paj0002ortry9lfkyvb",
+  1997→            month: 8,
+  1998→            year: 2026,
+  1999→            description: "DL Maria Antonia - Janeiro 2026",
+  2000→            date: "2026-02-03",
+
+[showing lines 1-2000 of 33054; use offset=2001 with limit to continue reading]

@@ -1,0 +1,464 @@
+     1→   901→                      </div>
+     2→   902→                    </div>
+     3→   903→                  )}
+     4→   904→
+     5→   905→                  </CardContent>
+     6→   906→              </Card>
+     7→   907→              {/* Items Table */}
+     8→   908→              {expenseItems.length > 0 && (
+     9→   909→                <Card>
+    10→   910→                  <CardHeader className="pb-3">
+    11→   911→                    <div className="flex items-center justify-between">
+    12→   912→                      <CardTitle className="text-base">
+    13→   913→                        Itens Importados
+    14→   914→                        <Badge variant="secondary" className="ml-2">{expenseItems.length}</Badge>
+    15→   915→                      </CardTitle>
+    16→   916→                      <span className="text-xs text-muted-foreground">
+    17→   917→                        {expenseItems.filter(i => !i.dreField).length > 0
+    18→   918→                          ? <span className="text-amber-600 font-medium">⚠ {expenseItems.filter(i => !i.dreField).length} sem classificação</span>
+    19→   919→                          : <span className="text-emerald-600 font-medium">✓ Todos classificados</span>
+    20→   920→                        }
+    21→   921→                      </span>
+    22→   922→                    </div>
+    23→   923→                  </CardHeader>
+    24→   924→                  <CardContent className="p-0">
+    25→   925→                    <div className="border rounded-lg overflow-hidden">
+    26→   926→                      <div className="grid grid-cols-12 gap-2 p-3 bg-muted/50 text-xs font-medium text-muted-foreground">
+    27→   927→                        <span className="col-span-1 text-center">#</span>
+    28→   928→                        <span className="col-span-3 sm:col-span-4">Descrição</span>
+    29→   929→                        <span className="col-span-2">Data</span>
+    30→   930→                        <span className="col-span-2 text-right">Valor</span>
+    31→   931→                        <span className="col-span-5 sm:col-span-3">Classificação</span>
+    32→   932→                      </div>
+    33→   933→                      <div className="max-h-[400px] overflow-y-auto">
+    34→   934→                        {expenseItems.map((item, idx) => (
+    35→   935→                          <div
+    36→   936→                            key={item.id || idx}
+    37→   937→                            className={`grid grid-cols-12 gap-2 p-3 border-t text-sm items-center hover:bg-muted/30 transition-colors ${!item.dreField ? 'bg-amber-50/30' : 'bg-white'}`}
+    38→   938→                          >
+    39→   939→                            <span className="col-span-1 text-center text-xs text-muted-foreground">{idx + 1}</span>
+    40→   940→                            <span className="col-span-3 sm:col-span-4 font-medium truncate" title={item.description}>{item.description}</span>
+    41→   941→                            <span className="col-span-2 text-muted-foreground text-xs">{item.date || '—'}</span>
+    42→   942→                            <span className="col-span-2 text-right font-mono font-medium">{brl(item.totalValue)}</span>
+    43→   943→                            <div className="col-span-5 sm:col-span-3">
+    44→   944→                              <Select
+    45→   945→                                value={item.dreField}
+    46→   946→                                onValueChange={(v) => {
+    47→   947→                                  const newItems = [...expenseItems]
+    48→   948→                                  newItems[idx] = { ...item, dreField: v }
+    49→   949→                                  setExpenseItems(newItems)
+    50→   950→                                }}
+    51→   951→                              >
+    52→   952→                                <SelectTrigger className={`h-8 text-xs ${!item.dreField ? 'border-amber-300 bg-amber-50/50' : 'border-emerald-200 bg-emerald-50/30'}`}>
+    53→   953→                                  <SelectValue placeholder="Selecione..." />
+    54→   954→                                </SelectTrigger>
+    55→   955→                                <SelectContent>
+    56→   956→                                  <SelectItem value="none" disabled className="text-muted-foreground text-xs">— Selecione —</SelectItem>
+    57→   957→                                  <SelectItem value="salarios">Salários</SelectItem>
+    58→   958→                                  <SelectItem value="bonus">Bônus</SelectItem>
+    59→   959→                                  <SelectItem value="prolabore">Pró-labore</SelectItem>
+    60→   960→                                </SelectContent>
+    61→   961→                              </Select>
+    62→   962→                            </div>
+    63→   963→                          </div>
+    64→   964→                        ))}
+    65→   965→                      </div>
+    66→   966→                      {/* Summary Footer */}
+    67→   967→                      <div className="p-3 bg-muted/30 border-t">
+    68→   968→                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+    69→   969→                          <div className="flex flex-wrap gap-3 text-xs">
+    70→   970→                            {(() => {
+    71→   971→                              const grouped: Record<string, number> = {}
+    72→   972→                              expenseItems.filter(i => i.dreField).forEach(i => {
+    73→   973→                                grouped[i.dreField] = (grouped[i.dreField] || 0) + i.totalValue
+    74→   974→                              })
+    75→   975→                              return Object.entries(grouped).map(([field, total]) => (
+    76→   976→                                <Badge key={field} variant="outline" className="font-mono gap-1.5">
+    77→   977→                                  <span className="text-muted-foreground">{DRE_FIELD_LABELS[field] || field}:</span>
+    78→   978→                                  <strong>{brl(total)}</strong>
+    79→   979→                                </Badge>
+    80→   980→                              ))
+    81→   981→                            })()}
+    82→   982→                          </div>
+    83→   983→                          <span className="text-xs text-muted-foreground font-mono">
+    84→   984→                            Total: <strong>{brl(expenseItems.reduce((s, i) => s + i.totalValue, 0))}</strong>
+    85→   985→                          </span>
+    86→   986→                        </div>
+    87→   987→                      </div>
+    88→   988→                    </div>
+    89→   989→                  </CardContent>
+    90→   990→                  <CardFooter className="pt-4 flex justify-end">
+    91→   991→                    <Button onClick={handleSaveExpenseClassification} disabled={applying || expenseItems.filter(i => !i.dreField).length > 0} className="min-w-[200px]">
+    92→   992→                      {applying ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+    93→   993→                      {applying ? 'Aplicando...' : 'Aplicar ao DRE Mensal'}
+    94→   994→                    </Button>
+    95→   995→                  </CardFooter>
+    96→   996→                </Card>
+    97→   997→              )}
+    98→   998→
+    99→   999→            </TabsContent>
+   100→  1000→
+   101→  1001→            {/* ─── Projection Tab ─── */}
+   102→  1002→            <TabsContent value="projection" className="space-y-4">
+   103→  1003→              <Card>
+   104→  1004→                <CardHeader>
+   105→  1005→                  <CardTitle className="text-base flex items-center gap-2">
+   106→  1006→                    <Brain className="h-5 w-5 text-primary" />
+   107→  1007→                    Previsão Orçamentária com IA
+   108→  1008→                  </CardTitle>
+   109→  1009→                  <CardDescription>
+   110→  1010→                    A IA analisa os dados históricos do DRE e gera projeções para os próximos meses.
+   111→  1011→                    {allHistory.length === 0 && ' Insira pelo menos 1 mês de dados para gerar projeções.'}
+   112→  1012→                  </CardDescription>
+   113→  1013→                </CardHeader>
+   114→  1014→                <CardContent className="space-y-4">
+   115→  1015→                  <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-end print:hidden">
+   116→  1016→                    <div>
+   117→  1017→                      <Label className="text-sm mb-1.5 block">Período da Projeção</Label>
+   118→  1018→                      <Select value={projectionPeriod} onValueChange={(v: any) => setProjectionPeriod(v)}>
+   119→  1019→                        <SelectTrigger className="w-[180px]">
+   120→  1020→                          <SelectValue />
+   121→  1021→                        </SelectTrigger>
+   122→  1022→                        <SelectContent>
+   123→  1023→                          <SelectItem value="3m">3 meses</SelectItem>
+   124→  1024→                          <SelectItem value="6m">6 meses</SelectItem>
+   125→  1025→                          <SelectItem value="12m">12 meses</SelectItem>
+   126→  1026→                        </SelectContent>
+   127→  1027→                      </Select>
+   128→  1028→                    </div>
+   129→  1029→                    <Button onClick={handleProjection} disabled={projecting || allHistory.length === 0} className="min-w-[200px]">
+   130→  1030→                      {projecting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Target className="h-4 w-4 mr-2" />}
+   131→  1031→                      {projecting ? 'Gerando Projeção...' : 'Gerar Previsão Orçamentária'}
+   132→  1032→                    </Button>
+   133→  1033→                  </div>
+   134→  1034→
+   135→  1035→                  {projectionResult && (
+   136→  1036→                    <>
+   137→  1037→                      <Separator />
+   138→  1038→                      <div className="space-y-2">
+   139→  1039→                        <h3 className="font-semibold text-sm text-muted-foreground">Projeção de Resultado Líquido</h3>
+   140→  1040→                        <div className="h-[300px] w-full">
+   141→  1041→                          <ResponsiveContainer width="100%" height="100%">
+   142→  1042→                            <AreaChart data={[...projectionResult.historical.map(h => ({ name: h.label, 'Resultado Líquido': h.resultadoLiquido, type: 'Histórico' })), ...projectionResult.projections.map(p => ({ name: p.label, 'Resultado Líquido': p.resultadoLiquido, type: 'Projeção' }))]}>
+   143→  1043→                              <CartesianGrid strokeDasharray="3 3" stroke="#E9EEF3" />
+   144→  1044→                              <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#64748B' }} />
+   145→  1045→                              <YAxis tick={{ fontSize: 11, fill: '#64748B' }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
+   146→  1046→                              <RTooltip
+   147→  1047→                                formatter={(value: number) => brl(value)}
+   148→  1048→                                contentStyle={{ borderRadius: '8px', border: '1px solid #E9EEF3', fontSize: '12px' }}
+   149→  1049→                              />
+   150→  1050→                              <ReferenceLine y={0} stroke="#94A3B8" strokeDasharray="3 3" />
+   151→  1051→                              <Area type="monotone" dataKey="Resultado Líquido" stroke={COLORS.accent} fill={COLORS.accent} fillOpacity={0.1} strokeWidth={2} />
+   152→  1052→                            </AreaChart>
+   153→  1053→                          </ResponsiveContainer>
+   154→  1054→                        </div>
+   155→  1055→                      </div>
+   156→  1056→
+   157→  1057→                      <div className="border rounded-lg overflow-hidden">
+   158→  1058→                        <div className="grid grid-cols-7 gap-2 p-3 bg-muted/50 text-xs font-medium text-muted-foreground">
+   159→  1059→                          <span>Mês</span>
+   160→  1060→                          <span className="text-right">Rec. Bruta</span>
+   161→  1061→                          <span className="text-right">Rec. Líquida</span>
+   162→  1062→                          <span className="text-right">Desp. Var.</span>
+   163→  1063→                          <span className="text-right">Desp. Fixas</span>
+   164→  1064→                          <span className="text-right">Result. Líq.</span>
+   165→  1065→                          <span className="text-right">Margem</span>
+   166→  1066→                        </div>
+   167→  1067→                        <div className="max-h-96 overflow-y-auto">
+   168→  1068→                          {[...projectionResult.historical, ...projectionResult.projections].map((p, i) => {
+   169→  1069→                            const isProjected = i >= projectionResult.historical.length
+   170→  1070→                            const isExpanded = expandedProjectionIdx === i
+   171→  1071→                            return (
+   172→  1072→                              <div key={i}>
+   173→  1073→                                <div
+   174→  1074→                                  className={`grid grid-cols-7 gap-2 p-3 border-t text-sm items-center cursor-pointer hover:bg-muted/30 transition-colors ${isProjected ? 'bg-accent/5' : ''} ${isExpanded ? 'bg-muted/20' : ''}`}
+   175→  1075→                                  onClick={() => setExpandedProjectionIdx(isExpanded ? null : i)}
+   176→  1076→                                >
+   177→  1077→                                  <span className="font-medium text-xs flex items-center gap-1">
+   178→  1078→                                    {isProjected && <ChevronDown className={`h-3 w-3 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />}
+   179→  1079→                                    {p.label}
+   180→  1080→                                    {isProjected && <Badge variant="outline" className="ml-1 text-[10px]">Projeção</Badge>}
+   181→  1081→                                  </span>
+   182→  1082→                                  <span className="text-right font-mono text-xs">{brl(p.receitaBruta)}</span>
+   183→  1083→                                  <span className="text-right font-mono text-xs">{brl(p.receitaLiquida)}</span>
+   184→  1084→                                  <span className="text-right font-mono text-xs text-red-600">{brl(p.despesasVariaveis)}</span>
+   185→  1085→                                  <span className="text-right font-mono text-xs text-red-600">{brl(p.despesasFixas)}</span>
+   186→  1086→                                  <span className={`text-right font-mono text-xs font-semibold ${p.resultadoLiquido >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>{brl(p.resultadoLiquido)}</span>
+   187→  1087→                                  <span className="text-right font-mono text-xs">{pct(safeDiv(p.resultadoLiquido, p.receitaBruta))}</span>
+   188→  1088→                                </div>
+   189→  1089→                                {/* Expanded DRE detail for projected months */}
+   190→  1090→                                {isExpanded && isProjected && (
+   191→  1091→                                  <div className="border-t bg-muted/10 px-4 py-3">
+   192→  1092→                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+   193→  1093→                                      <div className="space-y-1">
+   194→  1094→                                        <p className="text-xs font-semibold text-muted-foreground uppercase">Receita</p>
+   195→  1095→                                        {DRE_EXPAND_ITEMS.filter(d => d.group === 'Receita').map(d => (
+   196→  1096→                                          <div key={d.field} className="flex items-center justify-between text-xs">
+   197→  1097→                                            <span className="text-muted-foreground">{d.label}</span>
+   198→  1098→                                            <input
+   199→  1099→                                              className="w-28 text-right font-mono bg-white border rounded px-1.5 py-0.5 text-xs"
+   200→  1100→                                              value={brl((p as any)[d.field] || 0).replace('R\$', '').trim()}
+   201→  1101→                                              onChange={(e) => handleProjectionFieldChange(i, d.field, e.target.value)}
+   202→  1102→                                            />
+   203→  1103→                                          </div>
+   204→  1104→                                        ))}
+   205→  1105→                                      </div>
+   206→  1106→                                      <div className="space-y-1">
+   207→  1107→                                        <p className="text-xs font-semibold text-muted-foreground uppercase">Desp. Variáveis</p>
+   208→  1108→                                        {DRE_EXPAND_ITEMS.filter(d => d.group === 'Desp. Variáveis').map(d => (
+   209→  1109→                                          <div key={d.field} className="flex items-center justify-between text-xs">
+   210→  1110→                                            <span className="text-muted-foreground">{d.label}</span>
+   211→  1111→                                            <input
+   212→  1112→                                              className="w-28 text-right font-mono bg-white border rounded px-1.5 py-0.5 text-xs"
+   213→  1113→                                              value={brl((p as any)[d.field] || 0).replace('R\$', '').trim()}
+   214→  1114→                                              onChange={(e) => handleProjectionFieldChange(i, d.field, e.target.value)}
+   215→  1115→                                            />
+   216→  1116→                                          </div>
+   217→  1117→                                        ))}
+   218→  1118→                                      </div>
+   219→  1119→                                      <div className="space-y-1">
+   220→  1120→                                        <p className="text-xs font-semibold text-muted-foreground uppercase">Desp. Fixas</p>
+   221→  1121→                                        {DRE_EXPAND_ITEMS.filter(d => d.group === 'Desp. Fixas').map(d => (
+   222→  1122→                                          <div key={d.field} className="flex items-center justify-between text-xs">
+   223→  1123→                                            <span className="text-muted-foreground">{d.label}</span>
+   224→  1124→                                            <input
+   225→  1125→                                              className="w-28 text-right font-mono bg-white border rounded px-1.5 py-0.5 text-xs"
+   226→  1126→                                              value={brl((p as any)[d.field] || 0).replace('R\$', '').trim()}
+   227→  1127→                                              onChange={(e) => handleProjectionFieldChange(i, d.field, e.target.value)}
+   228→  1128→                                            />
+   229→  1129→                                          </div>
+   230→  1130→                                        ))}
+   231→  1131→                                      </div>
+   232→  1132→                                    </div>
+   233→  1133→                                  </div>
+   234→  1134→                                )}
+   235→  1135→                              </div>
+   236→  1136→                            )
+   237→  1137→                          })}
+   238→  1138→                        </div>
+   239→  1139→                      </div>
+   240→  1140→                    </>
+   241→  1141→                  )}
+   242→  1142→                </CardContent>
+   243→  1143→              </Card>
+   244→  1144→            </TabsContent>
+   245→  1145→
+   246→  1146→            {/* ─── Charts Tab ─── */}
+   247→  1147→            <TabsContent value="charts" className="space-y-4">
+   248→  1148→              {allHistory.length === 0 ? (
+   249→  1149→                <Card><CardContent className="py-12 text-center text-muted-foreground">
+   250→  1150→                  Nenhum dado histórico disponível. Insira dados no DRE Mensal para visualizar gráficos.
+   251→  1151→                </CardContent></Card>
+   252→  1152→              ) : (
+   253→  1153→                <>
+   254→  1154→                  {/* Evolution Line Chart */}
+   255→  1155→                  <Card>
+   256→  1156→                    <CardHeader className="pb-2">
+   257→  1157→                      <CardTitle className="text-base">Evolução Mensal</CardTitle>
+   258→  1158→                    </CardHeader>
+   259→  1159→                    <CardContent>
+   260→  1160→                      <div className="h-[350px] w-full">
+   261→  1161→                        <ResponsiveContainer width="100%" height="100%">
+   262→  1162→                          <LineChart data={allHistory}>
+   263→  1163→                            <CartesianGrid strokeDasharray="3 3" stroke="#E9EEF3" />
+   264→  1164→                            <XAxis dataKey="label" tick={{ fontSize: 11, fill: '#64748B' }} />
+   265→  1165→                            <YAxis tick={{ fontSize: 11, fill: '#64748B' }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
+   266→  1166→                            <RTooltip formatter={(value: number) => brl(value)} contentStyle={{ borderRadius: '8px', border: '1px solid #E9EEF3', fontSize: '12px' }} />
+   267→  1167→                            <Legend wrapperStyle={{ fontSize: '12px' }} />
+   268→  1168→                            <Line type="monotone" dataKey="receitaBruta" name="Rec. Bruta" stroke={COLORS.primary} strokeWidth={2} dot={{ r: 3 }} />
+   269→  1169→                            <Line type="monotone" dataKey="receitaLiquida" name="Rec. Líquida" stroke={COLORS.accent} strokeWidth={2} dot={{ r: 3 }} />
+   270→  1170→                            <Line type="monotone" dataKey="despesasVariaveis" name="Desp. Variáveis" stroke={COLORS.warning} strokeWidth={2} dot={{ r: 3 }} />
+   271→  1171→                            <Line type="monotone" dataKey="despesasFixas" name="Desp. Fixas" stroke={COLORS.danger} strokeWidth={2} dot={{ r: 3 }} />
+   272→  1172→                            <Line type="monotone" dataKey="resultadoLiquido" name="Result. Líquido" stroke={COLORS.success} strokeWidth={2.5} dot={{ r: 3 }} />
+   273→  1173→                          </LineChart>
+   274→  1174→                        </ResponsiveContainer>
+   275→  1175→                      </div>
+   276→  1176→                    </CardContent>
+   277→  1177→                  </Card>
+   278→  1178→
+   279→  1179→                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+   280→  1180→                    {/* Expense Composition Pie */}
+   281→  1181→                    <Card>
+   282→  1182→                      <CardHeader className="pb-2">
+   283→  1183→                        <CardTitle className="text-base">Composição de Despesas</CardTitle>
+   284→  1184→                      </CardHeader>
+   285→  1185→                      <CardContent>
+   286→  1186→                        <div className="h-[300px] w-full">
+   287→  1187→                          <ResponsiveContainer width="100%" height="100%">
+   288→  1188→                            <RPieChart>
+   289→  1189→                              <Pie
+   290→  1190→                                data={[
+   291→  1191→                                  { name: 'Desp. Variáveis', value: allHistory.reduce((a, e) => a + e.despesasVariaveis, 0) },
+   292→  1192→                                  { name: 'Desp. Fixas', value: allHistory.reduce((a, e) => a + e.despesasFixas, 0) },
+   293→  1193→                                ]}
+   294→  1194→                                cx="50%"
+   295→  1195→                                cy="50%"
+   296→  1196→                                innerRadius={60}
+   297→  1197→                                outerRadius={100}
+   298→  1198→                                paddingAngle={4}
+   299→  1199→                                dataKey="value"
+   300→  1200→                              >
+   301→  1201→                                <Cell fill={COLORS.warning} />
+   302→  1202→                                <Cell fill={COLORS.primary} />
+   303→  1203→                              </Pie>
+   304→  1204→                              <RTooltip formatter={(value: number) => brl(value)} contentStyle={{ borderRadius: '8px', border: '1px solid #E9EEF3', fontSize: '12px' }} />
+   305→  1205→                              <Legend wrapperStyle={{ fontSize: '12px' }} />
+   306→  1206→                            </RPieChart>
+   307→  1207→                          </ResponsiveContainer>
+   308→  1208→                        </div>
+   309→  1209→                      </CardContent>
+   310→  1210→                    </Card>
+   311→  1211→
+   312→  1212→                    {/* Revenue vs Expenses Bar */}
+   313→  1213→                    <Card>
+   314→  1214→                      <CardHeader className="pb-2">
+   315→  1215→                        <CardTitle className="text-base">Receita vs Despesas</CardTitle>
+   316→  1216→                      </CardHeader>
+   317→  1217→                      <CardContent>
+   318→  1218→                        <div className="h-[300px] w-full">
+   319→  1219→                          <ResponsiveContainer width="100%" height="100%">
+   320→  1220→                            <BarChart data={allHistory}>
+   321→  1221→                              <CartesianGrid strokeDasharray="3 3" stroke="#E9EEF3" />
+   322→  1222→                              <XAxis dataKey="label" tick={{ fontSize: 11, fill: '#64748B' }} />
+   323→  1223→                              <YAxis tick={{ fontSize: 11, fill: '#64748B' }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
+   324→  1224→                              <RTooltip formatter={(value: number) => brl(value)} contentStyle={{ borderRadius: '8px', border: '1px solid #E9EEF3', fontSize: '12px' }} />
+   325→  1225→                              <Legend wrapperStyle={{ fontSize: '12px' }} />
+   326→  1226→                              <Bar dataKey="receitaLiquida" name="Rec. Líquida" fill={COLORS.accent} radius={[2, 2, 0, 0]} />
+   327→  1227→                              <Bar dataKey="despesasVariaveis" name="Desp. Var." fill={COLORS.warning} radius={[2, 2, 0, 0]} />
+   328→  1228→                              <Bar dataKey="despesasFixas" name="Desp. Fixas" fill={COLORS.danger} radius={[2, 2, 0, 0]} />
+   329→  1229→                            </BarChart>
+   330→  1230→                          </ResponsiveContainer>
+   331→  1231→                        </div>
+   332→  1232→                      </CardContent>
+   333→  1233→                    </Card>
+   334→  1234→                  </div>
+   335→  1235→
+   336→  1236→                  {/* Resultado Liquido Bar */}
+   337→  1237→                  <Card>
+   338→  1238→                    <CardHeader className="pb-2">
+   339→  1239→                      <CardTitle className="text-base">Resultado Líquido por Mês</CardTitle>
+   340→  1240→                    </CardHeader>
+   341→  1241→                    <CardContent>
+   342→  1242→                      <div className="h-[250px] w-full">
+   343→  1243→                        <ResponsiveContainer width="100%" height="100%">
+   344→  1244→                          <BarChart data={allHistory}>
+   345→  1245→                            <CartesianGrid strokeDasharray="3 3" stroke="#E9EEF3" />
+   346→  1246→                            <XAxis dataKey="label" tick={{ fontSize: 11, fill: '#64748B' }} />
+   347→  1247→                            <YAxis tick={{ fontSize: 11, fill: '#64748B' }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
+   348→  1248→                            <RTooltip formatter={(value: number) => brl(value)} contentStyle={{ borderRadius: '8px', border: '1px solid #E9EEF3', fontSize: '12px' }} />
+   349→  1249→                            <ReferenceLine y={0} stroke="#94A3B8" strokeDasharray="3 3" />
+   350→  1250→                            <Bar dataKey="resultadoLiquido" name="Resultado Líquido" radius={[4, 4, 0, 0]}>
+   351→  1251→                              {allHistory.map((entry, index) => (
+   352→  1252→                                <Cell key={index} fill={entry.resultadoLiquido >= 0 ? COLORS.success : COLORS.danger} />
+   353→  1253→                              ))}
+   354→  1254→                            </Bar>
+   355→  1255→                          </BarChart>
+   356→  1256→                        </ResponsiveContainer>
+   357→  1257→                      </div>
+   358→  1258→                    </CardContent>
+   359→  1259→                  </Card>
+   360→  1260→                </>
+   361→  1261→              )}
+   362→  1262→            </TabsContent>
+   363→  1263→          </Tabs>
+   364→  1264→        )}
+   365→  1265→      </main>
+   366→  1266→
+   367→  1267→      {/* Footer */}
+   368→  1268→      <footer className="border-t mt-auto print:hidden">
+   369→  1269→        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between text-xs text-muted-foreground">
+   370→  1270→          <span>DRE Online — Planejamento Orçamentário para Escritórios de Advocacia</span>
+   371→  1271→          <span>{new Date().getFullYear()}</span>
+   372→  1272→        </div>
+   373→  1273→      </footer>
+   374→  1274→
+   375→  1275→      {/* Delete Confirmation Dialog - Step 1 */}
+   376→  1276→      <Dialog open={deleteDialogOpen} onOpenChange={(open) => { if (!open) setDeleteDialogOpen(false) }}>
+   377→  1277→        <DialogContent>
+   378→  1278→          <DialogHeader>
+   379→  1279→            <DialogTitle className="flex items-center gap-2">
+   380→  1280→              <AlertCircle className="h-5 w-5 text-destructive" />
+   381→  1281→              Confirmar Exclusão
+   382→  1282→            </DialogTitle>
+   383→  1283→            <DialogDescription>
+   384→  1284→              Tem certeza que deseja excluir <strong>{deletingCompanyName}</strong>?
+   385→  1285→              Esta ação não poderá ser desfeita e todos os dados serão perdidos.
+   386→  1286→            </DialogDescription>
+   387→  1287→          </DialogHeader>
+   388→  1288→          <DialogFooter className="gap-2 sm:gap-0">
+   389→  1289→            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>Cancelar</Button>
+   390→  1290→            <Button variant="destructive" onClick={() => {
+   391→  1291→              setDeleteDialogOpen(false)
+   392→  1292→              setDeleteSaveDialogOpen(true)
+   393→  1293→            }}>
+   394→  1294→              Sim, Excluir
+   395→  1295→            </Button>
+   396→  1296→          </DialogFooter>
+   397→  1297→        </DialogContent>
+   398→  1298→      </Dialog>
+   399→  1299→      {/* Delete Confirmation Dialog - Step 2: Save data? */}
+   400→  1300→      <Dialog open={deleteSaveDialogOpen} onOpenChange={(open) => { if (!open) setDeleteSaveDialogOpen(false) }}>
+   401→  1301→        <DialogContent>
+   402→  1302→          <DialogHeader>
+   403→  1303→            <DialogTitle className="flex items-center gap-2">
+   404→  1304→              <Download className="h-5 w-5 text-primary" />
+   405→  1305→              Salvar Dados Antes de Excluir?
+   406→  1306→            </DialogTitle>
+   407→  1307→            <DialogDescription>
+   408→  1308→              Deseja exportar todos os dados do DRE de <strong>{deletingCompanyName}</strong>
+   409→  1309→              em uma planilha Excel (cada mês em uma aba separada) antes de excluir?
+   410→  1310→            </DialogDescription>
+   411→  1311→          </DialogHeader>
+   412→  1312→          <DialogFooter className="gap-2 sm:gap-0">
+   413→  1313→            <Button variant="outline" onClick={() => {
+   414→  1314→              if (deletingCompanyId) handleDeleteCompany(deletingCompanyId, false)
+   415→  1315→            }}>
+   416→  1316→              Excluir sem Salvar
+   417→  1317→            </Button>
+   418→  1318→            <Button onClick={() => {
+   419→  1319→              if (deletingCompanyId) handleDeleteCompany(deletingCompanyId, true)
+   420→  1320→            }}>
+   421→  1321→              <Download className="h-4 w-4 mr-1.5" /> Salvar e Excluir
+   422→  1322→            </Button>
+   423→  1323→          </DialogFooter>
+   424→  1324→        </DialogContent>
+   425→  1325→      </Dialog>
+   426→  1326→
+   427→  1327→      {/* Company Dialog */}
+   428→  1328→      <Dialog open={companyDialogOpen} onOpenChange={setCompanyDialogOpen}>
+   429→  1329→        <DialogContent className="sm:max-w-md">
+   430→  1330→          <DialogHeader>
+   431→  1331→            <DialogTitle>Nova Empresa</DialogTitle>
+   432→  1332→            <DialogDescription>Adicione uma nova empresa ao seu planejamento orçamentário. Máximo de 5 empresas.</DialogDescription>
+   433→  1333→          </DialogHeader>
+   434→  1334→          <div className="space-y-4 py-2">
+   435→  1335→            <div>
+   436→  1336→              <Label className="mb-1.5 block">Nome da Empresa *</Label>
+   437→  1337→              <Input
+   438→  1338→                placeholder="Ex: Advocacia Silva & Associados"
+   439→  1339→                value={newCompanyName}
+   440→  1340→                onChange={(e) => setNewCompanyName(e.target.value)}
+   441→  1341→                onKeyDown={(e) => e.key === 'Enter' && handleCreateCompany()}
+   442→  1342→              />
+   443→  1343→            </div>
+   444→  1344→            <div>
+   445→  1345→              <Label className="mb-1.5 block">CNPJ (opcional)</Label>
+   446→  1346→              <Input
+   447→  1347→                placeholder="00.000.000/0001-00"
+   448→  1348→                value={newCompanyCnpj}
+   449→  1349→                onChange={(e) => setNewCompanyCnpj(e.target.value)}
+   450→  1350→              />
+   451→  1351→            </div>
+   452→  1352→          </div>
+   453→  1353→          <DialogFooter>
+   454→  1354→            <Button variant="outline" onClick={() => setCompanyDialogOpen(false)}>Cancelar</Button>
+   455→  1355→            <Button onClick={handleCreateCompany} disabled={!newCompanyName.trim()}>Criar Empresa</Button>
+   456→  1356→          </DialogFooter>
+   457→  1357→        </DialogContent>
+   458→  1358→      </Dialog>
+   459→  1359→
+   460→  1360→    </div>
+   461→  1361→    </TooltipProvider>
+   462→  1362→  )
+   463→  1363→}
+   464→  1364→

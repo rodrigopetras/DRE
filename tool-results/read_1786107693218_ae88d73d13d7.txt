@@ -1,0 +1,788 @@
+     1→import { db } from '@/lib/db'
+     2→import { NextRequest, NextResponse } from 'next/server'
+     3→import ExcelJS from 'exceljs'
+     4→import { getServerSession } from 'next-auth'
+     5→import { authOptions } from '@/lib/auth'
+     6→import { DRE_FIELD_LABELS, DRE_FIELD_SECTIONS, SECTION_LABELS } from '@/lib/dre-utils'
+     7→
+     8→// ─── Access Verification ───
+     9→
+    10→async function verifyAccess(userId: string, companyId: string) {
+    11→  const company = await db.company.findUnique({ where: { id: companyId } })
+    12→  if (!company) return false
+    13→  if (company.userId === userId) return true
+    14→  const share = await db.companyShare.findUnique({
+    15→    where: { companyId_userId: { companyId, userId } },
+    16→  })
+    17→  return share?.status === 'accepted'
+    18→}
+    19→
+    20→// ─── Number Parsing Helpers ───
+    21→
+    22→interface ExcelCellLike {
+    23→  value: unknown
+    24→  font?: { color?: { argb?: string } }
+    25→}
+    26→
+    27→/**
+    28→ * Detect if an Excel cell's font color is red.
+    29→ * Red = alpha byte 0xFF (high byte), R > 150, G < 100, B < 100.
+    30→ */
+    31→function isRedFont(cell?: ExcelCellLike): boolean {
+    32→  if (!cell?.font?.color?.argb) return false
+    33→  const argb = cell.font.color.argb
+    34→  if (argb.length < 8) return false
+    35→  const alpha = parseInt(argb.substring(0, 2), 16)
+    36→  if (alpha !== 0xFF) return false
+    37→  const r = parseInt(argb.substring(2, 4), 16)
+    38→  const g = parseInt(argb.substring(4, 6), 16)
+    39→  const b = parseInt(argb.substring(6, 8), 16)
+    40→  return r > 150 && g < 100 && b < 100
+    41→}
+    42→
+    43→/**
+    44→ * Parse any ExcelJS cell value into a number.
+    45→ * Handles: number, formula, RichText, Hyperlink, string, Date.
+    46→ * Parenthesized values like (780,00) are converted to negative.
+    47→ * Red font color also makes the value negative.
+    48→ */
+    49→function parseCellToNumber(cellValue: unknown, cell?: ExcelCellLike): number {
+    50→  let result = 0
+    51→
+    52→  if (typeof cellValue === 'number') {
+    53→    result = cellValue
+    54→  }
+    55→  else if (cellValue && typeof cellValue === 'object' && 'result' in cellValue) {
+    56→    const formulaResult = (cellValue as any).result
+    57→    if (typeof formulaResult === 'number') result = formulaResult
+    58→    else if (typeof formulaResult === 'string') result = parseTextToNumber(formulaResult)
+    59→  }
+    60→  else if (cellValue && typeof cellValue === 'object' && 'richText' in cellValue) {
+    61→    const parts = (cellValue as any).richText as Array<{ text: string }>
+    62→    const text = parts.map(p => p.text).join('')
+    63→    result = parseTextToNumber(text)
+    64→  }
+    65→  else if (cellValue && typeof cellValue === 'object' && 'text' in cellValue && 'hyperlink' in cellValue) {
+    66→    result = parseTextToNumber((cellValue as any).text)
+    67→  }
+    68→  else if (typeof cellValue === 'string') {
+    69→    result = parseTextToNumber(cellValue)
+    70→  }
+    71→
+    72→  if (result > 0 && isRedFont(cell)) {
+    73→    result = -result
+    74→  }
+    75→
+    76→  return result
+    77→}
+    78→
+    79→/**
+    80→ * Parse a text string like "1.234,56" or "(780,00)" into a number.
+    81→ * Parenthesized values become negative.
+    82→ */
+    83→function parseTextToNumber(text: string): number {
+    84→  const trimmed = text.trim()
+    85→  if (!trimmed) return 0
+    86→  const parenMatch = trimmed.match(/^\((.+)\)$/)
+    87→  let numStr: string
+    88→  let sign = 1
+    89→  if (parenMatch) {
+    90→    numStr = parenMatch[1]
+    91→    sign = -1
+    92→  } else {
+    93→    numStr = trimmed
+    94→    if (numStr.startsWith('-')) {
+    95→      sign = -1
+    96→      numStr = numStr.substring(1)
+    97→    }
+    98→  }
+    99→  const cleaned = numStr.replace(/\./g, '').replace(',', '.')
+   100→  const parsed = parseFloat(cleaned)
+   101→  if (isNaN(parsed)) return 0
+   102→  return sign * Math.abs(parsed)
+   103→}
+   104→
+   105→// ─── Date Parsing Helpers ───
+   106→
+   107→function excelSerialToDate(serial: number): Date {
+   108→  if (serial < 1) return new Date(NaN)
+   109→  const epoch = new Date(1899, 11, 30)
+   110→  const msPerDay = 24 * 60 * 60 * 1000
+   111→  return new Date(epoch.getTime() + serial * msPerDay)
+   112→}
+   113→
+   114→/** Remove accents/diacritics from a string for comparison */
+   115→function normalizeAccents(str: string): string {
+   116→  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim()
+   117→}
+   118→
+   119→interface ParsedDateInfo {
+   120→  month: number
+   121→  year: number
+   122→  dateStr: string
+   123→}
+   124→
+   125→/**
+   126→ * Parse a date value from an Excel cell (column B) into month/year.
+   127→ * Supports: JS Date, DD/MM/YYYY, YYYY-MM-DD, MM/DD/YYYY, DD-MM-YYYY, Excel serial numbers.
+   128→ */
+   129→const MONTH_NAMES_PT: Record<string, number> = {
+   130→  'janeiro': 1, 'fevereiro': 2, 'marco': 3, 'março': 3, 'abril': 4, 'maio': 5, 'junho': 6,
+   131→  'julho': 7, 'agosto': 8, 'setembro': 9, 'outubro': 10, 'novembro': 11, 'dezembro': 12,
+   132→  'jan': 1, 'fev': 2, 'mar': 3, 'abr': 4, 'mai': 5, 'jun': 6,
+   133→  'jul': 7, 'ago': 8, 'set': 9, 'out': 10, 'nov': 11, 'dez': 12,
+   134→}
+   135→
+   136→function parseRowDate(rawValue: unknown): ParsedDateInfo | null {
+   137→  if (!rawValue) return null
+   138→
+   139→  if (rawValue instanceof Date && !isNaN(rawValue.getTime())) {
+   140→    return {
+   141→      month: rawValue.getMonth() + 1,
+   142→      year: rawValue.getFullYear(),
+   143→      dateStr: rawValue.toISOString().split('T')[0],
+   144→    }
+   145→  }
+   146→
+   147→  if (typeof rawValue === 'number' && rawValue > 25569 && rawValue < 100000) {
+   148→    const d = excelSerialToDate(rawValue)
+   149→    if (!isNaN(d.getTime())) {
+   150→      return {
+   151→        month: d.getMonth() + 1,
+   152→        year: d.getFullYear(),
+   153→        dateStr: d.toISOString().split('T')[0],
+   154→      }
+   155→    }
+   156→  }
+   157→
+   158→  if (typeof rawValue === 'string') {
+   159→    const s = rawValue.trim()
+   160→    if (!s) return null
+   161→
+   162→    // YYYY-MM-DD
+   163→    let m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/)
+   164→    if (m) {
+   165→      const yr = parseInt(m[1]); const mo = parseInt(m[2]); const dy = parseInt(m[3])
+   166→      if (mo >= 1 && mo <= 12 && dy >= 1 && dy <= 31) {
+   167→        return { month: mo, year: yr, dateStr: `${yr}-${String(mo).padStart(2, '0')}-${String(dy).padStart(2, '0')}` }
+   168→      }
+   169→    }
+   170→
+   171→    // DD/MM/YYYY or MM/DD/YYYY
+   172→    m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/)
+   173→    if (m) {
+   174→      const a = parseInt(m[1]); const b = parseInt(m[2]); const yr = parseInt(m[3])
+   175→      let mo: number, dy: number
+   176→      if (a > 12) { dy = a; mo = b }
+   177→      else if (b > 12) { mo = a; dy = b }
+   178→      else { dy = a; mo = b }
+   179→      if (mo >= 1 && mo <= 12 && dy >= 1 && dy <= 31) {
+   180→        return { month: mo, year: yr, dateStr: `${yr}-${String(mo).padStart(2, '0')}-${String(dy).padStart(2, '0')}` }
+   181→      }
+   182→    }
+   183→
+   184→    // DD-MM-YYYY
+   185→    m = s.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/)
+   186→    if (m) {
+   187→      const a = parseInt(m[1]); const b = parseInt(m[2]); const yr = parseInt(m[3])
+   188→      let mo: number, dy: number
+   189→      if (a > 12) { dy = a; mo = b }
+   190→      else if (b > 12) { mo = a; dy = b }
+   191→      else { dy = a; mo = b }
+   192→      if (mo >= 1 && mo <= 12 && dy >= 1 && dy <= 31) {
+   193→        return { month: mo, year: yr, dateStr: `${yr}-${String(mo).padStart(2, '0')}-${String(dy).padStart(2, '0')}` }
+   194→      }
+   195→    }
+   196→
+   197→    // DD/MM/YY
+   198→    m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2})$/)
+   199→    if (m) {
+   200→      const a = parseInt(m[1]); const b = parseInt(m[2])
+   201→      let yr = parseInt(m[3])
+   202→      yr = yr < 100 ? 2000 + yr : yr
+   203→      let mo: number, dy: number
+   204→      if (a > 12) { dy = a; mo = b }
+   205→      else if (b > 12) { mo = a; dy = b }
+   206→      else { dy = a; mo = b }
+   207→      if (mo >= 1 && mo <= 12 && dy >= 1 && dy <= 31) {
+   208→        return { month: mo, year: yr, dateStr: `${yr}-${String(mo).padStart(2, '0')}-${String(dy).padStart(2, '0')}` }
+   209→      }
+   210→    }
+   211→
+   212→    // Month name in Portuguese (e.g. "Janeiro 2025", "Jan/2025", "janeiro")
+   213→    const normS = normalizeAccents(s)
+   214→    for (const [monthName, monthNum] of Object.entries(MONTH_NAMES_PT)) {
+   215→      const normName = normalizeAccents(monthName)
+   216→      const regex = new RegExp(`\\b${normName}\\b`, 'i')
+   217→      if (regex.test(normS)) {
+   218→        // Try to extract year from the string
+   219→        const yearMatch = s.match(/(\d{4})/)
+   220→        const yr = yearMatch ? parseInt(yearMatch[1]) : new Date().getFullYear()
+   221→        return { month: monthNum, year: yr, dateStr: `${yr}-${String(monthNum).padStart(2, '0')}-01` }
+   222→      }
+   223→    }
+   224→
+   225→    // MM/YYYY (just month and year)
+   226→    m = s.match(/^(\d{1,2})\/(\d{4})$/)
+   227→    if (m) {
+   228→      const mo = parseInt(m[1]); const yr = parseInt(m[2])
+   229→      if (mo >= 1 && mo <= 12) {
+   230→        return { month: mo, year: yr, dateStr: `${yr}-${String(mo).padStart(2, '0')}-01` }
+   231→      }
+   232→    }
+   233→  }
+   234→
+   235→  return null
+   236→}
+   237→
+   238→/**
+   239→ * RF-04: Build structural title → DRE field mapping.
+   240→ * Maps normalized section/field titles from spreadsheets to DRE field keys.
+   241→ */
+   242→const STRUCTURAL_TITLES: Array<{ patterns: string[]; fieldKey: string | null; sectionKey?: string }> = [
+   243→  // Section-level titles (set context, don't classify into a single field)
+   244→  { patterns: ['receita bruta', 'receitas', 'receita', 'total receita'], fieldKey: null, sectionKey: 'receita' },
+   245→  { patterns: ['despesas variaveis', 'despesa variavel', 'desp variaveis', 'custos variaveis', 'custo variavel'], fieldKey: null, sectionKey: 'desp_variaveis' },
+   246→  { patterns: ['despesas fixas', 'despesa fixa', 'desp fixas', 'custos fixos', 'custo fixo', 'despesas administrativas'], fieldKey: null, sectionKey: 'desp_fixas' },
+   247→  { patterns: ['resultado liquido', 'resultado', 'lucro', 'prejuizo', 'resultado operacional'], fieldKey: null, sectionKey: 'resultado' },
+   248→
+   249→  // Field-level titles (direct classification)
+   250→  { patterns: ['prestacao de nf', 'prestacao nf', 'nota fiscal', 'nf de servico', 'faturamento'], fieldKey: 'prestacaoNf' },
+   251→  { patterns: ['honorarios sucumbenciais', 'sucumbenciais', 'honorario sucumbencial'], fieldKey: 'honorariosSucumbenciais' },
+   252→  { patterns: ['honorarios', 'honorario', 'honorarios advocaticios'], fieldKey: 'honorarios' },
+   253→  { patterns: ['reembolso', 'reembolso de despesas'], fieldKey: 'reembolsoDespesas' },
+   254→  { patterns: ['nao identificado', 'outros', 'diversos', 'outras receitas'], fieldKey: 'naoIdentificado' },
+   255→  { patterns: ['impostos', 'cpp', 'impostos + cpp', 'tributos', 'pis cofins', 'irpj csll'], fieldKey: 'impostosCpp' },
+   256→  { patterns: ['combustivel', 'combustiveis', 'gasolina', 'alcool', 'gnv'], fieldKey: 'combustivel' },
+   257→  { patterns: ['insumos', 'materia prima', 'materia-prima'], fieldKey: 'insumos' },
+   258→  { patterns: ['material de escritorio', 'material escritorio', 'papel', 'materiais de escritorio', 'escritorio'], fieldKey: 'materialEscritorio' },
+   259→  { patterns: ['servicos contratados', 'servico contratado', 'terceirizados', 'outsourcing'], fieldKey: 'servicosContratados' },
+   260→  { patterns: ['materiais de uso e consumo', 'materiais uso consumo', 'uso e consumo', 'copa', 'limpeza'], fieldKey: 'materiaisUsoConsumo' },
+   261→  { patterns: ['taxas', 'emolumentos', 'taxa'], fieldKey: 'taxas' },
+   262→  { patterns: ['tarifas', 'tarifa bancaria', 'tarifas bancarias'], fieldKey: 'tarifas' },
+   263→  { patterns: ['energia eletrica', 'energia', 'luz', 'conta de luz', 'eletropaulo', 'celpe'], fieldKey: 'energiaEletrica' },
+   264→  { patterns: ['agua', 'conta de agua', 'sabesp'], fieldKey: 'agua' },
+   265→  { patterns: ['aluguel', 'alugueis', 'locacao'], fieldKey: 'aluguel' },
+   266→  { patterns: ['salarios', 'salario', 'folha de pagamento', 'remuneracao', 'funcionarios'], fieldKey: 'salarios' },
+   267→  { patterns: ['fgts'], fieldKey: 'fgts' },
+   268→  { patterns: ['pro-labore', 'prolabore'], fieldKey: 'prolabore' },
+   269→  { patterns: ['bonus', 'bonus mensal', 'participacao nos lucros', 'plr'], fieldKey: 'bonus' },
+   270→  { patterns: ['inss', 'contribuicao previdenciaria'], fieldKey: 'inss' },
+   271→  { patterns: ['iptu'], fieldKey: 'iptu' },
+   272→  { patterns: ['telefone', 'internet', 'telefone e internet', 'tel e internet', 'telefonia', 'celular'], fieldKey: 'telefoneInternet' },
+   273→  { patterns: ['vale transporte', 'vale-transporte', 'vt'], fieldKey: 'valeTransporte' },
+   274→  { patterns: ['plano de saude', 'plano saude', 'saude', 'assistencia medica', 'odontologico'], fieldKey: 'planoSaude' },
+   275→]
+   276→
+   277→/**
+   278→ * RF-04: Detect if a description is a structural title and return its context.
+   279→ * Returns { type: 'section' | 'field', fieldKey?, sectionKey? } or null.
+   280→ */
+   281→function detectStructuralTitle(description: string): { type: 'section' | 'field'; fieldKey?: string; sectionKey?: string } | null {
+   282→  const norm = normalizeAccents(description)
+   283→
+   284→  // Check for section-level matches first
+   285→  for (const entry of STRUCTURAL_TITLES) {
+   286→    for (const pattern of entry.patterns) {
+   287→      if (norm === normalizeAccents(pattern) || norm.includes(normalizeAccents(pattern))) {
+   288→        if (entry.sectionKey && !entry.fieldKey) {
+   289→          return { type: 'section', sectionKey: entry.sectionKey }
+   290→        }
+   291→        if (entry.fieldKey) {
+   292→          return { type: 'field', fieldKey: entry.fieldKey, sectionKey: DRE_FIELD_SECTIONS[entry.fieldKey] }
+   293→        }
+   294→      }
+   295→    }
+   296→  }
+   297→  return null
+   298→}
+   299→
+   300→/**
+   301→ * When a structural section title row has a value, map it to a reasonable DRE field.
+   302→ * For receita section: maps to 'naoIdentificado' (catch-all revenue field).
+   303→ * For desp sections: maps to the first field in that section.
+   304→ */
+   305→function sectionTitleToField(sectionKey: string): string {
+   306→  if (sectionKey === 'receita') return 'naoIdentificado'
+   307→  // For expense sections, find the first field in that section
+   308→  const sectionFields = Object.entries(DRE_FIELD_SECTIONS)
+   309→    .filter(([, section]) => section === sectionKey)
+   310→    .map(([key]) => key)
+   311→  return sectionFields[0] || 'naoIdentificado'
+   312→}
+   313→
+   314→/**
+   315→ * RF-04: Given a section context, try to auto-classify a description into the first matching field in that section.
+   316→ */
+   317→function autoClassifyInSection(description: string, sectionKey: string): string | null {
+   318→  const norm = normalizeAccents(description)
+   319→  const sectionFields = Object.entries(DRE_FIELD_SECTIONS)
+   320→    .filter(([, section]) => section === sectionKey)
+   321→    .map(([key]) => key)
+   322→
+   323→  for (const fieldKey of sectionFields) {
+   324→    const label = DRE_FIELD_LABELS[fieldKey]
+   325→    if (!label) continue
+   326→    const normLabel = normalizeAccents(label)
+   327→    // Check if description contains field label keywords
+   328→    const labelWords = normLabel.split(/\s+/).filter(w => w.length > 2)
+   329→    for (const word of labelWords) {
+   330→      if (norm.includes(word)) return fieldKey
+   331→    }
+   332→  }
+   333→  return null
+   334→}
+   335→
+   336→/**
+   337→ * Try to match a category string from column D against DRE field labels.
+   338→ */
+   339→function classifyByCategory(category: string): string | null {
+   340→  if (!category || !category.trim()) return null
+   341→  const norm = normalizeAccents(category)
+   342→
+   343→  for (const key of Object.keys(DRE_FIELD_LABELS)) {
+   344→    if (normalizeAccents(key) === norm) return key
+   345→  }
+   346→  for (const [key, value] of Object.entries(DRE_FIELD_LABELS)) {
+   347→    if (normalizeAccents(value) === norm) return key
+   348→  }
+   349→  return null
+   350→}
+   351→
+   352→// ─── POST: Upload spreadsheet ───
+   353→
+   354→export async function POST(req: NextRequest) {
+   355→  try {
+   356→    const session = await getServerSession(authOptions)
+   357→    if (!session?.user?.id) {
+   358→      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+   359→    }
+   360→
+   361→    const userId = (session.user as any).id
+   362→    const formData = await req.formData()
+   363→    const file = formData.get('file') as File
+   364→    const companyId = formData.get('companyId') as string
+   365→    const month = parseInt(formData.get('month') as string)
+   366→    const year = parseInt(formData.get('year') as string)
+   367→
+   368→    if (!file || !companyId || !month || !year) {
+   369→      return NextResponse.json({ error: 'Parâmetros incompletos' }, { status: 400 })
+   370→    }
+   371→
+   372→    const hasAccess = await verifyAccess(userId, companyId)
+   373→    if (!hasAccess) {
+   374→      return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })
+   375→    }
+   376→
+   377→    const buffer = Buffer.from(await file.arrayBuffer())
+   378→    const workbook = new ExcelJS.Workbook()
+   379→    await workbook.xlsx.load(buffer)
+   380→
+   381→    const worksheet = workbook.worksheets[0]
+   382→    if (!worksheet) {
+   383→      return NextResponse.json({ error: 'Planilha vazia' }, { status: 400 })
+   384→    }
+   385→
+   386→    // RF-04: Track structural title context during parsing
+   387→    let currentSectionContext: string | null = null
+   388→    let currentFieldContext: string | null = null
+   389→
+   390→    const parsedRows: Array<{
+   391→      description: string
+   392→      date: string
+   393→      totalValue: number
+   394→      itemMonth: number
+   395→      itemYear: number
+   396→      dreField: string
+   397→    }> = []
+   398→
+   399→    let structuralTitlesFound = 0
+   400→
+   401→    worksheet.eachRow((row, rowNumber) => {
+   402→      if (rowNumber === 1) return
+   403→
+   404→      // Column A: Description
+   405→      const description = row.getCell(1).value?.toString()?.trim() || ''
+   406→      if (!description) return
+   407→
+   408→      // Column B: Date → parse to get month/year
+   409→      const rawDate = row.getCell(2).value
+   410→      const parsedDate = parseRowDate(rawDate)
+   411→      // If date is parsed, use it; otherwise default to selected month/year
+   412→      const itemMonth = parsedDate?.month ?? month
+   413→      const itemYear = parsedDate?.year ?? year
+   414→      const dateStr = parsedDate?.dateStr ?? ''
+   415→
+   416→      // Column C: Value
+   417→      const valueCell = row.getCell(3)
+   418→      const value = parseCellToNumber(valueCell.value, { font: valueCell.font } as ExcelCellLike)
+   419→
+   420→      // RF-04: Check if this row is a structural title
+   421→      const titleInfo = detectStructuralTitle(description)
+   422→
+   423→      if (titleInfo) {
+   424→        structuralTitlesFound++
+   425→        if (titleInfo.type === 'section') {
+   426→          currentSectionContext = titleInfo.sectionKey ?? null
+   427→          currentFieldContext = null
+   428→        } else if (titleInfo.type === 'field') {
+   429→          currentFieldContext = titleInfo.fieldKey
+   430→          currentSectionContext = titleInfo.sectionKey ?? null
+   431→        }
+   432→        // Structural titles with no value are skipped as data rows
+   433→        if (value === 0) return
+   434→      }
+   435→
+   436→      // Column D: Category (explicit auto-classification, takes priority)
+   437→      const categoryCell = row.getCell(4)
+   438→      let dreField = ''
+   439→      if (categoryCell && categoryCell.value) {
+   440→        const categoryText = String(categoryCell.value).trim()
+   441→        dreField = classifyByCategory(categoryText) || ''
+   442→      }
+   443→
+   444→      // RF-04: If no category, use structural context for auto-classification
+   445→      if (!dreField) {
+   446→        if (currentFieldContext) {
+   447→          dreField = currentFieldContext
+   448→        } else if (titleInfo?.type === 'section' && titleInfo.sectionKey) {
+   449→          // Section-level title with a value: map to a catch-all field in that section
+   450→          // e.g. "Receita Bruta" with value → naoIdentificado
+   451→          dreField = sectionTitleToField(titleInfo.sectionKey)
+   452→        } else if (currentSectionContext) {
+   453→          const autoField = autoClassifyInSection(description, currentSectionContext)
+   454→          if (autoField) dreField = autoField
+   455→        }
+   456→      }
+   457→
+   458→      if (value !== 0) {
+   459→        parsedRows.push({ description, date: dateStr, totalValue: value, itemMonth, itemYear, dreField })
+   460→      }
+   461→    })
+   462→
+   463→    if (parsedRows.length === 0) {
+   464→      return NextResponse.json(
+   465→        { error: 'Nenhum dado válido encontrado. Verifique: Descrição (A), Data (B), Valor (C).' },
+   466→        { status: 400 }
+   467→      )
+   468→    }
+   469→
+   470→    // Create uploaded file record
+   471→    const uploadedFile = await db.uploadedFile.create({
+   472→      data: { companyId, month, year, fileName: file.name },
+   473→    })
+   474→
+   475→    // Save all qualifications
+   476→    const qualifications = parsedRows.map((item) => ({
+   477→      companyId,
+   478→      month: item.itemMonth,
+   479→      year: item.itemYear,
+   480→      description: item.description,
+   481→      date: item.date,
+   482→      totalValue: item.totalValue,
+   483→      dreField: item.dreField,
+   484→      uploadedFileId: uploadedFile.id,
+   485→    }))
+   486→
+   487→    await db.expenseQualification.createMany({ data: qualifications })
+   488→
+   489→    const savedItems = await db.expenseQualification.findMany({
+   490→      where: { uploadedFileId: uploadedFile.id },
+   491→      orderBy: { createdAt: 'asc' },
+   492→    })
+   493→
+   494→    // Build distributed months list
+   495→    const groupedByMonth = new Map<string, number[]>()
+   496→    for (const row of parsedRows) {
+   497→      const key = `${row.itemMonth}-${row.itemYear}`
+   498→      if (!groupedByMonth.has(key)) groupedByMonth.set(key, [])
+   499→      groupedByMonth.get(key)!.push(row.itemMonth)
+   500→    }
+   501→    const distributedMonths = Array.from(groupedByMonth.keys())
+   502→      .map(key => {
+   503→        const [m, y] = key.split('-')
+   504→        return `${String(parseInt(m)).padStart(2, '0')}/${y}`
+   505→      })
+   506→      .sort((a, b) => {
+   507→        const [am, ay] = a.split('/').map(Number)
+   508→        const [bm, by] = b.split('/').map(Number)
+   509→        return ay !== by ? ay - by : am - bm
+   510→      })
+   511→
+   512→    // Count auto-classified items
+   513→    const autoClassified = savedItems.filter(i => i.dreField).length
+   514→
+   515→    return NextResponse.json({
+   516→      items: savedItems.map(i => ({
+   517→        id: i.id, description: i.description, date: i.date,
+   518→        totalValue: i.totalValue, dreField: i.dreField,
+   519→        month: i.month, year: i.year,
+   520→      })),
+   521→      file: { id: uploadedFile.id, fileName: uploadedFile.fileName, uploadedAt: uploadedFile.uploadedAt },
+   522→      distributedMonths,
+   523→      structuralTitlesFound,
+   524→      autoClassified,
+   525→    })
+   526→  } catch (error) {
+   527→    console.error('Expense qualification error:', error)
+   528→    return NextResponse.json({ error: 'Erro ao processar planilha de despesas' }, { status: 500 })
+   529→  }
+   530→}
+   531→
+   532→// ─── PUT: Save expense classification and update DRE (RF-07: returns updated DRE data) ───
+   533→
+   534→export async function PUT(req: NextRequest) {
+   535→  try {
+   536→    const session = await getServerSession(authOptions)
+   537→    if (!session?.user?.id) {
+   538→      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+   539→    }
+   540→
+   541→    const userId = (session.user as any).id
+   542→    const body = await req.json()
+   543→    const { companyId, month, year, items } = body
+   544→
+   545→    if (!companyId || !month || !year || !items) {
+   546→      return NextResponse.json({ error: 'Parâmetros incompletos' }, { status: 400 })
+   547→    }
+   548→
+   549→    const hasAccess = await verifyAccess(userId, companyId)
+   550→    if (!hasAccess) {
+   551→      return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })
+   552→    }
+   553→
+   554→    // Update each item's dreField mapping in parallel
+   555→    const itemsToUpdate = items.filter((item: any) => item.id && item.dreField)
+   556→    await Promise.all(
+   557→      itemsToUpdate.map((item: any) =>
+   558→        db.expenseQualification.update({
+   559→          where: { id: item.id },
+   560→          data: { dreField: item.dreField },
+   561→        })
+   562→      )
+   563→    )
+   564→
+   565→    // Find all distinct month/year combos that have classified items for this company
+   566→    const allClassified = await db.expenseQualification.findMany({
+   567→      where: { companyId, dreField: { not: '' } },
+   568→      select: { month: true, year: true },
+   569→      distinct: ['month', 'year'],
+   570→    })
+   571→
+   572→    // Update DRE entries for ALL months that have classified items
+   573→    let currentMonthDreEntryId: string | null = null
+   574→    let currentMonthFieldTotals: Record<string, number> = {}
+   575→    for (const { month: m, year: y } of allClassified) {
+   576→      const monthQualifications = await db.expenseQualification.findMany({
+   577→        where: { companyId, month: m, year: y, dreField: { not: '' } },
+   578→      })
+   579→
+   580→      const fieldTotals: Record<string, number> = {}
+   581→      const customFieldTotals: Record<string, number> = {}
+   582→      for (const q of monthQualifications) {
+   583→        if (q.dreField) {
+   584→          if (q.dreField.startsWith('custom_')) {
+   585→            const customFieldId = q.dreField.replace('custom_', '')
+   586→            customFieldTotals[customFieldId] = (customFieldTotals[customFieldId] || 0) + q.totalValue
+   587→          } else {
+   588→            fieldTotals[q.dreField] = (fieldTotals[q.dreField] || 0) + q.totalValue
+   589→          }
+   590→        }
+   591→      }
+   592→
+   593→      // Save field totals for the currently selected month
+   594→      if (m === month && y === year) {
+   595→        currentMonthFieldTotals = fieldTotals
+   596→      }
+   597→
+   598→      const existing = await db.dREEntry.findUnique({
+   599→        where: { companyId_month_year: { companyId, month: m, year: y } },
+   600→      })
+   601→
+   602→      const updateData: Record<string, number> = {}
+   603→      for (const [field, total] of Object.entries(fieldTotals)) {
+   604→        updateData[field] = total
+   605→      }
+   606→
+   607→      let dreEntryId: string | null = null
+   608→      if (Object.keys(updateData).length > 0 || Object.keys(customFieldTotals).length > 0) {
+   609→        if (existing) {
+   610→          dreEntryId = existing.id
+   611→          if (Object.keys(updateData).length > 0) {
+   612→            await db.dREEntry.update({
+   613→              where: { id: existing.id },
+   614→              data: updateData,
+   615→            })
+   616→          }
+   617→        } else {
+   618→          const created = await db.dREEntry.create({
+   619→            data: { companyId, month: m, year: y, ...updateData },
+   620→          })
+   621→          dreEntryId = created.id
+   622→        }
+   623→      } else {
+   624→        dreEntryId = existing?.id || null
+   625→      }
+   626→
+   627→      // Handle custom field totals (with sign correction)
+   628→      if (dreEntryId && Object.keys(customFieldTotals).length > 0) {
+   629→        const customFieldIds = Object.keys(customFieldTotals)
+   630→        const customFields = await db.customDREField.findMany({
+   631→          where: { id: { in: customFieldIds } },
+   632→        })
+   633→        const fieldSignMap: Record<string, string> = {}
+   634→        for (const cf of customFields) fieldSignMap[cf.id] = cf.sign
+   635→
+   636→        await Promise.all(
+   637→          Object.entries(customFieldTotals).map(([customFieldId, total]) => {
+   638→            const sign = fieldSignMap[customFieldId]
+   639→            const adjustedTotal = sign === '-' ? -total : total
+   640→            return db.customDREValue.upsert({
+   641→              where: { customFieldId_dREEntryId: { customFieldId, dREEntryId } },
+   642→              create: { customFieldId, dREEntryId, value: adjustedTotal },
+   643→              update: { value: adjustedTotal },
+   644→            })
+   645→          })
+   646→        )
+   647→      }
+   648→
+   649→      // Track the entry ID for the currently selected month
+   650→      if (m === month && y === year) {
+   651→        currentMonthDreEntryId = dreEntryId
+   652→      }
+   653→    }
+   654→
+   655→    // RF-07: Fetch the updated DRE entry to return for reactive sync
+   656→    let updatedDREData: Record<string, any> | null = null
+   657→    if (currentMonthDreEntryId) {
+   658→      const updatedEntry = await db.dREEntry.findUnique({ where: { id: currentMonthDreEntryId } })
+   659→      if (updatedEntry) {
+   660→        const { id, companyId: _cid, month: _m, year: _y, createdAt, updatedAt, company, ...fields } = updatedEntry as any
+   661→        updatedDREData = fields
+   662→
+   663→        // Also fetch custom field values
+   664→        const customValues = await db.customDREValue.findMany({
+   665→          where: { dREEntryId: currentMonthDreEntryId },
+   666→          include: { customField: true },
+   667→        })
+   668→        if (customValues.length > 0) {
+   669→          updatedDREData._customFieldValues = {}
+   670→          for (const cv of customValues) {
+   671→            const sign = (cv.customField as any).sign || '+'
+   672→            updatedDREData._customFieldValues[cv.customFieldId] = sign === '-' ? -cv.value : cv.value
+   673→          }
+   674→        }
+   675→      }
+   676→    }
+   677→
+   678→    return NextResponse.json({
+   679→      success: true,
+   680→      fieldTotals: currentMonthFieldTotals,
+   681→      dreEntryId: currentMonthDreEntryId,
+   682→      updatedDREData, // RF-07: reactive sync payload
+   683→    })
+   684→  } catch (error) {
+   685→    console.error('Error updating qualification:', error)
+   686→    return NextResponse.json({ error: 'Erro ao atualizar qualificação' }, { status: 500 })
+   687→  }
+   688→}
+   689→
+   690→// ─── DELETE: Remove uploaded files ───
+   691→
+   692→export async function DELETE(req: NextRequest) {
+   693→  try {
+   694→    const session = await getServerSession(authOptions)
+   695→    if (!session?.user?.id) {
+   696→      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+   697→    }
+   698→
+   699→    const userId = (session.user as any).id
+   700→    const { searchParams } = new URL(req.url)
+   701→    const fileIdsParam = searchParams.get('fileIds')
+   702→
+   703→    if (!fileIdsParam) {
+   704→      return NextResponse.json({ error: 'fileIds obrigatório' }, { status: 400 })
+   705→    }
+   706→
+   707→    const ids = fileIdsParam.split(',').filter(Boolean)
+   708→    if (ids.length === 0) {
+   709→      return NextResponse.json({ error: 'Nenhum ID válido' }, { status: 400 })
+   710→    }
+   711→
+   712→    const files = await db.uploadedFile.findMany({ where: { id: { in: ids } } })
+   713→    const uniqueCompanyIds = [...new Set(files.map(f => f.companyId))]
+   714→    const accessChecks = await Promise.all(
+   715→      uniqueCompanyIds.map(cid => verifyAccess(userId, cid))
+   716→    )
+   717→    const accessMap = new Map(uniqueCompanyIds.map((cid, i) => [cid, accessChecks[i]]))
+   718→
+   719→    for (const file of files) {
+   720→      if (!accessMap.get(file.companyId)) {
+   721→        return NextResponse.json({ error: 'Sem permissão para excluir arquivo' }, { status: 403 })
+   722→      }
+   723→    }
+   724→
+   725→    const deleteResult = await db.expenseQualification.deleteMany({
+   726→      where: { uploadedFileId: { in: ids } },
+   727→    })
+   728→
+   729→    const fileDeleteResult = await db.uploadedFile.deleteMany({
+   730→      where: { id: { in: ids } },
+   731→    })
+   732→
+   733→    return NextResponse.json({ success: true, deletedFiles: fileDeleteResult.count, deletedItems: deleteResult.count })
+   734→  } catch (error) {
+   735→    console.error('Error deleting uploaded files:', error)
+   736→    return NextResponse.json({ error: 'Erro ao excluir arquivos' }, { status: 500 })
+   737→  }
+   738→}
+   739→
+   740→// ─── GET: Fetch expense qualifications ───
+   741→
+   742→export async function GET(req: NextRequest) {
+   743→  try {
+   744→    const session = await getServerSession(authOptions)
+   745→    if (!session?.user?.id) {
+   746→      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+   747→    }
+   748→
+   749→    const userId = (session.user as any).id
+   750→    const { searchParams } = new URL(req.url)
+   751→    const companyId = searchParams.get('companyId')
+   752→    const month = searchParams.get('month')
+   753→    const year = searchParams.get('year')
+   754→
+   755→    if (!companyId || !month || !year) {
+   756→      return NextResponse.json({ error: 'Parâmetros incompletos' }, { status: 400 })
+   757→    }
+   758→
+   759→    const hasAccess = await verifyAccess(userId, companyId)
+   760→    if (!hasAccess) {
+   761→      return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })
+   762→    }
+   763→
+   764→    const qualifications = await db.expenseQualification.findMany({
+   765→      where: { companyId, month: parseInt(month), year: parseInt(year) },
+   766→      orderBy: { createdAt: 'asc' },
+   767→    })
+   768→
+   769→    const uploadedFiles = await db.uploadedFile.findMany({
+   770→      where: { companyId, month: parseInt(month), year: parseInt(year) },
+   771→      orderBy: { uploadedAt: 'desc' },
+   772→    })
+   773→
+   774→    return NextResponse.json({
+   775→      items: qualifications.map(q => ({
+   776→        id: q.id, description: q.description, date: q.date,
+   777→        totalValue: q.totalValue, dreField: q.dreField,
+   778→        uploadedFileId: q.uploadedFileId,
+   779→      })),
+   780→      uploadedFiles: uploadedFiles.map(f => ({
+   781→        id: f.id, fileName: f.fileName, uploadedAt: f.uploadedAt,
+   782→      })),
+   783→    })
+   784→  } catch (error) {
+   785→    return NextResponse.json({ error: 'Erro ao buscar qualificações' }, { status: 500 })
+   786→  }
+   787→}
+   788→

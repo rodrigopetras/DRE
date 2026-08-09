@@ -1,0 +1,402 @@
+     1→  1201→                      <Users className="h-4 w-4 mr-1.5" />
+     2→  1202→                      <span className="hidden sm:inline">Compartilhar</span>
+     3→  1203→                    </Button>
+     4→  1204→                  </TooltipTrigger>
+     5→  1205→                  <TooltipContent>Compartilhar empresa</TooltipContent>
+     6→  1206→                </Tooltip>
+     7→  1207→              )}
+     8→  1208→              {/* Bell icon - owners only, for suggested changes */}
+     9→  1209→              {isOwner && selectedCompanyId && (
+    10→  1210→                <Tooltip>
+    11→  1211→                  <TooltipTrigger asChild>
+    12→  1212→                    <Button variant="outline" size="icon" className="relative h-9 w-9" onClick={() => { if (selectedCompanyId) loadSuggestedChanges(selectedCompanyId); setChangesDialogOpen(true) }}>
+    13→  1213→                      <Bell className="h-4 w-4" />
+    14→  1214→                      {pendingChangesCount > 0 && (
+    15→  1215→                        <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-[10px] font-bold text-white flex items-center justify-center">
+    16→  1216→                          {pendingChangesCount > 9 ? '9+' : pendingChangesCount}
+    17→  1217→                        </span>
+    18→  1218→                      )}
+    19→  1219→                    </Button>
+    20→  1220→                  </TooltipTrigger>
+    21→  1221→                  <TooltipContent>Sugestões pendentes</TooltipContent>
+    22→  1222→                </Tooltip>
+    23→  1223→              )}
+    24→  1224→              <Button variant="outline" size="sm" onClick={handleExportExcel} disabled={!selectedCompanyId}>
+    25→  1225→                <FileSpreadsheet className="h-4 w-4 mr-1.5" />
+    26→  1226→                <span className="hidden sm:inline">Excel</span>
+    27→  1227→              </Button>
+    28→  1228→              <Button variant="outline" size="sm" onClick={handlePrintPDF} disabled={!selectedCompanyId}>
+    29→  1229→                <Printer className="h-4 w-4 mr-1.5" />
+    30→  1230→                <span className="hidden sm:inline">PDF</span>
+    31→  1231→              </Button>
+    32→  1232→              {/* User Dropdown */}
+    33→  1233→              <DropdownMenu open={userMenuOpen} onOpenChange={setUserMenuOpen}>
+    34→  1234→                <DropdownMenuTrigger asChild>
+    35→  1235→                  <Button variant="ghost" className="relative h-9 w-9 rounded-full ml-1">
+    36→  1236→                    <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-sm font-semibold text-primary">
+    37→  1237→                      {userInitial}
+    38→  1238→                    </div>
+    39→  1239→                  </Button>
+    40→  1240→                </DropdownMenuTrigger>
+    41→  1241→                <DropdownMenuContent className="w-72" align="end" forceMount>
+    42→  1242→                  <DropdownMenuLabel className="font-normal">
+    43→  1243→                    <div className="flex flex-col space-y-1">
+    44→  1244→                      <div className="flex items-center gap-2.5">
+    45→  1245→                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-semibold text-primary flex-shrink-0">
+    46→  1246→                          {userInitial}
+    47→  1247→                        </div>
+    48→  1248→                        <div className="min-w-0">
+    49→  1249→                          <p className="text-sm font-medium leading-none truncate">{userName || 'Usuário'}</p>
+    50→  1250→                          <p className="text-xs text-muted-foreground leading-none mt-1 truncate">{userEmail}</p>
+    51→  1251→                        </div>
+    52→  1252→                      </div>
+    53→  1253→                    </div>
+    54→  1254→                  </DropdownMenuLabel>
+    55→  1255→                  <DropdownMenuSeparator />
+    56→  1256→                  {/* Minhas Empresas section */}
+    57→  1257→                  <DropdownMenuLabel className="text-xs text-muted-foreground flex items-center gap-1.5">
+    58→  1258→                    <Building2 className="h-3 w-3" /> Minhas Empresas
+    59→  1259→                  </DropdownMenuLabel>
+    60→  1260→                  {companies.filter(c => c.userId === userId).map(c => (
+    61→  1261→                    <DropdownMenuItem key={c.id} className="flex items-center gap-2 cursor-pointer" onClick={() => { setSelectedCompany(c.id); setUserMenuOpen(false) }}>
+    62→  1262→                      <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
+    63→  1263→                      <span className="truncate text-sm">{c.name}</span>
+    64→  1264→                      <Badge variant="outline" className="ml-auto text-[9px] h-4 px-1.5">Proprietário</Badge>
+    65→  1265→                    </DropdownMenuItem>
+    66→  1266→                  ))}
+    67→  1267→                  {companies.filter(c => c.userId !== userId).map(c => (
+    68→  1268→                    <DropdownMenuItem key={c.id} className="flex items-center gap-2 cursor-pointer" onClick={() => { setSelectedCompany(c.id); setUserMenuOpen(false) }}>
+    69→  1269→                      <Eye className="h-3.5 w-3.5 text-blue-500" />
+    70→  1270→                      <span className="truncate text-sm">{c.name}</span>
+    71→  1271→                      <Badge variant="outline" className="ml-auto text-[9px] h-4 px-1.5">Convidado</Badge>
+    72→  1272→                    </DropdownMenuItem>
+    73→  1273→                  ))}
+    74→  1274→                  {/* Pending Invitations */}
+    75→  1275→                  {pendingInvitations.length > 0 && (
+    76→  1276→                    <>
+    77→  1277→                      <DropdownMenuSeparator />
+    78→  1278→                      <DropdownMenuItem className="flex items-center gap-2 cursor-pointer font-medium text-amber-600" onClick={() => { setInvitationsDialogOpen(true); setUserMenuOpen(false) }}>
+    79→  1279→                        <UserPlus className="h-3.5 w-3.5" />
+    80→  1280→                        Convites
+    81→  1281→                        <Badge className="ml-auto bg-amber-500 text-white text-[10px] h-5 min-w-[20px] flex items-center justify-center px-1.5">{pendingInvitations.length}</Badge>
+    82→  1282→                      </DropdownMenuItem>
+    83→  1283→                    </>
+    84→  1284→                  )}
+    85→  1285→                  <DropdownMenuSeparator />
+    86→  1286→                  <DropdownMenuItem className="flex items-center gap-2 cursor-pointer text-destructive focus:text-destructive" onClick={() => signOut()}>
+    87→  1287→                    <LogOut className="h-4 w-4" />
+    88→  1288→                    Sair
+    89→  1289→                  </DropdownMenuItem>
+    90→  1290→                </DropdownMenuContent>
+    91→  1291→              </DropdownMenu>
+    92→  1292→            </div>
+    93→  1293→          </div>
+    94→  1294→        </div>
+    95→  1295→      </header>
+    96→  1296→
+    97→  1297→      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 print:p-4">
+    98→  1298→        {/* Company Selector + Period */}
+    99→  1299→        <div className="flex flex-col sm:flex-row gap-4 mb-6 print:hidden">
+   100→  1300→          <div className="flex-1">
+   101→  1301→            <div className="flex-1 flex items-center gap-2">
+   102→  1302→              <Select value={selectedCompanyId || ''} onValueChange={(v) => {
+   103→  1303→                setSelectedCompany(v)
+   104→  1304→                resetDREData()
+   105→  1305→                setExpenseItems([])
+   106→  1306→                setUploadedFiles([])
+   107→  1307→                setProjectionResult(null)
+   108→  1308→                setSuggestedFields(new Set())
+   109→  1309→                setCustomFieldValues({})
+   110→  1310→                setDreEntryId(null)
+   111→  1311→              }}>
+   112→  1312→                <SelectTrigger className="w-full">
+   113→  1313→                  <Building2 className="h-4 w-4 mr-2 text-muted-foreground" />
+   114→  1314→                  <SelectValue placeholder="Selecione uma empresa" />
+   115→  1315→                </SelectTrigger>
+   116→  1316→                <SelectContent>
+   117→  1317→                  {companies.map(c => (
+   118→  1318→                    <SelectItem key={c.id} value={c.id}>
+   119→  1319→                      <span className="flex items-center gap-2">
+   120→  1320→                        {c.userId === userId
+   121→  1321→                          ? <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
+   122→  1322→                          : <Eye className="h-3.5 w-3.5 text-blue-500" />}
+   123→  1323→                        {c.cnpj ? `${c.name} - ${c.cnpj}` : c.name}
+   124→  1324→                      </span>
+   125→  1325→                    </SelectItem>
+   126→  1326→                  ))}
+   127→  1327→                </SelectContent>
+   128→  1328→              </Select>
+   129→  1329→              {/* Delete button - owners only, outside the select */}
+   130→  1330→              {selectedCompanyId && isOwner && (
+   131→  1331→                <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-destructive flex-shrink-0"
+   132→  1332→                  title="Excluir empresa"
+   133→  1333→                  onClick={() => {
+   134→  1334→                    const c = companies.find(x => x.id === selectedCompanyId)
+   135→  1335→                    if (c) {
+   136→  1336→                      setDeletingCompanyId(c.id)
+   137→  1337→                      setDeletingCompanyName(c.name)
+   138→  1338→                      setDeleteDialogOpen(true)
+   139→  1339→                    }
+   140→  1340→                  }}>
+   141→  1341→                  <Trash2 className="h-4 w-4" />
+   142→  1342→                </Button>
+   143→  1343→              )}
+   144→  1344→            </div>
+   145→  1345→            {/* Add company - owners only */}
+   146→  1346→            {isOwner && Object.values(companyAccess).filter(a => a === 'owner').length < 5 && (
+   147→  1347→              <Button variant="ghost" size="sm" className="mt-1 h-7 text-xs" onClick={() => setCompanyDialogOpen(true)}>
+   148→  1348→                <Plus className="h-3 w-3 mr-1" /> Adicionar empresa ({Object.values(companyAccess).filter(a => a === 'owner').length}/5)
+   149→  1349→              </Button>
+   150→  1350→            )}
+   151→  1351→          </div>
+   152→  1352→          <div className="flex items-center gap-2">
+   153→  1353→            <Button variant="outline" size="icon" onClick={prevMonth} className="h-9 w-9">
+   154→  1354→              <ChevronLeft className="h-4 w-4" />
+   155→  1355→            </Button>
+   156→  1356→            <div className="flex items-center gap-2 min-w-[200px]">
+   157→  1357→              <Select value={String(selectedMonth)} onValueChange={(v) => setSelectedMonth(parseInt(v))}>
+   158→  1358→                <SelectTrigger className="h-9 w-[140px]">
+   159→  1359→                  <SelectValue />
+   160→  1360→                </SelectTrigger>
+   161→  1361→                <SelectContent>
+   162→  1362→                  {MONTHS.map((m, i) => (
+   163→  1363→                    <SelectItem key={i} value={String(i + 1)}>{m}</SelectItem>
+   164→  1364→                  ))}
+   165→  1365→                </SelectContent>
+   166→  1366→              </Select>
+   167→  1367→              <Select value={String(selectedYear)} onValueChange={(v) => setSelectedYear(parseInt(v))}>
+   168→  1368→                <SelectTrigger className="h-9 w-[90px]">
+   169→  1369→                  <SelectValue />
+   170→  1370→                </SelectTrigger>
+   171→  1371→                <SelectContent>
+   172→  1372→                  {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - 2 + i).map(y => (
+   173→  1373→                    <SelectItem key={y} value={String(y)}>{y}</SelectItem>
+   174→  1374→                  ))}
+   175→  1375→                </SelectContent>
+   176→  1376→              </Select>
+   177→  1377→            </div>
+   178→  1378→            <Button variant="outline" size="icon" onClick={nextMonth} className="h-9 w-9">
+   179→  1379→              <ChevronRight className="h-4 w-4" />
+   180→  1380→            </Button>
+   181→  1381→          </div>
+   182→  1382→        </div>
+   183→  1383→
+   184→  1384→        {!selectedCompanyId ? (
+   185→  1385→          <Card className="max-w-md mx-auto mt-20">
+   186→  1386→            <CardContent className="flex flex-col items-center py-12 text-center">
+   187→  1387→              <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
+   188→  1388→                <Building2 className="h-8 w-8 text-muted-foreground" />
+   189→  1389→              </div>
+   190→  1390→              <h3 className="font-semibold text-lg mb-2">Bem-vindo ao DRE Online</h3>
+   191→  1391→              <p className="text-sm text-muted-foreground mb-6">
+   192→  1392→                Selecione uma empresa existente ou crie uma nova para começar o planejamento orçamentário.
+   193→  1393→              </p>
+   194→  1394→              <Button onClick={() => setCompanyDialogOpen(true)}>
+   195→  1395→                <Plus className="h-4 w-4 mr-2" /> Criar Primeira Empresa
+   196→  1396→              </Button>
+   197→  1397→            </CardContent>
+   198→  1398→          </Card>
+   199→  1399→        ) : (
+   200→  1400→          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+   201→  1401→            <TabsList className="w-full flex print:hidden">
+   202→  1402→              <TabsTrigger value="dre" className="flex-1"><DollarSign className="h-4 w-4 mr-2" />DRE Mensal</TabsTrigger>
+   203→  1403→              <TabsTrigger value="expenses" className="flex-1"><FileUp className="h-4 w-4 mr-2" />Qualificação</TabsTrigger>
+   204→  1404→              <TabsTrigger value="projection" className="flex-1"><TrendingUp className="h-4 w-4 mr-2" />Projeção</TabsTrigger>
+   205→  1405→              <TabsTrigger value="charts" className="flex-1"><PieChart className="h-4 w-4 mr-2" />Gráficos</TabsTrigger>
+   206→  1406→            </TabsList>
+   207→  1407→
+   208→  1408→            {/* ─── DRE Tab ─── */}
+   209→  1409→            <TabsContent value="dre" className="space-y-4">
+   210→  1410→              {/* Viewer banner */}
+   211→  1411→              {isViewer && (
+   212→  1412→                <div className="flex items-center gap-2 p-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-sm">
+   213→  1413→                  <Info className="h-4 w-4 flex-shrink-0" />
+   214→  1414→                  <span>Você está visualizando esta empresa como convidado. Alterações serão enviadas como sugestões ao proprietário.</span>
+   215→  1415→                </div>
+   216→  1416→              )}
+   217→  1417→              {loading ? (
+   218→  1418→                <Card><CardContent className="py-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" /></CardContent></Card>
+   219→  1419→              ) : (
+   220→  1420→                <>
+   221→  1421→                  {/* Receita */}
+   222→  1422→                  <Card>
+   223→  1423→                    <CardHeader className="pb-3">
+   224→  1424→                      <CardTitle className="text-base">Receita</CardTitle>
+   225→  1425→                    </CardHeader>
+   226→  1426→                    <CardContent className="space-y-1">
+   227→  1427→                      <SectionHeader label="(=) Receita Bruta" value={dre.receitaBruta} pctValue={1} color="bg-muted/50" />
+   228→  1428→                      <div className="ml-4 space-y-0.5">
+   229→  1429→                        <NumInput label="(+) Prestação de NF" value={dreData.prestacaoNf} onChange={(v) => setDREData({ prestacaoNf: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('prestacaoNf')} dreField="prestacaoNf" />
+   230→  1430→                        <NumInput label="(+) Honorários Sucumbenciais" value={dreData.honorariosSucumbenciais} onChange={(v) => setDREData({ honorariosSucumbenciais: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('honorariosSucumbenciais')} dreField="honorariosSucumbenciais" />
+   231→  1431→                        <NumInput label="(+) Honorários" value={dreData.honorarios} onChange={(v) => setDREData({ honorarios: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('honorarios')} dreField="honorarios" />
+   232→  1432→                        <NumInput label="(+) Reembolso de Despesas" value={dreData.reembolsoDespesas} onChange={(v) => setDREData({ reembolsoDespesas: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('reembolsoDespesas')} dreField="reembolsoDespesas" />
+   233→  1433→                        <NumInput label="(+) Não Identificado (Quaisquer valores não identificados)" value={dreData.naoIdentificado} onChange={(v) => setDREData({ naoIdentificado: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('naoIdentificado')} dreField="naoIdentificado" />
+   234→  1434→                        {/* Custom receita fields */}
+   235→  1435→                        {customFieldsReceita.map(cf => (
+   236→  1436→                          <div key={cf.id} className="flex items-center justify-between py-1.5 group">
+   237→  1437→                            <label className="text-sm text-muted-foreground flex items-center gap-2">
+   238→  1438→                              ({cf.sign}) {cf.name}
+   239→  1439→                            </label>
+   240→  1440→                            <div className="flex items-center gap-1 w-44 justify-end">
+   241→  1441→                              <Input
+   242→  1442→                                type="text"
+   243→  1443→                                inputMode="decimal"
+   244→  1444→                                className="h-8 text-right text-sm font-mono"
+   245→  1445→                                value={(customFieldValues[cf.id] || 0) === 0 ? '' : brl(customFieldValues[cf.id] || 0)}
+   246→  1446→                                onFocus={(e) => { e.target.value = (customFieldValues[cf.id] || 0) === 0 ? '' : (customFieldValues[cf.id] || 0).toFixed(2).replace('.', ',') }}
+   247→  1447→                                onBlur={(e) => {
+   248→  1448→                                  const parsed = parseFloat((e.target.value || '0').replace(/\./g, '').replace(',', '.')) || 0
+   249→  1449→                                  handleCustomFieldValueChange(cf.id, parsed)
+   250→  1450→                                  if (dreEntryId) saveCustomFieldValues(dreEntryId, { ...customFieldValues, [cf.id]: parsed })
+   251→  1451→                                }}
+   252→  1452→                                onChange={(e) => {
+   253→  1453→                                  const parsed = parseFloat((e.target.value || '0').replace(/\./g, '').replace(',', '.')) || 0
+   254→  1454→                                  if (!isNaN(parsed)) handleCustomFieldValueChange(cf.id, parsed)
+   255→  1455→                                }}
+   256→  1456→                                placeholder="0,00"
+   257→  1457→                                disabled={isViewer}
+   258→  1458→                              />
+   259→  1459→                              {isOwner && (
+   260→  1460→                                <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+   261→  1461→                                  onClick={() => handleDeleteCustomField(cf.id)}>
+   262→  1462→                                  <X className="h-3.5 w-3.5" />
+   263→  1463→                                </Button>
+   264→  1464→                              )}
+   265→  1465→                            </div>
+   266→  1466→                          </div>
+   267→  1467→                        ))}
+   268→  1468→                      </div>
+   269→  1469→                      <div className="ml-4">
+   270→  1470→                        <NumInput label="(-) Impostos + CPP" value={dreData.impostosCpp} onChange={(v) => setDREData({ impostosCpp: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('impostosCpp')} dreField="impostosCpp" />
+   271→  1471→                      </div>
+   272→  1472→                      <SectionHeader
+   273→  1473→                        label="(=) Receita Líquida"
+   274→  1474→                        value={dre.receitaLiquida}
+   275→  1475→                        pctValue={safeDiv(dre.receitaLiquida, dre.receitaBruta)}
+   276→  1476→                        color={dre.receitaLiquida >= 0 ? 'bg-emerald-50' : 'bg-red-50'}
+   277→  1477→                      />
+   278→  1478→                      {/* Add custom field button (owners only) */}
+   279→  1479→                      {isOwner && (
+   280→  1480→                        <div className="mt-2 ml-4">
+   281→  1481→                          {addingCustomField === 'receita' ? (
+   282→  1482→                            <div className="flex items-center gap-2 p-2 rounded-lg border bg-muted/30">
+   283→  1483→                              <Input
+   284→  1484→                                placeholder="Nome do campo"
+   285→  1485→                                className="h-7 text-xs flex-1"
+   286→  1486→                                value={newCustomFieldName}
+   287→  1487→                                onChange={(e) => setNewCustomFieldName(e.target.value)}
+   288→  1488→                                onKeyDown={(e) => e.key === 'Enter' && handleAddCustomField('receita')}
+   289→  1489→                              />
+   290→  1490→                              <Button
+   291→  1491→                                size="sm"
+   292→  1492→                                variant="outline"
+   293→  1493→                                className="h-7 px-2 text-xs min-w-[28px]"
+   294→  1494→                                onClick={() => setNewCustomFieldSign(s => s === '+' ? '-' : '+')}
+   295→  1495→                              >
+   296→  1496→                                {newCustomFieldSign}
+   297→  1497→                              </Button>
+   298→  1498→                              <Button size="sm" className="h-7 px-2 text-xs" onClick={() => handleAddCustomField('receita')} disabled={!newCustomFieldName.trim() || addingCustomLoading}>
+   299→  1499→                                {addingCustomLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <CheckCircle2 className="h-3 w-3" />}
+   300→  1500→                              </Button>
+   301→  1501→                              <Button size="sm" variant="ghost" className="h-7 px-2 text-xs" onClick={() => { setAddingCustomField(null); setNewCustomFieldName(''); setNewCustomFieldSign('+') }}>
+   302→  1502→                                <X className="h-3 w-3" />
+   303→  1503→                              </Button>
+   304→  1504→                            </div>
+   305→  1505→                          ) : (
+   306→  1506→                            <Button variant="ghost" size="sm" className="h-7 text-xs text-muted-foreground" onClick={() => setAddingCustomField('receita')}>
+   307→  1507→                              <Plus className="h-3 w-3 mr-1" /> Adicionar campo
+   308→  1508→                            </Button>
+   309→  1509→                          )}
+   310→  1510→                        </div>
+   311→  1511→                      )}
+   312→  1512→                    </CardContent>
+   313→  1513→                  </Card>
+   314→  1514→
+   315→  1515→                  {/* Despesas Variáveis */}
+   316→  1516→                  <Card>
+   317→  1517→                    <CardHeader className="pb-3">
+   318→  1518→                      <CardTitle className="text-base">Despesas Variáveis</CardTitle>
+   319→  1519→                    </CardHeader>
+   320→  1520→                    <CardContent className="space-y-1">
+   321→  1521→                      <SectionHeader label="(=) Total Despesas Variáveis" value={dre.despesasVariaveis} pctValue={safeDiv(dre.despesasVariaveis, dre.receitaBruta)} color="bg-muted/50" />
+   322→  1522→                      <div className="ml-4 space-y-0.5">
+   323→  1523→                        <NumInput label="Combustível" value={dreData.combustivel} onChange={(v) => setDREData({ combustivel: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('combustivel')} dreField="combustivel" />
+   324→  1524→                        <NumInput label="Insumos" value={dreData.insumos} onChange={(v) => setDREData({ insumos: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('insumos')} dreField="insumos" />
+   325→  1525→                        <NumInput label="Material de Escritório" value={dreData.materialEscritorio} onChange={(v) => setDREData({ materialEscritorio: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('materialEscritorio')} dreField="materialEscritorio" />
+   326→  1526→                        <NumInput label="Serviços Contratados" value={dreData.servicosContratados} onChange={(v) => setDREData({ servicosContratados: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('servicosContratados')} dreField="servicosContratados" />
+   327→  1527→                        <NumInput label="Materiais de Uso e Consumo" value={dreData.materiaisUsoConsumo} onChange={(v) => setDREData({ materiaisUsoConsumo: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('materiaisUsoConsumo')} dreField="materiaisUsoConsumo" />
+   328→  1528→                        <NumInput label="Taxas" value={dreData.taxas} onChange={(v) => setDREData({ taxas: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('taxas')} dreField="taxas" />
+   329→  1529→                        <NumInput label="Tarifas" value={dreData.tarifas} onChange={(v) => setDREData({ tarifas: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('tarifas')} dreField="tarifas" />
+   330→  1530→                        <NumInput label="Energia Elétrica" value={dreData.energiaEletrica} onChange={(v) => setDREData({ energiaEletrica: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('energiaEletrica')} dreField="energiaEletrica" />
+   331→  1531→                        <NumInput label="Água" value={dreData.agua} onChange={(v) => setDREData({ agua: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('agua')} dreField="agua" />
+   332→  1532→                        {/* Custom desp_variaveis fields */}
+   333→  1533→                        {customFieldsDespVar.map(cf => (
+   334→  1534→                          <div key={cf.id} className="flex items-center justify-between py-1.5 group">
+   335→  1535→                            <label className="text-sm text-muted-foreground flex items-center gap-2">
+   336→  1536→                              ({cf.sign}) {cf.name}
+   337→  1537→                            </label>
+   338→  1538→                            <div className="flex items-center gap-1 w-44 justify-end">
+   339→  1539→                              <Input
+   340→  1540→                                type="text"
+   341→  1541→                                inputMode="decimal"
+   342→  1542→                                className="h-8 text-right text-sm font-mono"
+   343→  1543→                                value={(customFieldValues[cf.id] || 0) === 0 ? '' : brl(customFieldValues[cf.id] || 0)}
+   344→  1544→                                onFocus={(e) => { e.target.value = (customFieldValues[cf.id] || 0) === 0 ? '' : (customFieldValues[cf.id] || 0).toFixed(2).replace('.', ',') }}
+   345→  1545→                                onBlur={(e) => {
+   346→  1546→                                  const parsed = parseFloat((e.target.value || '0').replace(/\./g, '').replace(',', '.')) || 0
+   347→  1547→                                  handleCustomFieldValueChange(cf.id, parsed)
+   348→  1548→                                  if (dreEntryId) saveCustomFieldValues(dreEntryId, { ...customFieldValues, [cf.id]: parsed })
+   349→  1549→                                }}
+   350→  1550→                                onChange={(e) => {
+   351→  1551→                                  const parsed = parseFloat((e.target.value || '0').replace(/\./g, '').replace(',', '.')) || 0
+   352→  1552→                                  if (!isNaN(parsed)) handleCustomFieldValueChange(cf.id, parsed)
+   353→  1553→                                }}
+   354→  1554→                                placeholder="0,00"
+   355→  1555→                                disabled={isViewer}
+   356→  1556→                              />
+   357→  1557→                              {isOwner && (
+   358→  1558→                                <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+   359→  1559→                                  onClick={() => handleDeleteCustomField(cf.id)}>
+   360→  1560→                                  <X className="h-3.5 w-3.5" />
+   361→  1561→                                </Button>
+   362→  1562→                              )}
+   363→  1563→                            </div>
+   364→  1564→                          </div>
+   365→  1565→                        ))}
+   366→  1566→                      </div>
+   367→  1567→                      {/* Add custom field button (owners only) */}
+   368→  1568→                      {isOwner && (
+   369→  1569→                        <div className="mt-2 ml-4">
+   370→  1570→                          {addingCustomField === 'desp_variaveis' ? (
+   371→  1571→                            <div className="flex items-center gap-2 p-2 rounded-lg border bg-muted/30">
+   372→  1572→                              <Input
+   373→  1573→                                placeholder="Nome do campo"
+   374→  1574→                                className="h-7 text-xs flex-1"
+   375→  1575→                                value={newCustomFieldName}
+   376→  1576→                                onChange={(e) => setNewCustomFieldName(e.target.value)}
+   377→  1577→                                onKeyDown={(e) => e.key === 'Enter' && handleAddCustomField('desp_variaveis')}
+   378→  1578→                              />
+   379→  1579→                              <Button
+   380→  1580→                                size="sm"
+   381→  1581→                                variant="outline"
+   382→  1582→                                className="h-7 px-2 text-xs min-w-[28px]"
+   383→  1583→                                onClick={() => setNewCustomFieldSign(s => s === '+' ? '-' : '+')}
+   384→  1584→                              >
+   385→  1585→                                {newCustomFieldSign}
+   386→  1586→                              </Button>
+   387→  1587→                              <Button size="sm" className="h-7 px-2 text-xs" onClick={() => handleAddCustomField('desp_variaveis')} disabled={!newCustomFieldName.trim() || addingCustomLoading}>
+   388→  1588→                                {addingCustomLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <CheckCircle2 className="h-3 w-3" />}
+   389→  1589→                              </Button>
+   390→  1590→                              <Button size="sm" variant="ghost" className="h-7 px-2 text-xs" onClick={() => { setAddingCustomField(null); setNewCustomFieldName(''); setNewCustomFieldSign('+') }}>
+   391→  1591→                                <X className="h-3 w-3" />
+   392→  1592→                              </Button>
+   393→  1593→                            </div>
+   394→  1594→                          ) : (
+   395→  1595→                            <Button variant="ghost" size="sm" className="h-7 text-xs text-muted-foreground" onClick={() => setAddingCustomField('desp_variaveis')}>
+   396→  1596→                              <Plus className="h-3 w-3 mr-1" /> Adicionar campo
+   397→  1597→                            </Button>
+   398→  1598→                          )}
+   399→  1599→                        </div>
+   400→  1600→                      )}
+   401→
+   402→[showing lines 1201-1600 of 2459; use offset=1601 with limit to continue reading]

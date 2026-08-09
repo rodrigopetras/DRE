@@ -1,0 +1,787 @@
+   638→      toast.success('Empresa excluída')
+   639→    } catch {
+   640→      toast.error('Erro ao excluir empresa')
+   641→    }
+   642→    setDeleteDialogOpen(false)
+   643→    setDeleteSaveDialogOpen(false)
+   644→    setDeletingCompanyId(null)
+   645→  }
+   646→
+   647→  const handleSaveDRE = async () => {
+   648→    if (!selectedCompanyId || !isOwner) return
+   649→    setSaving(true)
+   650→    try {
+   651→      const res = await fetch('/api/dre', {
+   652→        method: 'POST',
+   653→        headers: { 'Content-Type': 'application/json' },
+   654→        body: JSON.stringify({ companyId: selectedCompanyId, month: selectedMonth, year: selectedYear, ...dreData }),
+   655→      })
+   656→      if (res.ok) {
+   657→        const savedData = await res.json()
+   658→        if (savedData?.id) {
+   659→          setDreEntryId(savedData.id)
+   660→          await saveCustomFieldValues(savedData.id, customFieldValues)
+   661→        }
+   662→        toast.success('DRE salvo com sucesso')
+   663→        setDRETrigger(t => t + 1)
+   664→      } else {
+   665→        toast.error('Erro ao salvar DRE')
+   666→      }
+   667→    } catch {
+   668→      toast.error('Erro ao salvar DRE')
+   669→    }
+   670→    setSaving(false)
+   671→  }
+   672→
+   673→  const handleUploadExpense = async (e: React.ChangeEvent<HTMLInputElement>) => {
+   674→    const file = e.target.files?.[0]
+   675→    if (!file || !selectedCompanyId) return
+   676→    setExpenseUploading(true)
+   677→    setUploadProgress(10)
+   678→    setUploadFileName(file.name)
+   679→    try {
+   680→      const formData = new FormData()
+   681→      formData.append('file', file)
+   682→      formData.append('companyId', selectedCompanyId)
+   683→      formData.append('month', String(selectedMonth))
+   684→      formData.append('year', String(selectedYear))
+   685→      setUploadProgress(30)
+   686→      const res = await fetch('/api/dre/expense-qualification', { method: 'POST', body: formData })
+   687→      setUploadProgress(70)
+   688→      if (res.ok) {
+   689→        const data = await res.json()
+   690→        setUploadProgress(90)
+   691→        const newItems = data.items.map((item: any) => ({ ...item, dreField: '' }))
+   692→        setExpenseItems([...expenseItems, ...newItems])
+   693→        if (data.file) {
+   694→          setUploadedFiles([...uploadedFiles, data.file])
+   695→        }
+   696→        setUploadProgress(100)
+   697→        toast.success(`Planilha importada: ${file.name} (${newItems.length} itens)`)
+   698→      } else {
+   699→        const err = await res.json()
+   700→        toast.error(err.error || 'Erro ao processar planilha')
+   701→        setUploadProgress(0)
+   702→        setUploadFileName('')
+   703→      }
+   704→    } catch {
+   705→      toast.error('Erro ao fazer upload')
+   706→      setUploadProgress(0)
+   707→      setUploadFileName('')
+   708→    }
+   709→    setTimeout(() => {
+   710→      setExpenseUploading(false)
+   711→      setUploadProgress(0)
+   712→    }, 600)
+   713→    if (fileInputRef.current) fileInputRef.current.value = ''
+   714→  }
+   715→
+   716→  const handleSaveExpenseClassification = async () => {
+   717→    if (!selectedCompanyId) return
+   718→    const unmapped = expenseItems.filter(i => !i.dreField)
+   719→    if (unmapped.length > 0) {
+   720→      toast.error(`${unmapped.length} item(ns) sem classificação. Classifique todos antes de aplicar.`)
+   721→      return
+   722→    }
+   723→    setApplying(true)
+   724→    try {
+   725→      const res = await fetch('/api/dre/expense-qualification', {
+   726→        method: 'PUT',
+   727→        headers: { 'Content-Type': 'application/json' },
+   728→        body: JSON.stringify({ companyId: selectedCompanyId, month: selectedMonth, year: selectedYear, items: expenseItems }),
+   729→      })
+   730→      if (res.ok) {
+   731→        setExpTrigger(t => t + 1)
+   732→        setDRETrigger(t => t + 1)
+   733→        toast.success('Valores aplicados ao DRE com sucesso')
+   734→      } else {
+   735→        const err = await res.json()
+   736→        toast.error(err.error || 'Erro ao aplicar valores')
+   737→      }
+   738→    } catch {
+   739→      toast.error('Erro ao salvar qualificação')
+   740→    }
+   741→    setApplying(false)
+   742→  }
+   743→
+   744→  const handleDeleteFiles = async (fileIds: string[]) => {
+   745→    if (!selectedCompanyId || fileIds.length === 0) return
+   746→    try {
+   747→      const res = await fetch(`/api/dre/expense-qualification?fileIds=${fileIds.join(',')}`, { method: 'DELETE' })
+   748→      if (res.ok) {
+   749→        setUploadedFiles(prev => prev.filter(f => !fileIds.includes(f.id)))
+   750→        setExpenseItems(prev => prev.filter(i => !i.uploadedFileId || !fileIds.includes(i.uploadedFileId)))
+   751→        toast.success(`${fileIds.length} arquivo(s) excluído(s)`)
+   752→      } else {
+   753→        toast.error('Erro ao excluir arquivos')
+   754→      }
+   755→    } catch {
+   756→      toast.error('Erro ao excluir arquivos')
+   757→    }
+   758→  }
+   759→
+   760→  const handleProjection = async () => {
+   761→    if (!selectedCompanyId) return
+   762→    setProjecting(true)
+   763→    try {
+   764→      const res = await fetch('/api/dre/projection', {
+   765→        method: 'POST',
+   766→        headers: { 'Content-Type': 'application/json' },
+   767→        body: JSON.stringify({ companyId: selectedCompanyId, period: projectionPeriod, currentMonth: selectedMonth, currentYear: selectedYear }),
+   768→      })
+   769→      if (res.ok) {
+   770→        const data = await res.json()
+   771→        setProjectionResult(data)
+   772→        setProjectionData(data.projections)
+   773→        toast.success('Projeção gerada com sucesso')
+   774→      } else {
+   775→        const err = await res.json()
+   776→        toast.error(err.error || 'Erro ao gerar projeção')
+   777→      }
+   778→    } catch {
+   779→      toast.error('Erro ao gerar projeção')
+   780→    }
+   781→    setProjecting(false)
+   782→  }
+   783→
+   784→  const handleProjectionFieldChange = (idx: number, field: string, value: number) => {
+   785→    if (!projectionResult) return
+   786→    const projIdx = idx - projectionResult.historical.length
+   787→    if (projIdx < 0) return
+   788→    const newProjections = [...projectionResult.projections]
+   789→    newProjections[projIdx] = { ...newProjections[projIdx], [field]: value }
+   790→    const p = newProjections[projIdx]
+   791→    const rb = (p.prestacaoNf || 0) + (p.honorariosSucumbenciais || 0) + (p.honorarios || 0) + (p.reembolsoDespesas || 0) + (p.naoIdentificado || 0)
+   792→    const rl = rb - (p.impostosCpp || 0)
+   793→    const dv = (p.combustivel||0)+(p.insumos||0)+(p.materialEscritorio||0)+(p.servicosContratados||0)+(p.materiaisUsoConsumo||0)+(p.taxas||0)+(p.tarifas||0)+(p.energiaEletrica||0)+(p.agua||0)
+   794→    const df = (p.aluguel||0)+(p.salarios||0)+(p.fgts||0)+(p.prolabore||0)+(p.bonus||0)+(p.inss||0)+(p.iptu||0)+(p.telefoneInternet||0)+(p.valeTransporte||0)+(p.planoSaude||0)
+   795→    newProjections[projIdx] = { ...newProjections[projIdx], receitaBruta: rb, receitaLiquida: rl, despesasVariaveis: dv, despesasFixas: df, resultadoLiquido: rl - dv - df }
+   796→    setProjectionResult({ ...projectionResult, projections: newProjections })
+   797→  }
+   798→
+   799→  const handleExportExcel = async () => {
+   800→    if (!selectedCompanyId) return
+   801→    try {
+   802→      const res = await fetch(`/api/dre/export?companyId=${selectedCompanyId}&type=excel`)
+   803→      if (res.ok) {
+   804→        const blob = await res.blob()
+   805→        const url = URL.createObjectURL(blob)
+   806→        const a = document.createElement('a')
+   807→        a.href = url
+   808→        a.download = 'DRE_Exportacao.xlsx'
+   809→        a.click()
+   810→        URL.revokeObjectURL(url)
+   811→        toast.success('Exportação realizada com sucesso')
+   812→      }
+   813→    } catch {
+   814→      toast.error('Erro ao exportar')
+   815→    }
+   816→  }
+   817→
+   818→  const handlePrintPDF = () => {
+   819→    window.print()
+   820→  }
+   821→
+   822→  const prevMonth = () => {
+   823→    if (selectedMonth === 1) { setSelectedMonth(12); setSelectedYear(selectedYear - 1) }
+   824→    else setSelectedMonth(selectedMonth - 1)
+   825→  }
+   826→  const nextMonth = () => {
+   827→    if (selectedMonth === 12) { setSelectedMonth(1); setSelectedYear(selectedYear + 1) }
+   828→    else setSelectedMonth(selectedMonth + 1)
+   829→  }
+   830→
+   831→  const userName = session?.user?.name || ''
+   832→  const userEmail = session?.user?.email || ''
+   833→  const userInitial = userName ? userName.charAt(0).toUpperCase() : userEmail.charAt(0).toUpperCase()
+   834→
+   835→  // ─── Render ───
+   836→  return (
+   837→    <TooltipProvider>
+   838→    <div className="min-h-screen flex flex-col bg-background">
+   839→      {/* Header */}
+   840→      <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 print:hidden">
+   841→        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+   842→          <div className="flex items-center justify-between h-16">
+   843→            <div className="flex items-center gap-3">
+   844→              <div className="flex items-center gap-2">
+   845→                <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
+   846→                  <BarChart3 className="h-4 w-4 text-primary-foreground" />
+   847→                </div>
+   848→                <h1 className="text-lg font-semibold tracking-tight">DRE Online</h1>
+   849→                <Badge variant="secondary" className="text-[10px] hidden sm:inline-flex">Planejamento Orçamentário</Badge>
+   850→              </div>
+   851→            </div>
+   852→            <div className="flex items-center gap-2">
+   853→              {isOwner && selectedCompanyId && (
+   854→                <Tooltip>
+   855→                  <TooltipTrigger asChild>
+   856→                    <Button variant="outline" size="sm" onClick={() => { loadShares(selectedCompanyId!, companyAccess); setShareDialogOpen(true) }}>
+   857→                      <Users className="h-4 w-4 mr-1.5" />
+   858→                      <span className="hidden sm:inline">Compartilhar</span>
+   859→                    </Button>
+   860→                  </TooltipTrigger>
+   861→                  <TooltipContent>Compartilhar empresa</TooltipContent>
+   862→                </Tooltip>
+   863→              )}
+   864→              {isOwner && selectedCompanyId && (
+   865→                <Tooltip>
+   866→                  <TooltipTrigger asChild>
+   867→                    <Button variant="outline" size="icon" className="relative h-9 w-9" onClick={() => { if (selectedCompanyId) loadSuggestedChanges(selectedCompanyId); setChangesDialogOpen(true) }}>
+   868→                      <Bell className="h-4 w-4" />
+   869→                      {pendingChangesCount > 0 && (
+   870→                        <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-[10px] font-bold text-white flex items-center justify-center">
+   871→                          {pendingChangesCount > 9 ? '9+' : pendingChangesCount}
+   872→                        </span>
+   873→                      )}
+   874→                    </Button>
+   875→                  </TooltipTrigger>
+   876→                  <TooltipContent>Sugestões pendentes</TooltipContent>
+   877→                </Tooltip>
+   878→              )}
+   879→              <Button variant="outline" size="sm" onClick={handleExportExcel} disabled={!selectedCompanyId}>
+   880→                <FileSpreadsheet className="h-4 w-4 mr-1.5" />
+   881→                <span className="hidden sm:inline">Excel</span>
+   882→              </Button>
+   883→              <Button variant="outline" size="sm" onClick={handlePrintPDF} disabled={!selectedCompanyId}>
+   884→                <Printer className="h-4 w-4 mr-1.5" />
+   885→                <span className="hidden sm:inline">PDF</span>
+   886→              </Button>
+   887→              {/* User Dropdown */}
+   888→              <DropdownMenu open={userMenuOpen} onOpenChange={setUserMenuOpen}>
+   889→                <DropdownMenuTrigger asChild>
+   890→                  <Button variant="ghost" className="relative h-9 w-9 rounded-full ml-1">
+   891→                    <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-sm font-semibold text-primary">
+   892→                      {userInitial}
+   893→                    </div>
+   894→                  </Button>
+   895→                </DropdownMenuTrigger>
+   896→                <DropdownMenuContent className="w-72" align="end" forceMount>
+   897→                  <DropdownMenuLabel className="font-normal">
+   898→                    <div className="flex flex-col space-y-1">
+   899→                      <div className="flex items-center gap-2.5">
+   900→                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-semibold text-primary flex-shrink-0">
+   901→                          {userInitial}
+   902→                        </div>
+   903→                        <div className="min-w-0">
+   904→                          <p className="text-sm font-medium leading-none truncate">{userName || 'Usuário'}</p>
+   905→                          <p className="text-xs text-muted-foreground leading-none mt-1 truncate">{userEmail}</p>
+   906→                        </div>
+   907→                      </div>
+   908→                    </div>
+   909→                  </DropdownMenuLabel>
+   910→                  <DropdownMenuSeparator />
+   911→                  <DropdownMenuLabel className="text-xs text-muted-foreground flex items-center gap-1.5">
+   912→                    <Building2 className="h-3 w-3" /> Minhas Empresas
+   913→                  </DropdownMenuLabel>
+   914→                  {companies.filter(c => c.userId === userId).map(c => (
+   915→                    <DropdownMenuItem key={c.id} className="flex items-center gap-2 cursor-pointer" onClick={() => { setSelectedCompany(c.id); setUserMenuOpen(false) }}>
+   916→                      <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
+   917→                      <span className="truncate text-sm">{c.name}</span>
+   918→                      <Badge variant="outline" className="ml-auto text-[9px] h-4 px-1.5">Proprietário</Badge>
+   919→                    </DropdownMenuItem>
+   920→                  ))}
+   921→                  {companies.filter(c => c.userId !== userId).map(c => (
+   922→                    <DropdownMenuItem key={c.id} className="flex items-center gap-2 cursor-pointer" onClick={() => { setSelectedCompany(c.id); setUserMenuOpen(false) }}>
+   923→                      <Eye className="h-3.5 w-3.5 text-blue-500" />
+   924→                      <span className="truncate text-sm">{c.name}</span>
+   925→                      <Badge variant="outline" className="ml-auto text-[9px] h-4 px-1.5">Convidado</Badge>
+   926→                    </DropdownMenuItem>
+   927→                  ))}
+   928→                  {pendingInvitations.length > 0 && (
+   929→                    <>
+   930→                      <DropdownMenuSeparator />
+   931→                      <DropdownMenuItem className="flex items-center gap-2 cursor-pointer font-medium text-amber-600" onClick={() => { setInvitationsDialogOpen(true); setUserMenuOpen(false) }}>
+   932→                        <UserPlus className="h-3.5 w-3.5" />
+   933→                        Convites
+   934→                        <Badge className="ml-auto bg-amber-500 text-white text-[10px] h-5 min-w-[20px] flex items-center justify-center px-1.5">{pendingInvitations.length}</Badge>
+   935→                      </DropdownMenuItem>
+   936→                    </>
+   937→                  )}
+   938→                  <DropdownMenuSeparator />
+   939→                  <DropdownMenuItem className="flex items-center gap-2 cursor-pointer text-destructive focus:text-destructive" onClick={() => { setUserMenuOpen(false); signOut({ redirect: true, callbackUrl: '/' }) }}>
+   940→                    <LogOut className="h-4 w-4" />
+   941→                    Sair
+   942→                  </DropdownMenuItem>
+   943→                </DropdownMenuContent>
+   944→              </DropdownMenu>
+   945→            </div>
+   946→          </div>
+   947→        </div>
+   948→      </header>
+   949→
+   950→      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 print:p-4">
+   951→        {/* Company Selector + Period */}
+   952→        <div className="flex flex-col sm:flex-row gap-3 mb-6 print:hidden items-start">
+   953→          <div className="flex-1 min-w-0">
+   954→            <div className="flex items-center gap-2">
+   955→              <Select value={selectedCompanyId || ''} onValueChange={(v) => {
+   956→                setSelectedCompany(v)
+   957→                resetDREData()
+   958→                setExpenseItems([])
+   959→                setUploadedFiles([])
+   960→                setProjectionResult(null)
+   961→                setSuggestedFields(new Set())
+   962→                setCustomFieldValues({})
+   963→                setDreEntryId(null)
+   964→              }}>
+   965→                <SelectTrigger className="h-9 w-full">
+   966→                  <Building2 className="h-4 w-4 mr-2 text-muted-foreground" />
+   967→                  <SelectValue placeholder="Selecione uma empresa" />
+   968→                </SelectTrigger>
+   969→                <SelectContent>
+   970→                  {companies.map(c => (
+   971→                    <SelectItem key={c.id} value={c.id}>
+   972→                      <span className="flex items-center gap-2">
+   973→                        {c.userId === userId
+   974→                          ? <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
+   975→                          : <Eye className="h-3.5 w-3.5 text-blue-500" />}
+   976→                        {c.cnpj ? `${c.name} - ${c.cnpj}` : c.name}
+   977→                      </span>
+   978→                    </SelectItem>
+   979→                  ))}
+   980→                </SelectContent>
+   981→              </Select>
+   982→              {selectedCompanyId && isOwner && (
+   983→                <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-destructive flex-shrink-0"
+   984→                  title="Excluir empresa"
+   985→                  onClick={() => {
+   986→                    const c = companies.find(x => x.id === selectedCompanyId)
+   987→                    if (c) {
+   988→                      setDeletingCompanyId(c.id)
+   989→                      setDeletingCompanyName(c.name)
+   990→                      setDeleteDialogOpen(true)
+   991→                    }
+   992→                  }}>
+   993→                  <Trash2 className="h-4 w-4" />
+   994→                </Button>
+   995→              )}
+   996→            </div>
+   997→            {isOwner && Object.values(companyAccess).filter(a => a === 'owner').length < 5 && (
+   998→              <Button variant="ghost" size="sm" className="h-9 text-xs flex-shrink-0" onClick={() => setCompanyDialogOpen(true)}>
+   999→                <Plus className="h-3 w-3 mr-1" /> Nova empresa ({Object.values(companyAccess).filter(a => a === 'owner').length}/5)
+  1000→              </Button>
+  1001→            )}
+  1002→          </div>
+  1003→          <div className="flex items-center gap-1.5 flex-shrink-0">
+  1004→            <Button variant="outline" size="icon" onClick={prevMonth} className="h-9 w-9">
+  1005→              <ChevronLeft className="h-4 w-4" />
+  1006→            </Button>
+  1007→            <Select value={String(selectedMonth)} onValueChange={(v) => setSelectedMonth(parseInt(v))}>
+  1008→              <SelectTrigger className="h-9 w-[130px]">
+  1009→                <SelectValue />
+  1010→              </SelectTrigger>
+  1011→              <SelectContent>
+  1012→                {MONTHS.map((m, i) => (
+  1013→                  <SelectItem key={i} value={String(i + 1)}>{m}</SelectItem>
+  1014→                ))}
+  1015→              </SelectContent>
+  1016→            </Select>
+  1017→            <Select value={String(selectedYear)} onValueChange={(v) => setSelectedYear(parseInt(v))}>
+  1018→              <SelectTrigger className="h-9 w-[85px]">
+  1019→                <SelectValue />
+  1020→              </SelectTrigger>
+  1021→              <SelectContent>
+  1022→                {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - 2 + i).map(y => (
+  1023→                  <SelectItem key={y} value={String(y)}>{y}</SelectItem>
+  1024→                ))}
+  1025→              </SelectContent>
+  1026→            </Select>
+  1027→            <Button variant="outline" size="icon" onClick={nextMonth} className="h-9 w-9">
+  1028→              <ChevronRight className="h-4 w-4" />
+  1029→            </Button>
+  1030→          </div>
+  1031→        </div>
+  1032→
+  1033→        {!selectedCompanyId ? (
+  1034→          <Card className="max-w-md mx-auto mt-20">
+  1035→            <CardContent className="flex flex-col items-center py-12 text-center">
+  1036→              <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
+  1037→                <Building2 className="h-8 w-8 text-muted-foreground" />
+  1038→              </div>
+  1039→              <h3 className="font-semibold text-lg mb-2">Bem-vindo ao DRE Online</h3>
+  1040→              <p className="text-sm text-muted-foreground mb-6">
+  1041→                Selecione uma empresa existente ou crie uma nova para começar o planejamento orçamentário.
+  1042→              </p>
+  1043→              <Button onClick={() => setCompanyDialogOpen(true)}>
+  1044→                <Plus className="h-4 w-4 mr-2" /> Criar Primeira Empresa
+  1045→              </Button>
+  1046→            </CardContent>
+  1047→          </Card>
+  1048→        ) : (
+  1049→          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+  1050→            <TabsList className="w-full flex print:hidden">
+  1051→              <TabsTrigger value="dre" className="flex-1"><DollarSign className="h-4 w-4 mr-2" />DRE Mensal</TabsTrigger>
+  1052→              <TabsTrigger value="expenses" className="flex-1"><FileUp className="h-4 w-4 mr-2" />Qualificação</TabsTrigger>
+  1053→              <TabsTrigger value="projection" className="flex-1"><TrendingUp className="h-4 w-4 mr-2" />Projeção</TabsTrigger>
+  1054→              <TabsTrigger value="charts" className="flex-1"><PieChart className="h-4 w-4 mr-2" />Gráficos</TabsTrigger>
+  1055→            </TabsList>
+  1056→
+  1057→            <TabsContent value="dre">
+  1058→              <DREMonthlyTab
+  1059→                dreData={dreData}
+  1060→                setDREData={setDREData}
+  1061→                customFields={customFields}
+  1062→                customFieldValues={customFieldValues}
+  1063→                setCustomFieldValues={setCustomFieldValues}
+  1064→                isViewer={isViewer}
+  1065→                isOwner={isOwner}
+  1066→                suggestedFields={suggestedFields}
+  1067→                dreEntryId={dreEntryId}
+  1068→                addingCustomField={addingCustomField}
+  1069→                setAddingCustomField={setAddingCustomField}
+  1070→                newCustomFieldName={newCustomFieldName}
+  1071→                setNewCustomFieldName={setNewCustomFieldName}
+  1072→                newCustomFieldSign={newCustomFieldSign}
+  1073→                setNewCustomFieldSign={setNewCustomFieldSign}
+  1074→                addingCustomLoading={addingCustomLoading}
+  1075→                handleAddCustomField={handleAddCustomField}
+  1076→                handleDeleteCustomField={handleDeleteCustomField}
+  1077→                handleCustomFieldValueChange={handleCustomFieldValueChange}
+  1078→                saveCustomFieldValues={saveCustomFieldValues}
+  1079→                handleSuggestChange={isViewer ? handleSuggestChange : undefined}
+  1080→                saving={saving}
+  1081→                handleSaveDRE={handleSaveDRE}
+  1082→                loading={loading}
+  1083→              />
+  1084→            </TabsContent>
+  1085→
+  1086→            <TabsContent value="expenses">
+  1087→              <QualificationTab
+  1088→                expenseItems={expenseItems}
+  1089→                setExpenseItems={setExpenseItems}
+  1090→                uploadedFiles={uploadedFiles}
+  1091→                setUploadedFiles={setUploadedFiles}
+  1092→                expenseUploading={expenseUploading}
+  1093→                uploadProgress={uploadProgress}
+  1094→                uploadFileName={uploadFileName}
+  1095→                selectedCompanyId={selectedCompanyId}
+  1096→                selectedMonth={selectedMonth}
+  1097→                selectedYear={selectedYear}
+  1098→                isOwner={isOwner}
+  1099→                fileInputRef={fileInputRef}
+  1100→                handleUploadExpense={handleUploadExpense}
+  1101→                handleSaveExpenseClassification={handleSaveExpenseClassification}
+  1102→                handleDeleteFiles={handleDeleteFiles}
+  1103→                applying={applying}
+  1104→                customFields={customFields}
+  1105→              />
+  1106→            </TabsContent>
+  1107→
+  1108→            <TabsContent value="projection">
+  1109→              <ProjectionTab
+  1110→                projectionResult={projectionResult}
+  1111→                projectionPeriod={projectionPeriod}
+  1112→                setProjectionPeriod={setProjectionPeriod}
+  1113→                projecting={projecting}
+  1114→                allHistory={allHistory}
+  1115→                expandedProjectionIdx={expandedProjectionIdx}
+  1116→                setExpandedProjectionIdx={setExpandedProjectionIdx}
+  1117→                handleProjection={handleProjection}
+  1118→                handleProjectionFieldChange={handleProjectionFieldChange}
+  1119→              />
+  1120→            </TabsContent>
+  1121→
+  1122→            <TabsContent value="charts">
+  1123→              <ChartsTab allHistory={allHistory} />
+  1124→            </TabsContent>
+  1125→          </Tabs>
+  1126→        )}
+  1127→      </main>
+  1128→
+  1129→      {/* Footer */}
+  1130→      <footer className="border-t mt-auto print:hidden">
+  1131→        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between text-xs text-muted-foreground">
+  1132→          <span>DRE Online — Planejamento Orçamentário para Escritórios de Advocacia</span>
+  1133→          <span>{new Date().getFullYear()}</span>
+  1134→        </div>
+  1135→      </footer>
+  1136→
+  1137→      {/* ─── Dialogs ─── */}
+  1138→
+  1139→      {/* Delete Confirmation Dialog - Step 1 */}
+  1140→      <Dialog open={deleteDialogOpen} onOpenChange={(open) => { if (!open) setDeleteDialogOpen(false) }}>
+  1141→        <DialogContent>
+  1142→          <DialogHeader>
+  1143→            <DialogTitle className="flex items-center gap-2">
+  1144→              <AlertCircle className="h-5 w-5 text-destructive" />
+  1145→              Confirmar Exclusão
+  1146→            </DialogTitle>
+  1147→            <DialogDescription>
+  1148→              Tem certeza que deseja excluir <strong>{deletingCompanyName}</strong>?
+  1149→              Esta ação não poderá ser desfeita e todos os dados serão perdidos.
+  1150→            </DialogDescription>
+  1151→          </DialogHeader>
+  1152→          <DialogFooter className="gap-2 sm:gap-0">
+  1153→            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>Cancelar</Button>
+  1154→            <Button variant="destructive" onClick={() => { setDeleteDialogOpen(false); setDeleteSaveDialogOpen(true) }}>
+  1155→              Sim, Excluir
+  1156→            </Button>
+  1157→          </DialogFooter>
+  1158→        </DialogContent>
+  1159→      </Dialog>
+  1160→
+  1161→      {/* Delete Confirmation Dialog - Step 2 */}
+  1162→      <Dialog open={deleteSaveDialogOpen} onOpenChange={(open) => { if (!open) setDeleteSaveDialogOpen(false) }}>
+  1163→        <DialogContent>
+  1164→          <DialogHeader>
+  1165→            <DialogTitle className="flex items-center gap-2">
+  1166→              <Download className="h-5 w-5 text-primary" />
+  1167→              Salvar Dados Antes de Excluir?
+  1168→            </DialogTitle>
+  1169→            <DialogDescription>
+  1170→              Deseja exportar todos os dados do DRE de <strong>{deletingCompanyName}</strong>
+  1171→              em uma planilha Excel (cada mês em uma aba separada) antes de excluir?
+  1172→            </DialogDescription>
+  1173→          </DialogHeader>
+  1174→          <DialogFooter className="gap-2 sm:gap-0">
+  1175→            <Button variant="outline" onClick={() => { if (deletingCompanyId) handleDeleteCompany(deletingCompanyId, false) }}>
+  1176→              Excluir sem Salvar
+  1177→            </Button>
+  1178→            <Button onClick={() => { if (deletingCompanyId) handleDeleteCompany(deletingCompanyId, true) }}>
+  1179→              <Download className="h-4 w-4 mr-1.5" /> Salvar e Excluir
+  1180→            </Button>
+  1181→          </DialogFooter>
+  1182→        </DialogContent>
+  1183→      </Dialog>
+  1184→
+  1185→      {/* Company Dialog */}
+  1186→      <Dialog open={companyDialogOpen} onOpenChange={(open) => {
+  1187→        if (!open) {
+  1188→          setNewCompanyName('')
+  1189→          setNewCompanyCnpj('')
+  1190→          setCnpjValid(null)
+  1191→          setCnpjMessage('')
+  1192→        }
+  1193→        setCompanyDialogOpen(open)
+  1194→      }}>
+  1195→        <DialogContent className="sm:max-w-md">
+  1196→          <DialogHeader>
+  1197→            <DialogTitle>Nova Empresa</DialogTitle>
+  1198→            <DialogDescription>Informe o CNPJ para buscar automaticamente os dados. Máximo de 5 empresas.</DialogDescription>
+  1199→          </DialogHeader>
+  1200→          <form onSubmit={handleCreateCompany} className="space-y-4 py-2">
+  1201→            <div>
+  1202→              <Label className="mb-1.5 block">CNPJ (opcional)</Label>
+  1203→              <div className="flex gap-2">
+  1204→                <div className="relative flex-1">
+  1205→                  <Input
+  1206→                    placeholder="00.000.000/0001-00"
+  1207→                    value={newCompanyCnpj}
+  1208→                    onChange={(e) => {
+  1209→                      const masked = formatCnpj(e.target.value)
+  1210→                      setNewCompanyCnpj(masked)
+  1211→                      setCnpjValid(null)
+  1212→                      setCnpjMessage('')
+  1213→                    }}
+  1214→                  />
+  1215→                  {cnpjValidating && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground" />}
+  1216→                  {!cnpjValidating && cnpjValid === true && <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-emerald-500" />}
+  1217→                  {!cnpjValidating && cnpjValid === false && <AlertCircle className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-red-500" />}
+  1218→                </div>
+  1219→                <Button
+  1220→                  type="button"
+  1221→                  variant="outline"
+  1222→                  className="shrink-0"
+  1223→                  disabled={newCompanyCnpj.replace(/\D/g, '').length !== 14 || cnpjValidating}
+  1224→                  onClick={() => validateCnpj(newCompanyCnpj)}
+  1225→                >
+  1226→                  {cnpjValidating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+  1227→                </Button>
+  1228→              </div>
+  1229→              {cnpjMessage && (
+  1230→                <p className={`text-xs mt-1.5 ${cnpjValid ? 'text-emerald-600' : 'text-red-500'}`}>
+  1231→                  {cnpjMessage}
+  1232→                </p>
+  1233→              )}
+  1234→            </div>
+  1235→            <div>
+  1236→              <Label className="mb-1.5 block">Nome da Empresa *</Label>
+  1237→              <Input
+  1238→                placeholder="Ex: Advocacia Silva & Associados"
+  1239→                value={newCompanyName}
+  1240→                onChange={(e) => setNewCompanyName(e.target.value)}
+  1241→              />
+  1242→            </div>
+  1243→            <div className="flex justify-end gap-2 pt-2">
+  1244→              <Button type="button" variant="outline" onClick={() => setCompanyDialogOpen(false)}>Cancelar</Button>
+  1245→              <Button type="submit" disabled={!newCompanyName.trim() || cnpjCreating}>
+  1246→                {cnpjCreating ? <Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> : null}
+  1247→                Criar Empresa
+  1248→              </Button>
+  1249→            </div>
+  1250→          </form>
+  1251→        </DialogContent>
+  1252→      </Dialog>
+  1253→
+  1254→      {/* Share Dialog */}
+  1255→      <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
+  1256→        <DialogContent className="sm:max-w-lg">
+  1257→          <DialogHeader>
+  1258→            <DialogTitle className="flex items-center gap-2"><Users className="h-5 w-5" />Compartilhar Empresa</DialogTitle>
+  1259→            <DialogDescription>Convide pessoas para visualizar e sugerir alterações nesta empresa.</DialogDescription>
+  1260→          </DialogHeader>
+  1261→          <div className="space-y-4 py-2">
+  1262→            <div className="flex gap-2">
+  1263→              <Input type="email" placeholder="email@exemplo.com" value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleInviteShare()} className="flex-1" />
+  1264→              <Button onClick={handleInviteShare} disabled={invitingShare || !inviteEmail.trim()}>
+  1265→                {invitingShare ? <Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> : <Send className="h-4 w-4 mr-1.5" />}
+  1266→                Convidar
+  1267→              </Button>
+  1268→            </div>
+  1269→            {shares.length > 0 ? (
+  1270→              <div className="space-y-2">
+  1271→                <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Compartilhamentos ({shares.length})</h4>
+  1272→                <div className="max-h-64 overflow-y-auto space-y-2">
+  1273→                  {shares.map((share) => {
+  1274→                    const statusColor = share.status === 'accepted' ? 'bg-emerald-100 text-emerald-700 border-emerald-200'
+  1275→                      : share.status === 'pending' ? 'bg-amber-100 text-amber-700 border-amber-200'
+  1276→                      : 'bg-red-100 text-red-700 border-red-200'
+  1277→                    const statusLabel = share.status === 'accepted' ? 'Aceito' : share.status === 'pending' ? 'Pendente' : 'Rejeitado'
+  1278→                    return (
+  1279→                      <div key={share.id} className="flex items-center gap-3 p-3 rounded-lg border bg-card">
+  1280→                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-semibold text-primary flex-shrink-0">
+  1281→                          {(share.user?.name || share.user?.email || '?').charAt(0).toUpperCase()}
+  1282→                        </div>
+  1283→                        <div className="flex-1 min-w-0">
+  1284→                          <p className="text-sm font-medium truncate">{share.user?.name || 'Sem nome'}</p>
+  1285→                          <p className="text-xs text-muted-foreground truncate">{share.user?.email}</p>
+  1286→                        </div>
+  1287→                        <div className="flex items-center gap-2 flex-shrink-0">
+  1288→                          <Badge variant="outline" className={`text-[10px] ${statusColor}`}>{statusLabel}</Badge>
+  1289→                          {share.status === 'accepted' && (
+  1290→                            <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-destructive" onClick={() => handleRevokeShare(share.id)} title="Revogar acesso">
+  1291→                              <X className="h-3.5 w-3.5" />
+  1292→                            </Button>
+  1293→                          )}
+  1294→                        </div>
+  1295→                      </div>
+  1296→                    )
+  1297→                  })}
+  1298→                </div>
+  1299→              </div>
+  1300→            ) : (
+  1301→              <div className="text-center py-8 text-muted-foreground">
+  1302→                <Users className="h-8 w-8 mx-auto mb-2 opacity-30" />
+  1303→                <p className="text-sm">Nenhum compartilhamento ainda.</p>
+  1304→                <p className="text-xs mt-1">Convide alguém pelo email acima.</p>
+  1305→              </div>
+  1306→            )}
+  1307→          </div>
+  1308→        </DialogContent>
+  1309→      </Dialog>
+  1310→
+  1311→      {/* Pending Invitations Dialog */}
+  1312→      <Dialog open={invitationsDialogOpen} onOpenChange={setInvitationsDialogOpen}>
+  1313→        <DialogContent className="sm:max-w-lg">
+  1314→          <DialogHeader>
+  1315→            <DialogTitle className="flex items-center gap-2"><UserPlus className="h-5 w-5" />Convites Pendentes</DialogTitle>
+  1316→            <DialogDescription>Empresas que compartilharam dados com você.</DialogDescription>
+  1317→          </DialogHeader>
+  1318→          <div className="py-2">
+  1319→            {pendingInvitations.length > 0 ? (
+  1320→              <div className="space-y-3">
+  1321→                {pendingInvitations.map((inv) => (
+  1322→                  <div key={inv.id} className="flex items-center gap-3 p-3 rounded-lg border bg-card">
+  1323→                    <div className="h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
+  1324→                      <Building2 className="h-5 w-5 text-amber-600" />
+  1325→                    </div>
+  1326→                    <div className="flex-1 min-w-0">
+  1327→                      <p className="text-sm font-medium truncate">{inv.companyName}</p>
+  1328→                      <p className="text-xs text-muted-foreground">
+  1329→                        Convidado por <strong>{inv.inviterName}</strong> · {new Date(inv.createdAt).toLocaleDateString('pt-BR')}
+  1330→                      </p>
+  1331→                    </div>
+  1332→                    <div className="flex items-center gap-1.5 flex-shrink-0">
+  1333→                      <Button size="sm" className="h-8 text-xs bg-emerald-600 hover:bg-emerald-700" onClick={() => handleInvitationAction(inv, 'accept')}>
+  1334→                        <CheckCircle2 className="h-3.5 w-3.5 mr-1" /> Aceitar
+  1335→                      </Button>
+  1336→                      <Button size="sm" variant="outline" className="h-8 text-xs text-destructive" onClick={() => handleInvitationAction(inv, 'reject')}>
+  1337→                        <X className="h-3 w-3 mr-1" /> Rejeitar
+  1338→                      </Button>
+  1339→                    </div>
+  1340→                  </div>
+  1341→                ))}
+  1342→              </div>
+  1343→            ) : (
+  1344→              <div className="text-center py-8 text-muted-foreground">
+  1345→                <CheckCircle2 className="h-8 w-8 mx-auto mb-2 opacity-30" />
+  1346→                <p className="text-sm">Nenhum convite pendente.</p>
+  1347→              </div>
+  1348→            )}
+  1349→          </div>
+  1350→        </DialogContent>
+  1351→      </Dialog>
+  1352→
+  1353→      {/* Suggested Changes Dialog */}
+  1354→      <Dialog open={changesDialogOpen} onOpenChange={(open) => { setChangesDialogOpen(open); if (open && selectedCompanyId) loadSuggestedChanges(selectedCompanyId) }}>
+  1355→        <DialogContent className="sm:max-w-2xl">
+  1356→          <DialogHeader>
+  1357→            <DialogTitle className="flex items-center gap-2">
+  1358→              <Bell className="h-5 w-5" />
+  1359→              Sugestões Pendentes
+  1360→              {pendingChangesCount > 0 && <Badge className="bg-red-500 text-white">{pendingChangesCount}</Badge>}
+  1361→            </DialogTitle>
+  1362→            <DialogDescription>Alterações sugeridas por convidados desta empresa.</DialogDescription>
+  1363→          </DialogHeader>
+  1364→          <div className="py-2">
+  1365→            {suggestedChanges.filter(c => c.status === 'pending').length > 0 ? (
+  1366→              <div className="space-y-3 max-h-96 overflow-y-auto">
+  1367→                {suggestedChanges.filter(c => c.status === 'pending').map((change) => (
+  1368→                  <div key={change.id} className="flex items-start gap-3 p-4 rounded-lg border bg-card">
+  1369→                    <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-sm font-semibold text-primary flex-shrink-0 mt-0.5">
+  1370→                      {(change.suggester?.name || change.suggester?.email || '?').charAt(0).toUpperCase()}
+  1371→                    </div>
+  1372→                    <div className="flex-1 min-w-0 space-y-2">
+  1373→                      <div className="flex items-center gap-2 flex-wrap">
+  1374→                        <span className="text-sm font-medium">{change.suggester?.name || 'Usuário'}</span>
+  1375→                        <span className="text-xs text-muted-foreground">{change.suggester?.email}</span>
+  1376→                      </div>
+  1377→                      <div className="flex items-center gap-4 text-sm flex-wrap">
+  1378→                        <span className="text-muted-foreground">
+  1379→                          <strong className="text-foreground">{DRE_FIELD_LABELS[change.dreField] || change.dreField}</strong>
+  1380→                          {' '}({MONTHS[change.month - 1]}/{change.year})
+  1381→                        </span>
+  1382→                        <span className="font-mono text-xs">
+  1383→                          <span className="line-through text-muted-foreground">{brlAccounting(change.oldValue).text}</span>
+  1384→                          {' → '}
+  1385→                          <span className={`font-semibold ${change.newValue < 0 ? 'text-red-600' : 'text-emerald-600'}`}>{brlAccounting(change.newValue).text}</span>
+  1386→                        </span>
+  1387→                      </div>
+  1388→                      <p className="text-[10px] text-muted-foreground">{new Date(change.createdAt).toLocaleString('pt-BR')}</p>
+  1389→                    </div>
+  1390→                    <div className="flex items-center gap-1.5 flex-shrink-0">
+  1391→                      <Button size="sm" className="h-8 text-xs bg-emerald-600 hover:bg-emerald-700" onClick={() => handleResolveChange(change, 'approve')}>
+  1392→                        <CheckCircle2 className="h-3.5 w-3.5 mr-1" /> Aprovar
+  1393→                      </Button>
+  1394→                      <Button size="sm" variant="outline" className="h-8 text-xs text-destructive" onClick={() => handleResolveChange(change, 'reject')}>
+  1395→                        <X className="h-3 w-3 mr-1" /> Rejeitar
+  1396→                      </Button>
+  1397→                    </div>
+  1398→                  </div>
+  1399→                ))}
+  1400→              </div>
+  1401→            ) : (
+  1402→              <div className="text-center py-8 text-muted-foreground">
+  1403→                <Bell className="h-8 w-8 mx-auto mb-2 opacity-30" />
+  1404→                <p className="text-sm">Nenhuma sugestão pendente.</p>
+  1405→              </div>
+  1406→            )}
+  1407→          </div>
+  1408→        </DialogContent>
+  1409→      </Dialog>
+  1410→
+  1411→    </div>
+  1412→    </TooltipProvider>
+  1413→  )
+  1414→}
+  1415→
+  1416→// ─── Default Export ───
+  1417→export default function Page() {
+  1418→  return (
+  1419→    <AuthProvider>
+  1420→      <AppContent />
+  1421→    </AuthProvider>
+  1422→  )
+  1423→}
+  1424→

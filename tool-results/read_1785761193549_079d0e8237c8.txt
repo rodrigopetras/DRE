@@ -1,0 +1,402 @@
+  1531→                        <NumInput label="Água" value={dreData.agua} onChange={(v) => setDREData({ agua: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('agua')} dreField="agua" />
+  1532→                        {/* Custom desp_variaveis fields */}
+  1533→                        {customFieldsDespVar.map(cf => (
+  1534→                          <div key={cf.id} className="flex items-center justify-between py-1.5 group">
+  1535→                            <label className="text-sm text-muted-foreground flex items-center gap-2">
+  1536→                              ({cf.sign}) {cf.name}
+  1537→                            </label>
+  1538→                            <div className="flex items-center gap-1 w-44 justify-end">
+  1539→                              <Input
+  1540→                                type="text"
+  1541→                                inputMode="decimal"
+  1542→                                className="h-8 text-right text-sm font-mono"
+  1543→                                value={(customFieldValues[cf.id] || 0) === 0 ? '' : brl(customFieldValues[cf.id] || 0)}
+  1544→                                onFocus={(e) => { e.target.value = (customFieldValues[cf.id] || 0) === 0 ? '' : (customFieldValues[cf.id] || 0).toFixed(2).replace('.', ',') }}
+  1545→                                onBlur={(e) => {
+  1546→                                  const parsed = parseFloat((e.target.value || '0').replace(/\./g, '').replace(',', '.')) || 0
+  1547→                                  handleCustomFieldValueChange(cf.id, parsed)
+  1548→                                  if (dreEntryId) saveCustomFieldValues(dreEntryId, { ...customFieldValues, [cf.id]: parsed })
+  1549→                                }}
+  1550→                                onChange={(e) => {
+  1551→                                  const parsed = parseFloat((e.target.value || '0').replace(/\./g, '').replace(',', '.')) || 0
+  1552→                                  if (!isNaN(parsed)) handleCustomFieldValueChange(cf.id, parsed)
+  1553→                                }}
+  1554→                                placeholder="0,00"
+  1555→                                disabled={isViewer}
+  1556→                              />
+  1557→                              {isOwner && (
+  1558→                                <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+  1559→                                  onClick={() => handleDeleteCustomField(cf.id)}>
+  1560→                                  <X className="h-3.5 w-3.5" />
+  1561→                                </Button>
+  1562→                              )}
+  1563→                            </div>
+  1564→                          </div>
+  1565→                        ))}
+  1566→                      </div>
+  1567→                      {/* Add custom field button (owners only) */}
+  1568→                      {isOwner && (
+  1569→                        <div className="mt-2 ml-4">
+  1570→                          {addingCustomField === 'desp_variaveis' ? (
+  1571→                            <div className="flex items-center gap-2 p-2 rounded-lg border bg-muted/30">
+  1572→                              <Input
+  1573→                                placeholder="Nome do campo"
+  1574→                                className="h-7 text-xs flex-1"
+  1575→                                value={newCustomFieldName}
+  1576→                                onChange={(e) => setNewCustomFieldName(e.target.value)}
+  1577→                                onKeyDown={(e) => e.key === 'Enter' && handleAddCustomField('desp_variaveis')}
+  1578→                              />
+  1579→                              <Button
+  1580→                                size="sm"
+  1581→                                variant="outline"
+  1582→                                className="h-7 px-2 text-xs min-w-[28px]"
+  1583→                                onClick={() => setNewCustomFieldSign(s => s === '+' ? '-' : '+')}
+  1584→                              >
+  1585→                                {newCustomFieldSign}
+  1586→                              </Button>
+  1587→                              <Button size="sm" className="h-7 px-2 text-xs" onClick={() => handleAddCustomField('desp_variaveis')} disabled={!newCustomFieldName.trim() || addingCustomLoading}>
+  1588→                                {addingCustomLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <CheckCircle2 className="h-3 w-3" />}
+  1589→                              </Button>
+  1590→                              <Button size="sm" variant="ghost" className="h-7 px-2 text-xs" onClick={() => { setAddingCustomField(null); setNewCustomFieldName(''); setNewCustomFieldSign('+') }}>
+  1591→                                <X className="h-3 w-3" />
+  1592→                              </Button>
+  1593→                            </div>
+  1594→                          ) : (
+  1595→                            <Button variant="ghost" size="sm" className="h-7 text-xs text-muted-foreground" onClick={() => setAddingCustomField('desp_variaveis')}>
+  1596→                              <Plus className="h-3 w-3 mr-1" /> Adicionar campo
+  1597→                            </Button>
+  1598→                          )}
+  1599→                        </div>
+  1600→                      )}
+  1601→                    </CardContent>
+  1602→                  </Card>
+  1603→
+  1604→                  {/* Despesas Fixas */}
+  1605→                  <Card>
+  1606→                    <CardHeader className="pb-3">
+  1607→                      <CardTitle className="text-base">Despesas Fixas</CardTitle>
+  1608→                    </CardHeader>
+  1609→                    <CardContent className="space-y-1">
+  1610→                      <SectionHeader label="(=) Total Despesas Fixas" value={dre.despesasFixas} pctValue={safeDiv(dre.despesasFixas, dre.receitaBruta)} color="bg-muted/50" />
+  1611→                      <div className="ml-4 space-y-0.5">
+  1612→                        <NumInput label="Aluguel" value={dreData.aluguel} onChange={(v) => setDREData({ aluguel: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('aluguel')} dreField="aluguel" />
+  1613→                        <NumInput label="Salários" value={dreData.salarios} onChange={(v) => setDREData({ salarios: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('salarios')} dreField="salarios" />
+  1614→                        <NumInput label="FGTS" value={dreData.fgts} onChange={(v) => setDREData({ fgts: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('fgts')} dreField="fgts" />
+  1615→                        <NumInput label="Pró-labore" value={dreData.prolabore} onChange={(v) => setDREData({ prolabore: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('prolabore')} dreField="prolabore" />
+  1616→                        <NumInput label="Bônus" value={dreData.bonus} onChange={(v) => setDREData({ bonus: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('bonus')} dreField="bonus" />
+  1617→                        <NumInput label="INSS" value={dreData.inss} onChange={(v) => setDREData({ inss: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('inss')} dreField="inss" />
+  1618→                        <NumInput label="IPTU" value={dreData.iptu} onChange={(v) => setDREData({ iptu: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('iptu')} dreField="iptu" />
+  1619→                        <NumInput label="Telefone e Internet" value={dreData.telefoneInternet} onChange={(v) => setDREData({ telefoneInternet: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('telefoneInternet')} dreField="telefoneInternet" />
+  1620→                        <NumInput label="Vale Transporte" value={dreData.valeTransporte} onChange={(v) => setDREData({ valeTransporte: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('valeTransporte')} dreField="valeTransporte" />
+  1621→                        <NumInput label="Plano de Saúde" value={dreData.planoSaude} onChange={(v) => setDREData({ planoSaude: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('planoSaude')} dreField="planoSaude" />
+  1622→                        {/* Custom desp_fixas fields */}
+  1623→                        {customFieldsDespFixas.map(cf => (
+  1624→                          <div key={cf.id} className="flex items-center justify-between py-1.5 group">
+  1625→                            <label className="text-sm text-muted-foreground flex items-center gap-2">
+  1626→                              ({cf.sign}) {cf.name}
+  1627→                            </label>
+  1628→                            <div className="flex items-center gap-1 w-44 justify-end">
+  1629→                              <Input
+  1630→                                type="text"
+  1631→                                inputMode="decimal"
+  1632→                                className="h-8 text-right text-sm font-mono"
+  1633→                                value={(customFieldValues[cf.id] || 0) === 0 ? '' : brl(customFieldValues[cf.id] || 0)}
+  1634→                                onFocus={(e) => { e.target.value = (customFieldValues[cf.id] || 0) === 0 ? '' : (customFieldValues[cf.id] || 0).toFixed(2).replace('.', ',') }}
+  1635→                                onBlur={(e) => {
+  1636→                                  const parsed = parseFloat((e.target.value || '0').replace(/\./g, '').replace(',', '.')) || 0
+  1637→                                  handleCustomFieldValueChange(cf.id, parsed)
+  1638→                                  if (dreEntryId) saveCustomFieldValues(dreEntryId, { ...customFieldValues, [cf.id]: parsed })
+  1639→                                }}
+  1640→                                onChange={(e) => {
+  1641→                                  const parsed = parseFloat((e.target.value || '0').replace(/\./g, '').replace(',', '.')) || 0
+  1642→                                  if (!isNaN(parsed)) handleCustomFieldValueChange(cf.id, parsed)
+  1643→                                }}
+  1644→                                placeholder="0,00"
+  1645→                                disabled={isViewer}
+  1646→                              />
+  1647→                              {isOwner && (
+  1648→                                <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+  1649→                                  onClick={() => handleDeleteCustomField(cf.id)}>
+  1650→                                  <X className="h-3.5 w-3.5" />
+  1651→                                </Button>
+  1652→                              )}
+  1653→                            </div>
+  1654→                          </div>
+  1655→                        ))}
+  1656→                      </div>
+  1657→                      {/* Add custom field button (owners only) */}
+  1658→                      {isOwner && (
+  1659→                        <div className="mt-2 ml-4">
+  1660→                          {addingCustomField === 'desp_fixas' ? (
+  1661→                            <div className="flex items-center gap-2 p-2 rounded-lg border bg-muted/30">
+  1662→                              <Input
+  1663→                                placeholder="Nome do campo"
+  1664→                                className="h-7 text-xs flex-1"
+  1665→                                value={newCustomFieldName}
+  1666→                                onChange={(e) => setNewCustomFieldName(e.target.value)}
+  1667→                                onKeyDown={(e) => e.key === 'Enter' && handleAddCustomField('desp_fixas')}
+  1668→                              />
+  1669→                              <Button
+  1670→                                size="sm"
+  1671→                                variant="outline"
+  1672→                                className="h-7 px-2 text-xs min-w-[28px]"
+  1673→                                onClick={() => setNewCustomFieldSign(s => s === '+' ? '-' : '+')}
+  1674→                              >
+  1675→                                {newCustomFieldSign}
+  1676→                              </Button>
+  1677→                              <Button size="sm" className="h-7 px-2 text-xs" onClick={() => handleAddCustomField('desp_fixas')} disabled={!newCustomFieldName.trim() || addingCustomLoading}>
+  1678→                                {addingCustomLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <CheckCircle2 className="h-3 w-3" />}
+  1679→                              </Button>
+  1680→                              <Button size="sm" variant="ghost" className="h-7 px-2 text-xs" onClick={() => { setAddingCustomField(null); setNewCustomFieldName(''); setNewCustomFieldSign('+') }}>
+  1681→                                <X className="h-3 w-3" />
+  1682→                              </Button>
+  1683→                            </div>
+  1684→                          ) : (
+  1685→                            <Button variant="ghost" size="sm" className="h-7 text-xs text-muted-foreground" onClick={() => setAddingCustomField('desp_fixas')}>
+  1686→                              <Plus className="h-3 w-3 mr-1" /> Adicionar campo
+  1687→                            </Button>
+  1688→                          )}
+  1689→                        </div>
+  1690→                      )}
+  1691→                    </CardContent>
+  1692→                  </Card>
+  1693→
+  1694→                  {/* Resultado */}
+  1695→                  <Card className={dre.resultadoLiquido >= 0 ? 'border-emerald-200' : 'border-red-200'}>
+  1696→                    <CardContent className="pt-6">
+  1697→                      <div className={`flex items-center justify-between py-3 px-4 rounded-lg ${dre.resultadoLiquido >= 0 ? 'bg-emerald-50' : 'bg-red-50'}`}>
+  1698→                        <div className="flex items-center gap-2">
+  1699→                          {dre.resultadoLiquido >= 0 ? <CheckCircle2 className="h-5 w-5 text-emerald-600" /> : <AlertCircle className="h-5 w-5 text-red-600" />}
+  1700→                          <span className={`font-bold text-base ${dre.resultadoLiquido >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>
+  1701→                            Resultado Líquido
+  1702→                          </span>
+  1703→                        </div>
+  1704→                        <div className="flex items-center gap-4">
+  1705→                          <span className={`font-mono text-lg font-bold ${dre.resultadoLiquido >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>
+  1706→                            {brl(dre.resultadoLiquido)}
+  1707→                          </span>
+  1708→                          <span className="text-sm text-muted-foreground w-16 text-right">
+  1709→                            {pct(safeDiv(dre.resultadoLiquido, dre.receitaBruta))}
+  1710→                          </span>
+  1711→                        </div>
+  1712→                      </div>
+  1713→                      {dre.resultadoLiquido > 0 && (
+  1714→                        <p className="text-xs text-emerald-600 mt-2 ml-1">
+  1715→                          ✓ Pode distribuir com isenção de IR
+  1716→                        </p>
+  1717→                      )}
+  1718→                      {dre.resultadoLiquido <= 0 && (
+  1719→                        <p className="text-xs text-red-500 mt-2 ml-1">
+  1720→                          ✗ Saldo negativo — não há distribuição de lucros
+  1721→                        </p>
+  1722→                      )}
+  1723→                    </CardContent>
+  1724→                  </Card>
+  1725→
+  1726→                  {/* Save Button - disabled for viewers */}
+  1727→                  <div className="flex justify-end print:hidden">
+  1728→                    <Button onClick={handleSaveDRE} disabled={saving || isViewer} className="min-w-[160px]">
+  1729→                      {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+  1730→                      {isViewer ? 'Apenas o proprietário pode salvar' : 'Salvar DRE'}
+  1731→                    </Button>
+  1732→                  </div>
+  1733→                </>
+  1734→              )}
+  1735→            </TabsContent>
+  1736→
+  1737→            {/* ─── Expense Qualification Tab ─── */}
+  1738→            <TabsContent value="expenses" className="space-y-4">
+  1739→              <Card>
+  1740→                <CardHeader>
+  1741→                  <CardTitle className="text-base">Qualificação de Despesas</CardTitle>
+  1742→                  <CardDescription>
+  1743→                    Faça upload de uma planilha com as colunas: <strong>Descrição</strong> (A), <strong>Data</strong> (B) e <strong>Valor</strong> (C).
+  1744→                    Após importar, classifique cada item como <strong>Salário</strong>, <strong>Bônus</strong> ou <strong>Pró-labore</strong> para aplicar ao DRE.
+  1745→                  </CardDescription>
+  1746→                </CardHeader>
+  1747→                <CardContent className="space-y-4">
+  1748→                  <input
+  1749→                    ref={fileInputRef}
+  1750→                    type="file"
+  1751→                    accept=".xlsx,.xls,.csv"
+  1752→                    className="hidden"
+  1753→                    onChange={handleUploadExpense}
+  1754→                  />
+  1755→                  <Button
+  1756→                    variant="outline"
+  1757→                    className="w-full sm:w-auto border-dashed border-2 h-12"
+  1758→                    onClick={() => fileInputRef.current?.click()}
+  1759→                    disabled={expenseUploading}
+  1760→                  >
+  1761→                    {expenseUploading ? (
+  1762→                      <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Enviando...</>
+  1763→                    ) : (
+  1764→                      <><Upload className="h-4 w-4 mr-2" /> Selecionar Planilha (.xlsx)</>
+  1765→                    )}
+  1766→                  </Button>
+  1767→
+  1768→                  {/* Upload Progress */}
+  1769→                  {expenseUploading && uploadProgress > 0 && (
+  1770→                    <div className="space-y-2">
+  1771→                      <div className="flex items-center justify-between text-xs text-muted-foreground">
+  1772→                        <span className="flex items-center gap-1.5">
+  1773→                          <Loader2 className="h-3 w-3 animate-spin" />
+  1774→                          Processando <strong className="text-foreground">{uploadFileName}</strong>
+  1775→                        </span>
+  1776→                        <span>{uploadProgress}%</span>
+  1777→                      </div>
+  1778→                      <Progress value={uploadProgress} className="h-2" />
+  1779→                    </div>
+  1780→                  )}
+  1781→
+  1782→                  {/* Uploaded Files History */}
+  1783→                  {uploadedFiles.length > 0 && !expenseUploading && (
+  1784→                    <div className="space-y-2">
+  1785→                      <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+  1786→                        <FileCheck className="h-3.5 w-3.5" />
+  1787→                        Arquivos Importados ({uploadedFiles.length})
+  1788→                      </h4>
+  1789→                      <div className="space-y-1.5">
+  1790→                        {uploadedFiles.map((f) => (
+  1791→                          <div key={f.id} className="flex items-center gap-3 p-2.5 rounded-lg bg-emerald-50 border border-emerald-100">
+  1792→                            <div className="h-8 w-8 rounded bg-emerald-100 flex items-center justify-center flex-shrink-0">
+  1793→                              <FileCheck className="h-4 w-4 text-emerald-600" />
+  1794→                            </div>
+  1795→                            <div className="flex-1 min-w-0">
+  1796→                              <p className="text-sm font-medium truncate">{f.fileName}</p>
+  1797→                              <p className="text-xs text-muted-foreground flex items-center gap-1">
+  1798→                                <Clock className="h-3 w-3" />
+  1799→                                Importado em {new Date(f.uploadedAt).toLocaleString('pt-BR')}
+  1800→                              </p>
+  1801→                            </div>
+  1802→                            <div className="flex items-center gap-1.5 flex-shrink-0">
+  1803→                              <Button
+  1804→                                variant="ghost"
+  1805→                                size="icon"
+  1806→                                className="h-7 w-7 text-muted-foreground hover:text-primary"
+  1807→                                onClick={() => {
+  1808→                                  window.open(`/api/dre/expense-qualification/export?companyId=${selectedCompanyId}&month=${selectedMonth}&year=${selectedYear}`, '_blank')
+  1809→                                }}
+  1810→                                title="Baixar planilha"
+  1811→                              >
+  1812→                                <Download className="h-3.5 w-3.5" />
+  1813→                              </Button>
+  1814→                              <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+  1815→                            </div>
+  1816→                          </div>
+  1817→                        ))}
+  1818→                      </div>
+  1819→                    </div>
+  1820→                  )}
+  1821→
+  1822→                  </CardContent>
+  1823→              </Card>
+  1824→              {/* Items Table */}
+  1825→              {expenseItems.length > 0 && (
+  1826→                <Card>
+  1827→                  <CardHeader className="pb-3">
+  1828→                    <div className="flex items-center justify-between">
+  1829→                      <CardTitle className="text-base">
+  1830→                        Itens Importados
+  1831→                        <Badge variant="secondary" className="ml-2">{expenseItems.length}</Badge>
+  1832→                      </CardTitle>
+  1833→                      <span className="text-xs text-muted-foreground">
+  1834→                        {expenseItems.filter(i => !i.dreField).length > 0
+  1835→                          ? <span className="text-amber-600 font-medium">⚠ {expenseItems.filter(i => !i.dreField).length} sem classificação</span>
+  1836→                          : <span className="text-emerald-600 font-medium">✓ Todos classificados</span>
+  1837→                        }
+  1838→                      </span>
+  1839→                    </div>
+  1840→                  </CardHeader>
+  1841→                  <CardContent className="p-0">
+  1842→                    <div className="border rounded-lg overflow-hidden">
+  1843→                      <div className="grid grid-cols-12 gap-2 p-3 bg-muted/50 text-xs font-medium text-muted-foreground">
+  1844→                        <span className="col-span-1 text-center">#</span>
+  1845→                        <span className="col-span-3 sm:col-span-4">Descrição</span>
+  1846→                        <span className="col-span-2">Data</span>
+  1847→                        <span className="col-span-2 text-right">Valor</span>
+  1848→                        <span className="col-span-5 sm:col-span-3">Classificação</span>
+  1849→                      </div>
+  1850→                      <div className="max-h-96 overflow-y-auto">
+  1851→                        {expenseItems.map((item, idx) => (
+  1852→                          <div key={item.id || idx} className="grid grid-cols-12 gap-2 p-3 border-t text-sm items-center hover:bg-muted/30">
+  1853→                            <span className="col-span-1 text-center text-xs text-muted-foreground">{idx + 1}</span>
+  1854→                            <span className="col-span-3 sm:col-span-4 truncate text-sm">{item.description}</span>
+  1855→                            <span className="col-span-2 text-xs text-muted-foreground">{item.date}</span>
+  1856→                            <span className="col-span-2 text-right font-mono text-xs">{brl(item.totalValue)}</span>
+  1857→                            <div className="col-span-5 sm:col-span-3">
+  1858→                              <Select
+  1859→                                value={item.dreField}
+  1860→                                onValueChange={(v) => {
+  1861→                                  const newItems = [...expenseItems]
+  1862→                                  newItems[idx] = { ...newItems[idx], dreField: v }
+  1863→                                  setExpenseItems(newItems)
+  1864→                                }}
+  1865→                              >
+  1866→                                <SelectTrigger className={`h-8 text-xs ${!item.dreField ? 'border-amber-300 bg-amber-50' : item.dreField === 'salarios' ? 'border-emerald-300 bg-emerald-50' : item.dreField === 'bonus' ? 'border-blue-300 bg-blue-50' : 'border-purple-300 bg-purple-50'}`}>
+  1867→                                  <SelectValue placeholder="Selecionar..." />
+  1868→                                </SelectTrigger>
+  1869→                                <SelectContent>
+  1870→                                  <SelectItem value="salarios">
+  1871→                                    <span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-emerald-500" /> Salários</span>
+  1872→                                  </SelectItem>
+  1873→                                  <SelectItem value="bonus">
+  1874→                                    <span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-blue-500" /> Bônus</span>
+  1875→                                  </SelectItem>
+  1876→                                  <SelectItem value="prolabore">
+  1877→                                    <span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-purple-500" /> Pró-labore</span>
+  1878→                                  </SelectItem>
+  1879→                                </SelectContent>
+  1880→                              </Select>
+  1881→                            </div>
+  1882→                          </div>
+  1883→                        ))}
+  1884→                      </div>
+  1885→                    </div>
+  1886→                  </CardContent>
+  1887→                  <CardFooter className="flex-col gap-3">
+  1888→                    <div className="w-full flex flex-wrap gap-2">
+  1889→                      {['salarios', 'bonus', 'prolabore'].map(field => {
+  1890→                        const total = expenseItems.filter(i => i.dreField === field).reduce((sum, i) => sum + i.totalValue, 0)
+  1891→                        if (total === 0) return null
+  1892→                        return (
+  1893→                          <Badge key={field} variant="outline" className="text-xs">
+  1894→                            {DRE_FIELD_LABELS[field]}: {brl(total)}
+  1895→                          </Badge>
+  1896→                        )
+  1897→                      })}
+  1898→                    </div>
+  1899→                    <Button onClick={handleSaveExpenseClassification} disabled={applying || expenseItems.some(i => !i.dreField)} className="w-full sm:w-auto">
+  1900→                      {applying ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Target className="h-4 w-4 mr-2" />}
+  1901→                      Aplicar ao DRE
+  1902→                    </Button>
+  1903→                  </CardFooter>
+  1904→                </Card>
+  1905→              )}
+  1906→            </TabsContent>
+  1907→
+  1908→            {/* ─── Projection Tab ─── */}
+  1909→            <TabsContent value="projection" className="space-y-4">
+  1910→              <Card>
+  1911→                <CardHeader>
+  1912→                  <CardTitle className="text-base flex items-center gap-2">
+  1913→                    <Brain className="h-5 w-5 text-primary" />
+  1914→                    Previsão Orçamentária com IA
+  1915→                  </CardTitle>
+  1916→                  <CardDescription>
+  1917→                    A IA analisa os dados históricos do DRE e gera projeções para os próximos meses.
+  1918→                    {allHistory.length === 0 && ' Insira pelo menos 1 mês de dados para gerar projeções.'}
+  1919→                  </CardDescription>
+  1920→                </CardHeader>
+  1921→                <CardContent className="space-y-4">
+  1922→                  <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-end print:hidden">
+  1923→                    <div>
+  1924→                      <Label className="text-sm mb-1.5 block">Período da Projeção</Label>
+  1925→                      <Select value={projectionPeriod} onValueChange={(v: any) => setProjectionPeriod(v)}>
+  1926→                        <SelectTrigger className="w-[180px]">
+  1927→                          <SelectValue />
+  1928→                        </SelectTrigger>
+  1929→                        <SelectContent>
+  1930→                          <SelectItem value="3m">3 meses</SelectItem>
+
+[showing lines 1531-1930 of 2459; use offset=1931 with limit to continue reading]

@@ -1,0 +1,304 @@
+   100→   199→  1199→  1199→        </div>
+   101→   200→  1200→  1200→
+   102→   201→  1201→  1201→        {!selectedCompanyId ? (
+   103→   202→  1202→  1202→          <Card className="max-w-md mx-auto mt-20">
+   104→   203→  1203→  1203→            <CardContent className="flex flex-col items-center py-12 text-center">
+   105→   204→  1204→  1204→              <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
+   106→   205→  1205→  1205→                <Building2 className="h-8 w-8 text-muted-foreground" />
+   107→   206→  1206→  1206→              </div>
+   108→   207→  1207→  1207→              <h3 className="font-semibold text-lg mb-2">Bem-vindo ao DRE Online</h3>
+   109→   208→  1208→  1208→              <p className="text-sm text-muted-foreground mb-6">
+   110→   209→  1209→  1209→                Selecione uma empresa existente ou crie uma nova para começar o planejamento orçamentário.
+   111→   210→  1210→  1210→              </p>
+   112→   211→  1211→  1211→              <Button onClick={() => setCompanyDialogOpen(true)}>
+   113→   212→  1212→  1212→                <Plus className="h-4 w-4 mr-2" /> Criar Primeira Empresa
+   114→   213→  1213→  1213→              </Button>
+   115→   214→  1214→  1214→            </CardContent>
+   116→   215→  1215→  1215→          </Card>
+   117→   216→  1216→  1216→        ) : (
+   118→   217→  1217→  1217→          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+   119→   218→  1218→  1218→            <TabsList className="w-full flex print:hidden">
+   120→   219→  1219→  1219→              <TabsTrigger value="dre" className="flex-1"><DollarSign className="h-4 w-4 mr-2" />DRE Mensal</TabsTrigger>
+   121→   220→  1220→  1220→              <TabsTrigger value="expenses" className="flex-1"><FileUp className="h-4 w-4 mr-2" />Qualificação</TabsTrigger>
+   122→   221→  1221→  1221→              <TabsTrigger value="projection" className="flex-1"><TrendingUp className="h-4 w-4 mr-2" />Projeção</TabsTrigger>
+   123→   222→  1222→  1222→              <TabsTrigger value="charts" className="flex-1"><PieChart className="h-4 w-4 mr-2" />Gráficos</TabsTrigger>
+   124→   223→  1223→  1223→            </TabsList>
+   125→   224→  1224→  1224→
+   126→   225→  1225→  1225→            {/* ─── DRE Tab ─── */}
+   127→   226→  1226→  1226→            <TabsContent value="dre" className="space-y-4">
+   128→   227→  1227→  1227→              {/* Viewer banner */}
+   129→   228→  1228→  1228→              {isViewer && (
+   130→   229→  1229→  1229→                <div className="flex items-center gap-2 p-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-sm">
+   131→   230→  1230→  1230→                  <Info className="h-4 w-4 flex-shrink-0" />
+   132→   231→  1231→  1231→                  <span>Você está visualizando esta empresa como convidado. Alterações serão enviadas como sugestões ao proprietário.</span>
+   133→   232→  1232→  1232→                </div>
+   134→   233→  1233→  1233→              )}
+   135→   234→  1234→  1234→              {loading ? (
+   136→   235→  1235→  1235→                <Card><CardContent className="py-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" /></CardContent></Card>
+   137→   236→  1236→  1236→              ) : (
+   138→   237→  1237→  1237→                <>
+   139→   238→  1238→  1238→                  {/* Receita */}
+   140→   239→  1239→  1239→                  <Card>
+   141→   240→  1240→  1240→                    <CardHeader className="pb-3">
+   142→   241→  1241→  1241→                      <CardTitle className="text-base">Receita</CardTitle>
+   143→   242→  1242→  1242→                    </CardHeader>
+   144→   243→  1243→  1243→                    <CardContent className="space-y-1">
+   145→   244→  1244→  1244→                      <SectionHeader label="(=) Receita Bruta" value={dre.receitaBruta} pctValue={1} color="bg-muted/50" />
+   146→   245→  1245→  1245→                      <div className="ml-4 space-y-0.5">
+   147→   246→  1246→  1246→                        <NumInput label="(+) Prestação de NF" value={dreData.prestacaoNf} onChange={(v) => setDREData({ prestacaoNf: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('prestacaoNf')} dreField="prestacaoNf" />
+   148→   247→  1247→  1247→                        <NumInput label="(+) Honorários Sucumbenciais" value={dreData.honorariosSucumbenciais} onChange={(v) => setDREData({ honorariosSucumbenciais: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('honorariosSucumbenciais')} dreField="honorariosSucumbenciais" />
+   149→   248→  1248→  1248→                      </div>
+   150→   249→  1249→  1249→                      <div className="ml-4">
+   151→   250→  1250→  1250→                        <NumInput label="(-) Impostos + CPP" value={dreData.impostosCpp} onChange={(v) => setDREData({ impostosCpp: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('impostosCpp')} dreField="impostosCpp" />
+   152→   251→  1251→  1251→                      </div>
+   153→   252→  1252→  1252→                      <SectionHeader
+   154→   253→  1253→  1253→                        label="(=) Receita Líquida"
+   155→   254→  1254→  1254→                        value={dre.receitaLiquida}
+   156→   255→  1255→  1255→                        pctValue={safeDiv(dre.receitaLiquida, dre.receitaBruta)}
+   157→   256→  1256→  1256→                        color={dre.receitaLiquida >= 0 ? 'bg-emerald-50' : 'bg-red-50'}
+   158→   257→  1257→  1257→                      />
+   159→   258→  1258→  1258→                    </CardContent>
+   160→   259→  1259→  1259→                  </Card>
+   161→   260→  1260→  1260→
+   162→   261→  1261→  1261→                  {/* Despesas Variáveis */}
+   163→   262→  1262→  1262→                  <Card>
+   164→   263→  1263→  1263→                    <CardHeader className="pb-3">
+   165→   264→  1264→  1264→                      <CardTitle className="text-base">Despesas Variáveis</CardTitle>
+   166→   265→  1265→  1265→                    </CardHeader>
+   167→   266→  1266→  1266→                    <CardContent className="space-y-1">
+   168→   267→  1267→  1267→                      <SectionHeader label="(=) Total Despesas Variáveis" value={dre.despesasVariaveis} pctValue={safeDiv(dre.despesasVariaveis, dre.receitaBruta)} color="bg-muted/50" />
+   169→   268→  1268→  1268→                      <div className="ml-4 space-y-0.5">
+   170→   269→  1269→  1269→                        <NumInput label="Combustível" value={dreData.combustivel} onChange={(v) => setDREData({ combustivel: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('combustivel')} dreField="combustivel" />
+   171→   270→  1270→  1270→                        <NumInput label="Insumos" value={dreData.insumos} onChange={(v) => setDREData({ insumos: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('insumos')} dreField="insumos" />
+   172→   271→  1271→  1271→                        <NumInput label="Material de Escritório" value={dreData.materialEscritorio} onChange={(v) => setDREData({ materialEscritorio: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('materialEscritorio')} dreField="materialEscritorio" />
+   173→   272→  1272→  1272→                        <NumInput label="Serviços Contratados" value={dreData.servicosContratados} onChange={(v) => setDREData({ servicosContratados: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('servicosContratados')} dreField="servicosContratados" />
+   174→   273→  1273→  1273→                        <NumInput label="Materiais de Uso e Consumo" value={dreData.materiaisUsoConsumo} onChange={(v) => setDREData({ materiaisUsoConsumo: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('materiaisUsoConsumo')} dreField="materiaisUsoConsumo" />
+   175→   274→  1274→  1274→                        <NumInput label="Taxas" value={dreData.taxas} onChange={(v) => setDREData({ taxas: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('taxas')} dreField="taxas" />
+   176→   275→  1275→  1275→                        <NumInput label="Tarifas" value={dreData.tarifas} onChange={(v) => setDREData({ tarifas: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('tarifas')} dreField="tarifas" />
+   177→   276→  1276→  1276→                        <NumInput label="Energia Elétrica" value={dreData.energiaEletrica} onChange={(v) => setDREData({ energiaEletrica: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('energiaEletrica')} dreField="energiaEletrica" />
+   178→   277→  1277→  1277→                        <NumInput label="Água" value={dreData.agua} onChange={(v) => setDREData({ agua: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('agua')} dreField="agua" />
+   179→   278→  1278→  1278→                      </div>
+   180→   279→  1279→  1279→                    </CardContent>
+   181→   280→  1280→  1280→                  </Card>
+   182→   281→  1281→  1281→
+   183→   282→  1282→  1282→                  {/* Despesas Fixas */}
+   184→   283→  1283→  1283→                  <Card>
+   185→   284→  1284→  1284→                    <CardHeader className="pb-3">
+   186→   285→  1285→  1285→                      <CardTitle className="text-base">Despesas Fixas</CardTitle>
+   187→   286→  1286→  1286→                    </CardHeader>
+   188→   287→  1287→  1287→                    <CardContent className="space-y-1">
+   189→   288→  1288→  1288→                      <SectionHeader label="(=) Total Despesas Fixas" value={dre.despesasFixas} pctValue={safeDiv(dre.despesasFixas, dre.receitaBruta)} color="bg-muted/50" />
+   190→   289→  1289→  1289→                      <div className="ml-4 space-y-0.5">
+   191→   290→  1290→  1290→                        <NumInput label="Aluguel" value={dreData.aluguel} onChange={(v) => setDREData({ aluguel: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('aluguel')} dreField="aluguel" />
+   192→   291→  1291→  1291→                        <NumInput label="Salários" value={dreData.salarios} onChange={(v) => setDREData({ salarios: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('salarios')} dreField="salarios" />
+   193→   292→  1292→  1292→                        <NumInput label="FGTS" value={dreData.fgts} onChange={(v) => setDREData({ fgts: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('fgts')} dreField="fgts" />
+   194→   293→  1293→  1293→                        <NumInput label="Pró-labore" value={dreData.prolabore} onChange={(v) => setDREData({ prolabore: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('prolabore')} dreField="prolabore" />
+   195→   294→  1294→  1294→                        <NumInput label="Bônus" value={dreData.bonus} onChange={(v) => setDREData({ bonus: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('bonus')} dreField="bonus" />
+   196→   295→  1295→  1295→                        <NumInput label="INSS" value={dreData.inss} onChange={(v) => setDREData({ inss: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('inss')} dreField="inss" />
+   197→   296→  1296→  1296→                        <NumInput label="IPTU" value={dreData.iptu} onChange={(v) => setDREData({ iptu: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('iptu')} dreField="iptu" />
+   198→   297→  1297→  1297→                        <NumInput label="Telefone e Internet" value={dreData.telefoneInternet} onChange={(v) => setDREData({ telefoneInternet: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('telefoneInternet')} dreField="telefoneInternet" />
+   199→   298→  1298→  1298→                        <NumInput label="Vale Transporte" value={dreData.valeTransporte} onChange={(v) => setDREData({ valeTransporte: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('valeTransporte')} dreField="valeTransporte" />
+   200→   299→  1299→  1299→                        <NumInput label="Plano de Saúde" value={dreData.planoSaude} onChange={(v) => setDREData({ planoSaude: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('planoSaude')} dreField="planoSaude" />
+   201→   300→  1300→  1300→                      </div>
+   202→   301→  1301→  1301→                    </CardContent>
+   203→   302→  1302→  1302→                  </Card>
+   204→   303→  1303→  1303→
+   205→   304→  1304→  1304→                  {/* Resultado */}
+   206→   305→  1305→  1305→                  <Card className={dre.resultadoLiquido >= 0 ? 'border-emerald-200' : 'border-red-200'}>
+   207→   306→  1306→  1306→                    <CardContent className="pt-6">
+   208→   307→  1307→  1307→                      <div className={`flex items-center justify-between py-3 px-4 rounded-lg ${dre.resultadoLiquido >= 0 ? 'bg-emerald-50' : 'bg-red-50'}`}>
+   209→   308→  1308→  1308→                        <div className="flex items-center gap-2">
+   210→   309→  1309→  1309→                          {dre.resultadoLiquido >= 0 ? <CheckCircle2 className="h-5 w-5 text-emerald-600" /> : <AlertCircle className="h-5 w-5 text-red-600" />}
+   211→   310→  1310→  1310→                          <span className={`font-bold text-base ${dre.resultadoLiquido >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>
+   212→   311→  1311→  1311→                            Resultado Líquido
+   213→   312→  1312→  1312→                          </span>
+   214→   313→  1313→  1313→                        </div>
+   215→   314→  1314→  1314→                        <div className="flex items-center gap-4">
+   216→   315→  1315→  1315→                          <span className={`font-mono text-lg font-bold ${dre.resultadoLiquido >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>
+   217→   316→  1316→  1316→                            {brl(dre.resultadoLiquido)}
+   218→   317→  1317→  1317→                          </span>
+   219→   318→  1318→  1318→                          <span className="text-sm text-muted-foreground w-16 text-right">
+   220→   319→  1319→  1319→                            {pct(safeDiv(dre.resultadoLiquido, dre.receitaBruta))}
+   221→   320→  1320→  1320→                          </span>
+   222→   321→  1321→  1321→                        </div>
+   223→   322→  1322→  1322→                      </div>
+   224→   323→  1323→  1323→                      {dre.resultadoLiquido > 0 && (
+   225→   324→  1324→  1324→                        <p className="text-xs text-emerald-600 mt-2 ml-1">
+   226→   325→  1325→  1325→                          ✓ Pode distribuir com isenção de IR
+   227→   326→  1326→  1326→                        </p>
+   228→   327→  1327→  1327→                      )}
+   229→   328→  1328→  1328→                      {dre.resultadoLiquido <= 0 && (
+   230→   329→  1329→  1329→                        <p className="text-xs text-red-500 mt-2 ml-1">
+   231→   330→  1330→  1330→                          ✗ Saldo negativo — não há distribuição de lucros
+   232→   331→  1331→  1331→                        </p>
+   233→   332→  1332→  1332→                      )}
+   234→   333→  1333→  1333→                    </CardContent>
+   235→   334→  1334→  1334→                  </Card>
+   236→   335→  1335→  1335→
+   237→   336→  1336→  1336→                  {/* Save Button - disabled for viewers */}
+   238→   337→  1337→  1337→                  <div className="flex justify-end print:hidden">
+   239→   338→  1338→  1338→                    <Button onClick={handleSaveDRE} disabled={saving || isViewer} className="min-w-[160px]">
+   240→   339→  1339→  1339→                      {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+   241→   340→  1340→  1340→                      {isViewer ? 'Apenas o proprietário pode salvar' : 'Salvar DRE'}
+   242→   341→  1341→  1341→                    </Button>
+   243→   342→  1342→  1342→                  </div>
+   244→   343→  1343→  1343→                </>
+   245→   344→  1344→  1344→              )}
+   246→   345→  1345→  1345→            </TabsContent>
+   247→   346→  1346→  1346→
+   248→   347→  1347→  1347→            {/* ─── Expense Qualification Tab ─── */}
+   249→   348→  1348→  1348→            <TabsContent value="expenses" className="space-y-4">
+   250→   349→  1349→  1349→              <Card>
+   251→   350→  1350→  1350→                <CardHeader>
+   252→   351→  1351→  1351→                  <CardTitle className="text-base">Qualificação de Despesas</CardTitle>
+   253→   352→  1352→  1352→                  <CardDescription>
+   254→   353→  1353→  1353→                    Faça upload de uma planilha com as colunas: <strong>Descrição</strong> (A), <strong>Data</strong> (B) e <strong>Valor</strong> (C).
+   255→   354→  1354→  1354→                    Após importar, classifique cada item como <strong>Salário</strong>, <strong>Bônus</strong> ou <strong>Pró-labore</strong> para aplicar ao DRE.
+   256→   355→  1355→  1355→                  </CardDescription>
+   257→   356→  1356→  1356→                </CardHeader>
+   258→   357→  1357→  1357→                <CardContent className="space-y-4">
+   259→   358→  1358→  1358→                  <input
+   260→   359→  1359→  1359→                    ref={fileInputRef}
+   261→   360→  1360→  1360→                    type="file"
+   262→   361→  1361→  1361→                    accept=".xlsx,.xls,.csv"
+   263→   362→  1362→  1362→                    className="hidden"
+   264→   363→  1363→  1363→                    onChange={handleUploadExpense}
+   265→   364→  1364→  1364→                  />
+   266→   365→  1365→  1365→                  <Button
+   267→   366→  1366→  1366→                    variant="outline"
+   268→   367→  1367→  1367→                    className="w-full sm:w-auto border-dashed border-2 h-12"
+   269→   368→  1368→  1368→                    onClick={() => fileInputRef.current?.click()}
+   270→   369→  1369→  1369→                    disabled={expenseUploading}
+   271→   370→  1370→  1370→                  >
+   272→   371→  1371→  1371→                    {expenseUploading ? (
+   273→   372→  1372→  1372→                      <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Enviando...</>
+   274→   373→  1373→  1373→                    ) : (
+   275→   374→  1374→  1374→                      <><Upload className="h-4 w-4 mr-2" /> Selecionar Planilha (.xlsx)</>
+   276→   375→  1375→  1375→                    )}
+   277→   376→  1376→  1376→                  </Button>
+   278→   377→  1377→  1377→
+   279→   378→  1378→  1378→                  {/* Upload Progress */}
+   280→   379→  1379→  1379→                  {expenseUploading && uploadProgress > 0 && (
+   281→   380→  1380→  1380→                    <div className="space-y-2">
+   282→   381→  1381→  1381→                      <div className="flex items-center justify-between text-xs text-muted-foreground">
+   283→   382→  1382→  1382→                        <span className="flex items-center gap-1.5">
+   284→   383→  1383→  1383→                          <Loader2 className="h-3 w-3 animate-spin" />
+   285→   384→  1384→  1384→                          Processando <strong className="text-foreground">{uploadFileName}</strong>
+   286→   385→  1385→  1385→                        </span>
+   287→   386→  1386→  1386→                        <span>{uploadProgress}%</span>
+   288→   387→  1387→  1387→                      </div>
+   289→   388→  1388→  1388→                      <Progress value={uploadProgress} className="h-2" />
+   290→   389→  1389→  1389→                    </div>
+   291→   390→  1390→  1390→                  )}
+   292→   391→  1391→  1391→
+   293→   392→  1392→  1392→                  {/* Uploaded Files History */}
+   294→   393→  1393→  1393→                  {uploadedFiles.length > 0 && !expenseUploading && (
+   295→   394→  1394→  1394→                    <div className="space-y-2">
+   296→   395→  1395→  1395→                      <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+   297→   396→  1396→  1396→                        <FileCheck className="h-3.5 w-3.5" />
+   298→   397→  1397→  1397→                        Arquivos Importados ({uploadedFiles.length})
+   299→   398→  1398→  1398→                      </h4>
+   300→   399→  1399→  1399→                      <div className="space-y-1.5">
+   301→   400→  1400→  1400→                        {uploadedFiles.map((f) => (
+   302→   401→  1401→  1401→                          <div key={f.id} className="flex items-center gap-3 p-2.5 rounded-lg bg-emerald-50 border border-emerald-100">
+   303→   402→  1402→  1402→                            <div className="h-8 w-8 rounded bg-emerald-100 flex items-center justify-center flex-shrink-0">
+   304→   403→  1403→  1403→                              <FileCheck className="h-4 w-4 text-emerald-600" />
+   305→   404→  1404→  1404→                            </div>
+   306→   405→  1405→  1405→                            <div className="flex-1 min-w-0">
+   307→   406→  1406→  1406→                              <p className="text-sm font-medium truncate">{f.fileName}</p>
+   308→   407→  1407→  1407→                              <p className="text-xs text-muted-foreground flex items-center gap-1">
+   309→   408→  1408→  1408→                                <Clock className="h-3 w-3" />
+   310→   409→  1409→  1409→                                Importado em {new Date(f.uploadedAt).toLocaleString('pt-BR')}
+   311→   410→  1410→  1410→                              </p>
+   312→   411→  1411→  1411→                            </div>
+   313→   412→  1412→  1412→                            <div className="flex items-center gap-1.5 flex-shrink-0">
+   314→   413→  1413→  1413→                              <Button
+   315→   414→  1414→  1414→                                variant="ghost"
+   316→   415→  1415→  1415→                                size="icon"
+   317→   416→  1416→  1416→                                className="h-7 w-7 text-muted-foreground hover:text-primary"
+   318→   417→  1417→  1417→                                onClick={() => {
+   319→   418→  1418→  1418→                                  window.open(`/api/dre/expense-qualification/export?companyId=${selectedCompanyId}&month=${selectedMonth}&year=${selectedYear}`, '_blank')
+   320→   419→  1419→  1419→                                }}
+   321→   420→  1420→  1420→                                title="Baixar planilha"
+   322→   421→  1421→  1421→                              >
+   323→   422→  1422→  1422→                                <Download className="h-3.5 w-3.5" />
+   324→   423→  1423→  1423→                              </Button>
+   325→   424→  1424→  1424→                              <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+   326→   425→  1425→  1425→                            </div>
+   327→   426→  1426→  1426→                          </div>
+   328→   427→  1427→  1427→                        ))}
+   329→   428→  1428→  1428→                      </div>
+   330→   429→  1429→  1429→                    </div>
+   331→   430→  1430→  1430→                  )}
+   332→   431→  1431→  1431→
+   333→   432→  1432→  1432→                  </CardContent>
+   334→   433→  1433→  1433→              </Card>
+   335→   434→  1434→  1434→              {/* Items Table */}
+   336→   435→  1435→  1435→              {expenseItems.length > 0 && (
+   337→   436→  1436→  1436→                <Card>
+   338→   437→  1437→  1437→                  <CardHeader className="pb-3">
+   339→   438→  1438→  1438→                    <div className="flex items-center justify-between">
+   340→   439→  1439→  1439→                      <CardTitle className="text-base">
+   341→   440→  1440→  1440→                        Itens Importados
+   342→   441→  1441→  1441→                        <Badge variant="secondary" className="ml-2">{expenseItems.length}</Badge>
+   343→   442→  1442→  1442→                      </CardTitle>
+   344→   443→  1443→  1443→                      <span className="text-xs text-muted-foreground">
+   345→   444→  1444→  1444→                        {expenseItems.filter(i => !i.dreField).length > 0
+   346→   445→  1445→  1445→                          ? <span className="text-amber-600 font-medium">⚠ {expenseItems.filter(i => !i.dreField).length} sem classificação</span>
+   347→   446→  1446→  1446→                          : <span className="text-emerald-600 font-medium">✓ Todos classificados</span>
+   348→   447→  1447→  1447→                        }
+   349→   448→  1448→  1448→                      </span>
+   350→   449→  1449→  1449→                    </div>
+   351→   450→  1450→  1450→                  </CardHeader>
+   352→   451→  1451→  1451→                  <CardContent className="p-0">
+   353→   452→  1452→  1452→                    <div className="border rounded-lg overflow-hidden">
+   354→   453→  1453→  1453→                      <div className="grid grid-cols-12 gap-2 p-3 bg-muted/50 text-xs font-medium text-muted-foreground">
+   355→   454→  1454→  1454→                        <span className="col-span-1 text-center">#</span>
+   356→   455→  1455→  1455→                        <span className="col-span-3 sm:col-span-4">Descrição</span>
+   357→   456→  1456→  1456→                        <span className="col-span-2">Data</span>
+   358→   457→  1457→  1457→                        <span className="col-span-2 text-right">Valor</span>
+   359→   458→  1458→  1458→                        <span className="col-span-5 sm:col-span-3">Classificação</span>
+   360→   459→  1459→  1459→                      </div>
+   361→   460→  1460→  1460→                      <div className="max-h-96 overflow-y-auto">
+   362→   461→  1461→  1461→                        {expenseItems.map((item, idx) => (
+   363→   462→  1462→  1462→                          <div key={item.id || idx} className="grid grid-cols-12 gap-2 p-3 border-t text-sm items-center hover:bg-muted/30">
+   364→   463→  1463→  1463→                            <span className="col-span-1 text-center text-xs text-muted-foreground">{idx + 1}</span>
+   365→   464→  1464→  1464→                            <span className="col-span-3 sm:col-span-4 truncate text-sm">{item.description}</span>
+   366→   465→  1465→  1465→                            <span className="col-span-2 text-xs text-muted-foreground">{item.date}</span>
+   367→   466→  1466→  1466→                            <span className="col-span-2 text-right font-mono text-xs">{brl(item.totalValue)}</span>
+   368→   467→  1467→  1467→                            <div className="col-span-5 sm:col-span-3">
+   369→   468→  1468→  1468→                              <Select
+   370→   469→  1469→  1469→                                value={item.dreField}
+   371→   470→  1470→  1470→                                onValueChange={(v) => {
+   372→   471→  1471→  1471→                                  const newItems = [...expenseItems]
+   373→   472→  1472→  1472→                                  newItems[idx] = { ...newItems[idx], dreField: v }
+   374→   473→  1473→  1473→                                  setExpenseItems(newItems)
+   375→   474→  1474→  1474→                                }}
+   376→   475→  1475→  1475→                              >
+   377→   476→  1476→  1476→                                <SelectTrigger className={`h-8 text-xs ${!item.dreField ? 'border-amber-300 bg-amber-50' : item.dreField === 'salarios' ? 'border-emerald-300 bg-emerald-50' : item.dreField === 'bonus' ? 'border-blue-300 bg-blue-50' : 'border-purple-300 bg-purple-50'}`}>
+   378→   477→  1477→  1477→                                  <SelectValue placeholder="Selecionar..." />
+   379→   478→  1478→  1478→                                </SelectTrigger>
+   380→   479→  1479→  1479→                                <SelectContent>
+   381→   480→  1480→  1480→                                  <SelectItem value="salarios">
+   382→   481→  1481→  1481→                                    <span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-emerald-500" /> Salários</span>
+   383→   482→  1482→  1482→                                  </SelectItem>
+   384→   483→  1483→  1483→                                  <SelectItem value="bonus">
+   385→   484→  1484→  1484→                                    <span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-blue-500" /> Bônus</span>
+   386→   485→  1485→  1485→                                  </SelectItem>
+   387→   486→  1486→  1486→                                  <SelectItem value="prolabore">
+   388→   487→  1487→  1487→                                    <span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-purple-500" /> Pró-labore</span>
+   389→   488→  1488→  1488→                                  </SelectItem>
+   390→   489→  1489→  1489→                                </SelectContent>
+   391→   490→  1490→  1490→                              </Select>
+   392→   491→  1491→  1491→                            </div>
+   393→   492→  1492→  1492→                          </div>
+   394→   493→  1493→  1493→                        ))}
+   395→   494→  1494→  1494→                      </div>
+   396→   495→  1495→  1495→                    </div>
+   397→   496→  1496→  1496→                  </CardContent>
+   398→   497→  1497→  1497→                  <CardFooter className="flex-col gap-3">
+   399→   498→  1498→  1498→                    <div className="w-full flex flex-wrap gap-2">
+   400→   499→  1499→  1499→                      {['salarios', 'bonus', 'prolabore'].map(field => {
+   401→   500→  1500→  1500→                        const total = expenseItems.filter(i => i.dreField === field).reduce((sum, i) => sum + i.totalValue, 0)
+   402→   501→
+   403→   502→[showing lines 1001-1500 of 2002; use offset=1501 with limit to continue reading]

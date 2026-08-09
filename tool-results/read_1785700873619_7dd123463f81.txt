@@ -1,0 +1,373 @@
+    30→  1246→                        <NumInput label="(+) Prestação de NF" value={dreData.prestacaoNf} onChange={(v) => setDREData({ prestacaoNf: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('prestacaoNf')} dreField="prestacaoNf" />
+    31→  1247→                        <NumInput label="(+) Honorários Sucumbenciais" value={dreData.honorariosSucumbenciais} onChange={(v) => setDREData({ honorariosSucumbenciais: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('honorariosSucumbenciais')} dreField="honorariosSucumbenciais" />
+    32→  1248→                      </div>
+    33→  1249→                      <div className="ml-4">
+    34→  1250→                        <NumInput label="(-) Impostos + CPP" value={dreData.impostosCpp} onChange={(v) => setDREData({ impostosCpp: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('impostosCpp')} dreField="impostosCpp" />
+    35→  1251→                      </div>
+    36→  1252→                      <SectionHeader
+    37→  1253→                        label="(=) Receita Líquida"
+    38→  1254→                        value={dre.receitaLiquida}
+    39→  1255→                        pctValue={safeDiv(dre.receitaLiquida, dre.receitaBruta)}
+    40→  1256→                        color={dre.receitaLiquida >= 0 ? 'bg-emerald-50' : 'bg-red-50'}
+    41→  1257→                      />
+    42→  1258→                    </CardContent>
+    43→  1259→                  </Card>
+    44→  1260→
+    45→  1261→                  {/* Despesas Variáveis */}
+    46→  1262→                  <Card>
+    47→  1263→                    <CardHeader className="pb-3">
+    48→  1264→                      <CardTitle className="text-base">Despesas Variáveis</CardTitle>
+    49→  1265→                    </CardHeader>
+    50→  1266→                    <CardContent className="space-y-1">
+    51→  1267→                      <SectionHeader label="(=) Total Despesas Variáveis" value={dre.despesasVariaveis} pctValue={safeDiv(dre.despesasVariaveis, dre.receitaBruta)} color="bg-muted/50" />
+    52→  1268→                      <div className="ml-4 space-y-0.5">
+    53→  1269→                        <NumInput label="Combustível" value={dreData.combustivel} onChange={(v) => setDREData({ combustivel: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('combustivel')} dreField="combustivel" />
+    54→  1270→                        <NumInput label="Insumos" value={dreData.insumos} onChange={(v) => setDREData({ insumos: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('insumos')} dreField="insumos" />
+    55→  1271→                        <NumInput label="Material de Escritório" value={dreData.materialEscritorio} onChange={(v) => setDREData({ materialEscritorio: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('materialEscritorio')} dreField="materialEscritorio" />
+    56→  1272→                        <NumInput label="Serviços Contratados" value={dreData.servicosContratados} onChange={(v) => setDREData({ servicosContratados: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('servicosContratados')} dreField="servicosContratados" />
+    57→  1273→                        <NumInput label="Materiais de Uso e Consumo" value={dreData.materiaisUsoConsumo} onChange={(v) => setDREData({ materiaisUsoConsumo: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('materiaisUsoConsumo')} dreField="materiaisUsoConsumo" />
+    58→  1274→                        <NumInput label="Taxas" value={dreData.taxas} onChange={(v) => setDREData({ taxas: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('taxas')} dreField="taxas" />
+    59→  1275→                        <NumInput label="Tarifas" value={dreData.tarifas} onChange={(v) => setDREData({ tarifas: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('tarifas')} dreField="tarifas" />
+    60→  1276→                        <NumInput label="Energia Elétrica" value={dreData.energiaEletrica} onChange={(v) => setDREData({ energiaEletrica: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('energiaEletrica')} dreField="energiaEletrica" />
+    61→  1277→                        <NumInput label="Água" value={dreData.agua} onChange={(v) => setDREData({ agua: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('agua')} dreField="agua" />
+    62→  1278→                      </div>
+    63→  1279→                    </CardContent>
+    64→  1280→                  </Card>
+    65→  1281→
+    66→  1282→                  {/* Despesas Fixas */}
+    67→  1283→                  <Card>
+    68→  1284→                    <CardHeader className="pb-3">
+    69→  1285→                      <CardTitle className="text-base">Despesas Fixas</CardTitle>
+    70→  1286→                    </CardHeader>
+    71→  1287→                    <CardContent className="space-y-1">
+    72→  1288→                      <SectionHeader label="(=) Total Despesas Fixas" value={dre.despesasFixas} pctValue={safeDiv(dre.despesasFixas, dre.receitaBruta)} color="bg-muted/50" />
+    73→  1289→                      <div className="ml-4 space-y-0.5">
+    74→  1290→                        <NumInput label="Aluguel" value={dreData.aluguel} onChange={(v) => setDREData({ aluguel: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('aluguel')} dreField="aluguel" />
+    75→  1291→                        <NumInput label="Salários" value={dreData.salarios} onChange={(v) => setDREData({ salarios: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('salarios')} dreField="salarios" />
+    76→  1292→                        <NumInput label="FGTS" value={dreData.fgts} onChange={(v) => setDREData({ fgts: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('fgts')} dreField="fgts" />
+    77→  1293→                        <NumInput label="Pró-labore" value={dreData.prolabore} onChange={(v) => setDREData({ prolabore: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('prolabore')} dreField="prolabore" />
+    78→  1294→                        <NumInput label="Bônus" value={dreData.bonus} onChange={(v) => setDREData({ bonus: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('bonus')} dreField="bonus" />
+    79→  1295→                        <NumInput label="INSS" value={dreData.inss} onChange={(v) => setDREData({ inss: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('inss')} dreField="inss" />
+    80→  1296→                        <NumInput label="IPTU" value={dreData.iptu} onChange={(v) => setDREData({ iptu: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('iptu')} dreField="iptu" />
+    81→  1297→                        <NumInput label="Telefone e Internet" value={dreData.telefoneInternet} onChange={(v) => setDREData({ telefoneInternet: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('telefoneInternet')} dreField="telefoneInternet" />
+    82→  1298→                        <NumInput label="Vale Transporte" value={dreData.valeTransporte} onChange={(v) => setDREData({ valeTransporte: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('valeTransporte')} dreField="valeTransporte" />
+    83→  1299→                        <NumInput label="Plano de Saúde" value={dreData.planoSaude} onChange={(v) => setDREData({ planoSaude: v })} isViewer={isViewer} onSuggestChange={isViewer ? handleSuggestChange : undefined} isSuggested={suggestedFields.has('planoSaude')} dreField="planoSaude" />
+    84→  1300→                      </div>
+    85→  1301→                    </CardContent>
+    86→  1302→                  </Card>
+    87→  1303→
+    88→  1304→                  {/* Resultado */}
+    89→  1305→                  <Card className={dre.resultadoLiquido >= 0 ? 'border-emerald-200' : 'border-red-200'}>
+    90→  1306→                    <CardContent className="pt-6">
+    91→  1307→                      <div className={`flex items-center justify-between py-3 px-4 rounded-lg ${dre.resultadoLiquido >= 0 ? 'bg-emerald-50' : 'bg-red-50'}`}>
+    92→  1308→                        <div className="flex items-center gap-2">
+    93→  1309→                          {dre.resultadoLiquido >= 0 ? <CheckCircle2 className="h-5 w-5 text-emerald-600" /> : <AlertCircle className="h-5 w-5 text-red-600" />}
+    94→  1310→                          <span className={`font-bold text-base ${dre.resultadoLiquido >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>
+    95→  1311→                            Resultado Líquido
+    96→  1312→                          </span>
+    97→  1313→                        </div>
+    98→  1314→                        <div className="flex items-center gap-4">
+    99→  1315→                          <span className={`font-mono text-lg font-bold ${dre.resultadoLiquido >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>
+   100→  1316→                            {brl(dre.resultadoLiquido)}
+   101→  1317→                          </span>
+   102→  1318→                          <span className="text-sm text-muted-foreground w-16 text-right">
+   103→  1319→                            {pct(safeDiv(dre.resultadoLiquido, dre.receitaBruta))}
+   104→  1320→                          </span>
+   105→  1321→                        </div>
+   106→  1322→                      </div>
+   107→  1323→                      {dre.resultadoLiquido > 0 && (
+   108→  1324→                        <p className="text-xs text-emerald-600 mt-2 ml-1">
+   109→  1325→                          ✓ Pode distribuir com isenção de IR
+   110→  1326→                        </p>
+   111→  1327→                      )}
+   112→  1328→                      {dre.resultadoLiquido <= 0 && (
+   113→  1329→                        <p className="text-xs text-red-500 mt-2 ml-1">
+   114→  1330→                          ✗ Saldo negativo — não há distribuição de lucros
+   115→  1331→                        </p>
+   116→  1332→                      )}
+   117→  1333→                    </CardContent>
+   118→  1334→                  </Card>
+   119→  1335→
+   120→  1336→                  {/* Save Button - disabled for viewers */}
+   121→  1337→                  <div className="flex justify-end print:hidden">
+   122→  1338→                    <Button onClick={handleSaveDRE} disabled={saving || isViewer} className="min-w-[160px]">
+   123→  1339→                      {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+   124→  1340→                      {isViewer ? 'Apenas o proprietário pode salvar' : 'Salvar DRE'}
+   125→  1341→                    </Button>
+   126→  1342→                  </div>
+   127→  1343→                </>
+   128→  1344→              )}
+   129→  1345→            </TabsContent>
+   130→  1346→
+   131→  1347→            {/* ─── Expense Qualification Tab ─── */}
+   132→  1348→            <TabsContent value="expenses" className="space-y-4">
+   133→  1349→              <Card>
+   134→  1350→                <CardHeader>
+   135→  1351→                  <CardTitle className="text-base">Qualificação de Despesas</CardTitle>
+   136→  1352→                  <CardDescription>
+   137→  1353→                    Faça upload de uma planilha com as colunas: <strong>Descrição</strong> (A), <strong>Data</strong> (B) e <strong>Valor</strong> (C).
+   138→  1354→                    Após importar, classifique cada item como <strong>Salário</strong>, <strong>Bônus</strong> ou <strong>Pró-labore</strong> para aplicar ao DRE.
+   139→  1355→                  </CardDescription>
+   140→  1356→                </CardHeader>
+   141→  1357→                <CardContent className="space-y-4">
+   142→  1358→                  <input
+   143→  1359→                    ref={fileInputRef}
+   144→  1360→                    type="file"
+   145→  1361→                    accept=".xlsx,.xls,.csv"
+   146→  1362→                    className="hidden"
+   147→  1363→                    onChange={handleUploadExpense}
+   148→  1364→                  />
+   149→  1365→                  <Button
+   150→  1366→                    variant="outline"
+   151→  1367→                    className="w-full sm:w-auto border-dashed border-2 h-12"
+   152→  1368→                    onClick={() => fileInputRef.current?.click()}
+   153→  1369→                    disabled={expenseUploading}
+   154→  1370→                  >
+   155→  1371→                    {expenseUploading ? (
+   156→  1372→                      <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Enviando...</>
+   157→  1373→                    ) : (
+   158→  1374→                      <><Upload className="h-4 w-4 mr-2" /> Selecionar Planilha (.xlsx)</>
+   159→  1375→                    )}
+   160→  1376→                  </Button>
+   161→  1377→
+   162→  1378→                  {/* Upload Progress */}
+   163→  1379→                  {expenseUploading && uploadProgress > 0 && (
+   164→  1380→                    <div className="space-y-2">
+   165→  1381→                      <div className="flex items-center justify-between text-xs text-muted-foreground">
+   166→  1382→                        <span className="flex items-center gap-1.5">
+   167→  1383→                          <Loader2 className="h-3 w-3 animate-spin" />
+   168→  1384→                          Processando <strong className="text-foreground">{uploadFileName}</strong>
+   169→  1385→                        </span>
+   170→  1386→                        <span>{uploadProgress}%</span>
+   171→  1387→                      </div>
+   172→  1388→                      <Progress value={uploadProgress} className="h-2" />
+   173→  1389→                    </div>
+   174→  1390→                  )}
+   175→  1391→
+   176→  1392→                  {/* Uploaded Files History */}
+   177→  1393→                  {uploadedFiles.length > 0 && !expenseUploading && (
+   178→  1394→                    <div className="space-y-2">
+   179→  1395→                      <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+   180→  1396→                        <FileCheck className="h-3.5 w-3.5" />
+   181→  1397→                        Arquivos Importados ({uploadedFiles.length})
+   182→  1398→                      </h4>
+   183→  1399→                      <div className="space-y-1.5">
+   184→  1400→                        {uploadedFiles.map((f) => (
+   185→  1401→                          <div key={f.id} className="flex items-center gap-3 p-2.5 rounded-lg bg-emerald-50 border border-emerald-100">
+   186→  1402→                            <div className="h-8 w-8 rounded bg-emerald-100 flex items-center justify-center flex-shrink-0">
+   187→  1403→                              <FileCheck className="h-4 w-4 text-emerald-600" />
+   188→  1404→                            </div>
+   189→  1405→                            <div className="flex-1 min-w-0">
+   190→  1406→                              <p className="text-sm font-medium truncate">{f.fileName}</p>
+   191→  1407→                              <p className="text-xs text-muted-foreground flex items-center gap-1">
+   192→  1408→                                <Clock className="h-3 w-3" />
+   193→  1409→                                Importado em {new Date(f.uploadedAt).toLocaleString('pt-BR')}
+   194→  1410→                              </p>
+   195→  1411→                            </div>
+   196→  1412→                            <div className="flex items-center gap-1.5 flex-shrink-0">
+   197→  1413→                              <Button
+   198→  1414→                                variant="ghost"
+   199→  1415→                                size="icon"
+   200→  1416→                                className="h-7 w-7 text-muted-foreground hover:text-primary"
+   201→  1417→                                onClick={() => {
+   202→  1418→                                  window.open(`/api/dre/expense-qualification/export?companyId=${selectedCompanyId}&month=${selectedMonth}&year=${selectedYear}`, '_blank')
+   203→  1419→                                }}
+   204→  1420→                                title="Baixar planilha"
+   205→  1421→                              >
+   206→  1422→                                <Download className="h-3.5 w-3.5" />
+   207→  1423→                              </Button>
+   208→  1424→                              <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+   209→  1425→                            </div>
+   210→  1426→                          </div>
+   211→  1427→                        ))}
+   212→  1428→                      </div>
+   213→  1429→                    </div>
+   214→  1430→                  )}
+   215→  1431→
+   216→  1432→                  </CardContent>
+   217→  1433→              </Card>
+   218→  1434→              {/* Items Table */}
+   219→  1435→              {expenseItems.length > 0 && (
+   220→  1436→                <Card>
+   221→  1437→                  <CardHeader className="pb-3">
+   222→  1438→                    <div className="flex items-center justify-between">
+   223→  1439→                      <CardTitle className="text-base">
+   224→  1440→                        Itens Importados
+   225→  1441→                        <Badge variant="secondary" className="ml-2">{expenseItems.length}</Badge>
+   226→  1442→                      </CardTitle>
+   227→  1443→                      <span className="text-xs text-muted-foreground">
+   228→  1444→                        {expenseItems.filter(i => !i.dreField).length > 0
+   229→  1445→                          ? <span className="text-amber-600 font-medium">⚠ {expenseItems.filter(i => !i.dreField).length} sem classificação</span>
+   230→  1446→                          : <span className="text-emerald-600 font-medium">✓ Todos classificados</span>
+   231→  1447→                        }
+   232→  1448→                      </span>
+   233→  1449→                    </div>
+   234→  1450→                  </CardHeader>
+   235→  1451→                  <CardContent className="p-0">
+   236→  1452→                    <div className="border rounded-lg overflow-hidden">
+   237→  1453→                      <div className="grid grid-cols-12 gap-2 p-3 bg-muted/50 text-xs font-medium text-muted-foreground">
+   238→  1454→                        <span className="col-span-1 text-center">#</span>
+   239→  1455→                        <span className="col-span-3 sm:col-span-4">Descrição</span>
+   240→  1456→                        <span className="col-span-2">Data</span>
+   241→  1457→                        <span className="col-span-2 text-right">Valor</span>
+   242→  1458→                        <span className="col-span-5 sm:col-span-3">Classificação</span>
+   243→  1459→                      </div>
+   244→  1460→                      <div className="max-h-96 overflow-y-auto">
+   245→  1461→                        {expenseItems.map((item, idx) => (
+   246→  1462→                          <div key={item.id || idx} className="grid grid-cols-12 gap-2 p-3 border-t text-sm items-center hover:bg-muted/30">
+   247→  1463→                            <span className="col-span-1 text-center text-xs text-muted-foreground">{idx + 1}</span>
+   248→  1464→                            <span className="col-span-3 sm:col-span-4 truncate text-sm">{item.description}</span>
+   249→  1465→                            <span className="col-span-2 text-xs text-muted-foreground">{item.date}</span>
+   250→  1466→                            <span className="col-span-2 text-right font-mono text-xs">{brl(item.totalValue)}</span>
+   251→  1467→                            <div className="col-span-5 sm:col-span-3">
+   252→  1468→                              <Select
+   253→  1469→                                value={item.dreField}
+   254→  1470→                                onValueChange={(v) => {
+   255→  1471→                                  const newItems = [...expenseItems]
+   256→  1472→                                  newItems[idx] = { ...newItems[idx], dreField: v }
+   257→  1473→                                  setExpenseItems(newItems)
+   258→  1474→                                }}
+   259→  1475→                              >
+   260→  1476→                                <SelectTrigger className={`h-8 text-xs ${!item.dreField ? 'border-amber-300 bg-amber-50' : item.dreField === 'salarios' ? 'border-emerald-300 bg-emerald-50' : item.dreField === 'bonus' ? 'border-blue-300 bg-blue-50' : 'border-purple-300 bg-purple-50'}`}>
+   261→  1477→                                  <SelectValue placeholder="Selecionar..." />
+   262→  1478→                                </SelectTrigger>
+   263→  1479→                                <SelectContent>
+   264→  1480→                                  <SelectItem value="salarios">
+   265→  1481→                                    <span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-emerald-500" /> Salários</span>
+   266→  1482→                                  </SelectItem>
+   267→  1483→                                  <SelectItem value="bonus">
+   268→  1484→                                    <span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-blue-500" /> Bônus</span>
+   269→  1485→                                  </SelectItem>
+   270→  1486→                                  <SelectItem value="prolabore">
+   271→  1487→                                    <span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-purple-500" /> Pró-labore</span>
+   272→  1488→                                  </SelectItem>
+   273→  1489→                                </SelectContent>
+   274→  1490→                              </Select>
+   275→  1491→                            </div>
+   276→  1492→                          </div>
+   277→  1493→                        ))}
+   278→  1494→                      </div>
+   279→  1495→                    </div>
+   280→  1496→                  </CardContent>
+   281→  1497→                  <CardFooter className="flex-col gap-3">
+   282→  1498→                    <div className="w-full flex flex-wrap gap-2">
+   283→  1499→                      {['salarios', 'bonus', 'prolabore'].map(field => {
+   284→  1500→                        const total = expenseItems.filter(i => i.dreField === field).reduce((sum, i) => sum + i.totalValue, 0)
+   285→  1501→                        if (total === 0) return null
+   286→  1502→                        return (
+   287→  1503→                          <Badge key={field} variant="outline" className="text-xs">
+   288→  1504→                            {DRE_FIELD_LABELS[field]}: {brl(total)}
+   289→  1505→                          </Badge>
+   290→  1506→                        )
+   291→  1507→                      })}
+   292→  1508→                    </div>
+   293→  1509→                    <Button onClick={handleSaveExpenseClassification} disabled={applying || expenseItems.some(i => !i.dreField)} className="w-full sm:w-auto">
+   294→  1510→                      {applying ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Target className="h-4 w-4 mr-2" />}
+   295→  1511→                      Aplicar ao DRE
+   296→  1512→                    </Button>
+   297→  1513→                  </CardFooter>
+   298→  1514→                </Card>
+   299→  1515→              )}
+   300→  1516→            </TabsContent>
+   301→  1517→
+   302→  1518→            {/* ─── Projection Tab ─── */}
+   303→  1519→            <TabsContent value="projection" className="space-y-4">
+   304→  1520→              <Card>
+   305→  1521→                <CardHeader>
+   306→  1522→                  <CardTitle className="text-base flex items-center gap-2">
+   307→  1523→                    <Brain className="h-5 w-5 text-primary" />
+   308→  1524→                    Previsão Orçamentária com IA
+   309→  1525→                  </CardTitle>
+   310→  1526→                  <CardDescription>
+   311→  1527→                    A IA analisa os dados históricos do DRE e gera projeções para os próximos meses.
+   312→  1528→                    {allHistory.length === 0 && ' Insira pelo menos 1 mês de dados para gerar projeções.'}
+   313→  1529→                  </CardDescription>
+   314→  1530→                </CardHeader>
+   315→  1531→                <CardContent className="space-y-4">
+   316→  1532→                  <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-end print:hidden">
+   317→  1533→                    <div>
+   318→  1534→                      <Label className="text-sm mb-1.5 block">Período da Projeção</Label>
+   319→  1535→                      <Select value={projectionPeriod} onValueChange={(v: any) => setProjectionPeriod(v)}>
+   320→  1536→                        <SelectTrigger className="w-[180px]">
+   321→  1537→                          <SelectValue />
+   322→  1538→                        </SelectTrigger>
+   323→  1539→                        <SelectContent>
+   324→  1540→                          <SelectItem value="3m">3 meses</SelectItem>
+   325→  1541→                          <SelectItem value="6m">6 meses</SelectItem>
+   326→  1542→                          <SelectItem value="12m">12 meses</SelectItem>
+   327→  1543→                        </SelectContent>
+   328→  1544→                      </Select>
+   329→  1545→                    </div>
+   330→  1546→                    <Button onClick={handleProjection} disabled={projecting || allHistory.length === 0} className="min-w-[200px]">
+   331→  1547→                      {projecting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Target className="h-4 w-4 mr-2" />}
+   332→  1548→                      {projecting ? 'Gerando Projeção...' : 'Gerar Previsão Orçamentária'}
+   333→  1549→                    </Button>
+   334→  1550→                  </div>
+   335→  1551→
+   336→  1552→                  {projectionResult && (
+   337→  1553→                    <>
+   338→  1554→                      <Separator />
+   339→  1555→                      <div className="space-y-2">
+   340→  1556→                        <h3 className="font-semibold text-sm text-muted-foreground">Projeção de Resultado Líquido</h3>
+   341→  1557→                        <div className="h-[300px] w-full">
+   342→  1558→                          <ResponsiveContainer width="100%" height="100%">
+   343→  1559→                            <AreaChart data={[...projectionResult.historical.map(h => ({ name: h.label, 'Resultado Líquido': h.resultadoLiquido, type: 'Histórico' })), ...projectionResult.projections.map(p => ({ name: p.label, 'Resultado Líquido': p.resultadoLiquido, type: 'Projeção' }))]}>
+   344→  1560→                              <CartesianGrid strokeDasharray="3 3" stroke="#E9EEF3" />
+   345→  1561→                              <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#64748B' }} />
+   346→  1562→                              <YAxis tick={{ fontSize: 11, fill: '#64748B' }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
+   347→  1563→                              <RTooltip
+   348→  1564→                                formatter={(value: number) => brl(value)}
+   349→  1565→                                contentStyle={{ borderRadius: '8px', border: '1px solid #E9EEF3', fontSize: '12px' }}
+   350→  1566→                              />
+   351→  1567→                              <ReferenceLine y={0} stroke="#94A3B8" strokeDasharray="3 3" />
+   352→  1568→                              <Area type="monotone" dataKey="Resultado Líquido" stroke={COLORS.accent} fill={COLORS.accent} fillOpacity={0.1} strokeWidth={2} />
+   353→  1569→                            </AreaChart>
+   354→  1570→                          </ResponsiveContainer>
+   355→  1571→                        </div>
+   356→  1572→                      </div>
+   357→  1573→
+   358→  1574→                      <div className="border rounded-lg overflow-hidden">
+   359→  1575→                        <div className="grid grid-cols-7 gap-2 p-3 bg-muted/50 text-xs font-medium text-muted-foreground">
+   360→  1576→                          <span>Mês</span>
+   361→  1577→                          <span className="text-right">Rec. Bruta</span>
+   362→  1578→                          <span className="text-right">Rec. Líquida</span>
+   363→  1579→                          <span className="text-right">Desp. Var.</span>
+   364→  1580→                          <span className="text-right">Desp. Fixas</span>
+   365→  1581→                          <span className="text-right">Result. Líq.</span>
+   366→  1582→                          <span className="text-right">Margem</span>
+   367→  1583→                        </div>
+   368→  1584→                        <div className="max-h-96 overflow-y-auto">
+   369→  1585→                          {[...projectionResult.historical, ...projectionResult.projections].map((p, i) => {
+   370→  1586→                            const isProjected = i >= projectionResult.historical.length
+   371→  1587→                            const isExpanded = expandedProjectionIdx === i
+   372→  1588→                            return (
+   373→  1589→                              <div key={i}>
+   374→  1590→                                <div
+   375→  1591→                                  className={`grid grid-cols-7 gap-2 p-3 border-t text-sm items-center cursor-pointer hover:bg-muted/30 transition-colors ${isProjected ? 'bg-accent/5' : ''} ${isExpanded ? 'bg-muted/20' : ''}`}
+   376→  1592→                                  onClick={() => setExpandedProjectionIdx(isExpanded ? null : i)}
+   377→  1593→                                >
+   378→  1594→                                  <span className="font-medium text-xs flex items-center gap-1">
+   379→  1595→                                    {isProjected && <ChevronDown className={`h-3 w-3 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />}
+   380→  1596→                                    {p.label}
+   381→  1597→                                    {isProjected && <Badge variant="outline" className="ml-1 text-[10px]">Projeção</Badge>}
+   382→  1598→                                  </span>
+   383→  1599→                                  <span className="text-right font-mono text-xs">{brl(p.receitaBruta)}</span>
+   384→  1600→                                  <span className="text-right font-mono text-xs">{brl(p.receitaLiquida)}</span>
+   385→  1601→                                  <span className="text-right font-mono text-xs text-red-600">{brl(p.despesasVariaveis)}</span>
+   386→  1602→                                  <span className="text-right font-mono text-xs text-red-600">{brl(p.despesasFixas)}</span>
+   387→  1603→                                  <span className={`text-right font-mono text-xs font-semibold ${p.resultadoLiquido >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>{brl(p.resultadoLiquido)}</span>
+   388→  1604→                                  <span className="text-right font-mono text-xs">{pct(safeDiv(p.resultadoLiquido, p.receitaBruta))}</span>
+   389→  1605→                                </div>
+   390→  1606→                                {isExpanded && isProjected && (
+   391→  1607→                                  <div className="border-t bg-muted/10 px-4 py-3">
+   392→  1608→                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+   393→  1609→                                      <div className="space-y-1">
+   394→  1610→                                        <p className="text-xs font-semibold text-muted-foreground uppercase">Receita</p>
+   395→  1611→                                        {DRE_EXPAND_ITEMS.filter(d => d.group === 'Receita').map(d => (
+   396→  1612→                                          <div key={d.field} className="flex items-center justify-between text-xs">
+   397→  1613→                                            <span className="text-muted-foreground">{d.label}</span>
+   398→  1614→                                            <input
+   399→  1615→                                              className="w-28 text-right font-mono bg-white border rounded px-1.5 py-0.5 text-xs"
+   400→  1616→                                              value={brl((p as any)[d.field] || 0).replace('R\$', '').trim()}
+   401→
+   402→[showing lines 1217-1616 of 2072; use offset=1617 with limit to continue reading]
